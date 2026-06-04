@@ -129,54 +129,54 @@
             display: flex; 
             align-items: center; 
             justify-content: center;
-            padding: 64px 80px; 
+            padding: 40px 64px; 
             background: #FAF8F5;
             height: 100vh;
             overflow-y: auto;
         }
         .auth-form-inner { 
             width: 100%; 
-            max-width: 460px; 
+            max-width: 400px; 
         }
 
         .label-tag {
-            font-size: 11px; 
+            font-size: 10px; 
             font-weight: 600; 
             letter-spacing: 0.15em;
             color: var(--color-accent); 
             text-transform: uppercase; 
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: inline-block;
         }
         .auth-title {
             font-family: var(--font-heading);
-            font-size: 38px; 
+            font-size: 32px; 
             color: var(--color-primary); 
             font-weight: 400;
-            margin-bottom: 8px; 
+            margin-bottom: 6px; 
             line-height: 1.2;
         }
         .auth-subtitle {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--color-text-muted);
-            margin-bottom: 36px;
+            margin-bottom: 24px;
         }
 
         /* Role Cards Premium Grid */
         .role-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 36px;
+            gap: 16px;
+            margin-bottom: 24px;
         }
         .role-card {
             position: relative;
             border: 2px solid transparent;
-            border-radius: 16px;
+            border-radius: 12px;
             cursor: pointer;
             transition: var(--transition-smooth);
             overflow: hidden;
-            height: 240px;
+            height: 200px;
             box-shadow: 0 4px 12px rgba(28, 43, 30, 0.04);
             display: flex;
             flex-direction: column;
@@ -217,15 +217,15 @@
         .role-card-content {
             position: relative;
             z-index: 3;
-            padding: 20px;
+            padding: 16px;
             color: #FFFFFF;
         }
         .role-card-tick {
             position: absolute;
-            top: 16px;
-            right: 16px;
-            width: 28px;
-            height: 28px;
+            top: 12px;
+            right: 12px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             background: #FFFFFF;
             border: 2px solid var(--color-primary);
@@ -233,7 +233,7 @@
             align-items: center;
             justify-content: center;
             color: var(--color-primary);
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 700;
             opacity: 0;
             transform: scale(0.7);
@@ -250,22 +250,22 @@
         }
         .role-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(28, 43, 30, 0.12);
+            box-shadow: 0 8px 20px rgba(28, 43, 30, 0.12);
         }
         .role-card.selected {
             border-color: #FFFFFF;
-            box-shadow: 0 12px 30px rgba(196, 120, 58, 0.25);
+            box-shadow: 0 8px 24px rgba(196, 120, 58, 0.25);
         }
         .role-name {
             font-family: var(--font-heading);
-            font-size: 22px;
+            font-size: 18px;
             color: #FFFFFF;
             font-weight: 600;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         }
         .role-desc {
-            font-size: 12px;
+            font-size: 11px;
             color: rgba(255, 255, 255, 0.85);
             line-height: 1.4;
             font-weight: 400;
@@ -275,21 +275,25 @@
         /* Primary Button */
         .btn-primary {
             width: 100%; 
-            padding: 16px;
+            padding: 14px;
             background: var(--color-primary); 
             color: #FFFFFF;
             border: none; 
-            border-radius: 12px;
-            font-size: 15px; 
+            border-radius: 10px;
+            font-size: 14px; 
             font-weight: 600; 
             cursor: pointer;
             transition: var(--transition-smooth);
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            gap: 10px;
+            gap: 8px;
             font-family: var(--font-body);
             box-shadow: 0 4px 14px rgba(28, 43, 30, 0.15);
+        }
+        .btn-primary svg {
+            width: 16px;
+            height: 16px;
         }
         .btn-primary:hover:not(:disabled) { 
             background: var(--color-primary-light); 
@@ -309,11 +313,11 @@
 
         .signin-link {
             text-align: center; 
-            margin-top: 28px;
-            font-size: 14px; 
+            margin-top: 20px;
+            font-size: 13px; 
             color: var(--color-text-muted);
             border-top: 1px solid var(--color-border);
-            padding-top: 24px;
+            padding-top: 20px;
         }
         .signin-link a { 
             color: var(--color-accent); 
@@ -348,10 +352,6 @@
     <div class="auth-photo">
         <img src="https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=1200&q=80" alt="Bali Traditional Culture Scene">
         <div class="auth-photo-overlay"></div>
-        <div class="auth-photo-brand">
-            <span class="auth-photo-brand-dot"></span>
-            CittaLoka
-        </div>
         <div class="auth-photo-quote">
             <h2>Immerse yourself in the living rhythm of the world's most vibrant cultures.</h2>
             <p>Connect with local hosts, learn centuries-old traditions, and create memories that live forever in your heart.</p>

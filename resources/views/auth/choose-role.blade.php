@@ -240,6 +240,7 @@
             transition: var(--transition-smooth);
             z-index: 3;
         }
+        
         .role-card.selected .role-card-tick {
             opacity: 1;
             transform: scale(1);

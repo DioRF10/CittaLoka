@@ -19,22 +19,38 @@
         {{-- Kolom Kiri: Foto --}}
         <div class="relative hidden lg:flex flex-col justify-end" style="min-height: 100vh;">
             {{-- Foto asli seperti desain --}}
-            <img src="https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=1200&q=80" alt="Bali Culture"
-                class="absolute inset-0 w-full h-full object-cover">
+            <img src="{{ asset('images/auth/travelling.png') }}" class="absolute inset-0 w-full h-full object-cover">
             {{-- Overlay tipis di bawah saja --}}
-            <div class="absolute bottom-0 left-0 right-0"
-                style="height: 220px; background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.70));">
+            <div class="absolute inset-0"
+                style=" background: linear-gradient( to bottom,rgba(28,43,30,0.25) 0%, rgba(28,43,30,0.85) 100% );   ">
+            </div>
+            {{-- Logo --}}
+            <div class="absolute top-12 left-12 z-10 flex items-center gap-3">
+
+                <div class="w-2 h-2 rounded-full" style="background:#C4783A;">
+                </div>
+
+                <span class="text-white text-[26px] font-bold tracking-tight"
+                    style="font-family:'Playfair Display', serif;">
+                    CITTALOKA
+                </span>
+
             </div>
             {{-- Teks pojok kiri bawah --}}
-            <div class="relative z-10 px-8 pb-8">
-                <p class="text-white text-lg font-normal mb-1" style="font-family: 'Playfair Display', serif;">
-                    CittaLoka
+            <div class="relative z-10 px-12 pb-12 max-w-[520px]">
+
+                <h2 class="text-white text-[42px] leading-[1.2] font-normal mb-4"
+                    style="font-family:'Playfair Display', serif;">
+                    Begin your cultural journey.
+                </h2>
+
+                <p class="text-[14px] italic leading-relaxed" style="color: rgba(255,255,255,0.8);">
+                    Connect with local hosts, discover authentic traditions,
+                    and experience cultures beyond the ordinary.
                 </p>
-                <p class="text-sm italic leading-relaxed"
-                    style="color: rgba(255,255,255,0.80); font-family: 'Playfair Display', serif;">
-                    "Immerse yourself in the living rhythm of the world's most vibrant cultures."
-                </p>
+
             </div>
+
         </div>
 
         {{-- Kolom Kanan: Form --}}
@@ -232,7 +248,7 @@
                         class="w-full py-2.5 rounded-lg text-sm font-medium text-white transition-all duration-200 hover:-translate-y-0.5"
                         style="background: #1a2e1c;" onmouseover="this.style.background='#2D4A32'"
                         onmouseout="this.style.background='#1a2e1c'">
-                        Create Account →
+                        Create Account
                     </button>
                 </form>
 

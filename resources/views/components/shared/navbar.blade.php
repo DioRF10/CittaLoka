@@ -40,8 +40,8 @@ $user = computed(fn() => auth()->user());
         <div class="flex items-center gap-3">
 
             {{-- Language Toggle --}}
-            <button class="text-xs font-medium px-2 py-1 rounded transition-colors hover:bg-[#F0EDE6]"
-                    style="color: #6B7280;">
+            <button class="text-xs font-medium px-3 py-1.5 rounded-full transition duration-200 hover:bg-[#F0EDE6] hover:text-[#1a2e1c] hover:shadow-sm cursor-pointer"
+                    style="color: #6B7280; border: 1px solid transparent;">
                 EN
             </button>
 
@@ -82,16 +82,43 @@ $user = computed(fn() => auth()->user());
                 {{-- Avatar Dropdown --}}
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open"
-                            class="w-9 h-9 rounded-full overflow-hidden border-2 flex items-center justify-center transition-all"
-                            style="border-color: #E8E4DC; background: #F0EDE6;">
-                        @if(auth()->user()->avatar)
-                            <img src="{{ auth()->user()->avatar }}" alt="Avatar" class="w-full h-full object-cover">
-                        @else
-                            <span class="text-sm font-medium" style="color: #1a2e1c;">
-                                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-                            </span>
-                        @endif
-                    </button>
+        class="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full border transition-all duration-200 hover:bg-[#F5F2EC] hover:border-[#C4BEB1] cursor-pointer"
+        style="border-color: #E8E4DC;"
+        aria-label="Open profile menu">
+
+    {{-- Avatar --}}
+    <div class="w-9 h-9 rounded-full overflow-hidden flex items-center justify-center"
+         style="background: #F0EDE6;">
+
+        @if(auth()->user()->avatar)
+            <img src="{{ auth()->user()->avatar }}"
+                 alt="Avatar"
+                 class="w-full h-full object-cover">
+        @else
+            <span class="text-sm font-medium"
+                  style="color: #1a2e1c;">
+                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+            </span>
+        @endif
+
+    </div>
+
+    {{-- Chevron --}}
+    <svg
+        class="w-4 h-4 text-[#6B7280] transition-transform duration-200"
+        :class="{ 'rotate-180': open }"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24">
+
+        <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 9l-7 7-7-7"/>
+    </svg>
+
+</button>
 
                     {{-- Dropdown Menu --}}
                     <div x-show="open"
@@ -102,9 +129,8 @@ $user = computed(fn() => auth()->user());
                          x-transition:leave="transition ease-in duration-75"
                          x-transition:leave-start="opacity-100 scale-100"
                          x-transition:leave-end="opacity-0 scale-95"
-                         style="display:none;"
-                         class="absolute right-0 mt-2 w-52 rounded-xl shadow-lg py-1 z-50"
-                         style="background: white; border: 1px solid #E8E4DC;">
+                         style="display:none; background-color: #FFFFFF;"
+                         class="absolute right-0 mt-2 w-52 rounded-xl border border-[#E8E4DC] bg-white shadow-lg py-1 z-50">
 
                         <div class="px-4 py-3 border-b" style="border-color: #E8E4DC;">
                             <p class="text-sm font-medium truncate" style="color: #1a2e1c;">{{ auth()->user()->name }}</p>
@@ -112,26 +138,26 @@ $user = computed(fn() => auth()->user());
                         </div>
 
                         @if(auth()->user()->role === 'host')
-                            <a href="/dashboard" class="flex items-center gap-2.5 px-4 py-2.5 text-sm hover:bg-[#F5F2EC] transition-colors" style="color: #1a2e1c;">
+                            <a href="/dashboard" class="flex items-center gap-2.5 px-4 py-2.5 text-sm rounded-xl hover:bg-[#F5F2EC] hover:text-[#1a2e1c] transition-colors duration-150 cursor-pointer" style="color: #1a2e1c;">
                                 Dashboard
                             </a>
-                            <a href="/dashboard/experiences" class="flex items-center gap-2.5 px-4 py-2.5 text-sm hover:bg-[#F5F2EC] transition-colors" style="color: #1a2e1c;">
+                            <a href="/dashboard/experiences" class="flex items-center gap-2.5 px-4 py-2.5 text-sm rounded-xl hover:bg-[#F5F2EC] hover:text-[#1a2e1c] transition-colors duration-150 cursor-pointer" style="color: #1a2e1c;">
                                 My Experiences
                             </a>
-                            <a href="/dashboard/bookings" class="flex items-center gap-2.5 px-4 py-2.5 text-sm hover:bg-[#F5F2EC] transition-colors" style="color: #1a2e1c;">
+                            <a href="/dashboard/bookings" class="flex items-center gap-2.5 px-4 py-2.5 text-sm rounded-xl hover:bg-[#F5F2EC] hover:text-[#1a2e1c] transition-colors duration-150 cursor-pointer" style="color: #1a2e1c;">
                                 Bookings
                             </a>
-                            <a href="/dashboard/earnings" class="flex items-center gap-2.5 px-4 py-2.5 text-sm hover:bg-[#F5F2EC] transition-colors" style="color: #1a2e1c;">
+                            <a href="/dashboard/earnings" class="flex items-center gap-2.5 px-4 py-2.5 text-sm rounded-xl hover:bg-[#F5F2EC] hover:text-[#1a2e1c] transition-colors duration-150 cursor-pointer" style="color: #1a2e1c;">
                                 Earnings
                             </a>
                         @else
-                            <a href="/my-bookings" class="flex items-center gap-2.5 px-4 py-2.5 text-sm hover:bg-[#F5F2EC] transition-colors" style="color: #1a2e1c;">
+                            <a href="/my-bookings" class="flex items-center gap-2.5 px-4 py-2.5 text-sm rounded-xl hover:bg-[#F5F2EC] hover:text-[#1a2e1c] transition-colors duration-150 cursor-pointer" style="color: #1a2e1c;">
                                 My Bookings
                             </a>
-                            <a href="/wishlist" class="flex items-center gap-2.5 px-4 py-2.5 text-sm hover:bg-[#F5F2EC] transition-colors" style="color: #1a2e1c;">
+                            <a href="/wishlist" class="flex items-center gap-2.5 px-4 py-2.5 text-sm rounded-xl hover:bg-[#F5F2EC] hover:text-[#1a2e1c] transition-colors duration-150 cursor-pointer" style="color: #1a2e1c;">
                                 Wishlist
                             </a>
-                            <a href="/profile" class="flex items-center gap-2.5 px-4 py-2.5 text-sm hover:bg-[#F5F2EC] transition-colors" style="color: #1a2e1c;">
+                            <a href="/profile" class="flex items-center gap-2.5 px-4 py-2.5 text-sm rounded-xl hover:bg-[#F5F2EC] hover:text-[#1a2e1c] transition-colors duration-150 cursor-pointer" style="color: #1a2e1c;">
                                 My Profile
                             </a>
                         @endif
@@ -139,7 +165,7 @@ $user = computed(fn() => auth()->user());
                         <div class="border-t mt-1" style="border-color: #E8E4DC;">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="w-full text-left flex items-center gap-2.5 px-4 py-2.5 text-sm hover:bg-[#FEF2F2] transition-colors" style="color: #EF4444;">
+                                <button type="submit" class="w-full text-left flex items-center gap-2.5 px-4 py-2.5 text-sm rounded-xl hover:bg-[#FEF2F2] hover:text-[#B91C1C] transition-colors duration-150 cursor-pointer" style="color: #EF4444;">
                                     Log Out
                                 </button>
                             </form>

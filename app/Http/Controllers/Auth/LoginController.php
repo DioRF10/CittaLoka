@@ -56,11 +56,6 @@ class LoginController extends Controller
 
         $user = Auth::user();
 
-        // 5. Cek email sudah diverifikasi
-        if (!$user->hasVerifiedEmail()) {
-            return redirect()->route('verification.notice');
-        }
-
         // 6. Redirect berdasarkan role
         return redirect()->intended($this->redirectAfterLogin($user));
     }
@@ -80,7 +75,7 @@ class LoginController extends Controller
         return match($user->role) {
             'host'  => '/dashboard',
             'admin' => '/admin',
-            default => '/experiences',
+            default => '/',
         };
     }
 }

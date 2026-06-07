@@ -266,9 +266,7 @@
     </div>
 </section>
 
-{{-- ═══════════════════════════════════════════════════════════════
-     SECTION 5: YOUR PATH TO INNER BALI
-════════════════════════════════════════════════════════════════ --}}
+
 <section class="mx-6 lg:mx-auto max-w-7xl mb-20">
     <div class="rounded-2xl p-10 lg:p-16" style="background: #F0EDE6;">
         <div class="text-center mb-12">

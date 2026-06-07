@@ -88,7 +88,7 @@ Route::get('/auth/google/callback', [App\Http\Controllers\Auth\GoogleController:
 // Protected pages (sementara)
 // =============================================================================
 Route::get('/experiences', function () {
-    return '<h1>Experiences — coming soon</h1>';
+    return view('pages.experiences');
 })->name('experiences.index');
 
 Route::get('/dashboard', function () {

@@ -207,7 +207,7 @@
 
                     {{-- Submit --}}
                     <button type="submit" class="w-full rounded-2xl bg-[#1A2E1C] py-2.5 text-sm font-medium text-white transition duration-200 hover:bg-[#2D4A32]">
-                        Sign In →
+                        Sign In 
                     </button>
 
                 </form>

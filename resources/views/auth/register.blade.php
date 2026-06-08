@@ -104,8 +104,12 @@
                 </div>
 
                 {{-- Form --}}
-                <form method="POST" action="{{ route('register.store') }}"
-                    x-data="{ showPass: false, showConfirm: false }">
+                <form method="POST" action="{{ route('register.store') }}" x-data="{ 
+                        showPass: false, 
+                        showConfirm: false,
+                        termsAccepted: false,
+                        passwordStrength: 0
+                    }" @submit="if (!termsAccepted) { $event.preventDefault(); }">
                     @csrf
                     <input type="hidden" name="role" value="{{ session('register_role', 'user') }}">
 
@@ -153,6 +157,7 @@
                         <div class="relative">
                             <input :type="showPass ? 'text' : 'password'" id="password" name="password"
                                 placeholder="Min. 8 characters"
+                                @input="passwordStrength = $event.target.value.length >= 8 ? 100 : ($event.target.value.length * 12.5)"
                                 class="w-full px-3 py-1.5 pr-10 rounded-lg text-sm outline-none transition-all duration-200"
                                 style="background: white; border: 1.5px solid #E2DDD5; color: #1a2e1c;"
                                 onfocus="this.style.borderColor='#1a2e1c'" onblur="this.style.borderColor='#E2DDD5'"
@@ -182,10 +187,14 @@
                         </div>
                         {{-- Password strength indicator --}}
                         <div class="flex gap-1 mt-1.5">
-                            <div class="h-0.5 flex-1 rounded-full" style="background: #E2DDD5;"></div>
-                            <div class="h-0.5 flex-1 rounded-full" style="background: #E2DDD5;"></div>
-                            <div class="h-0.5 flex-1 rounded-full" style="background: #E2DDD5;"></div>
-                            <div class="h-0.5 flex-1 rounded-full" style="background: #E2DDD5;"></div>
+                            <div class="h-0.5 flex-1 rounded-full transition-all duration-300"
+                                :style="{ background: passwordStrength >= 25 ? '#C4783A' : '#E2DDD5' }"></div>
+                            <div class="h-0.5 flex-1 rounded-full transition-all duration-300"
+                                :style="{ background: passwordStrength >= 50 ? '#C4783A' : '#E2DDD5' }"></div>
+                            <div class="h-0.5 flex-1 rounded-full transition-all duration-300"
+                                :style="{ background: passwordStrength >= 75 ? '#C4783A' : '#E2DDD5' }"></div>
+                            <div class="h-0.5 flex-1 rounded-full transition-all duration-300"
+                                :style="{ background: passwordStrength === 100 ? '#C4783A' : '#E2DDD5' }"></div>
                         </div>
                         @error('password')
                             <p class="text-xs mt-1" style="color: #EF4444;">{{ $message }}</p>
@@ -233,7 +242,8 @@
 
                     {{-- Checkbox --}}
                     <div class="flex items-start gap-3 mb-3">
-                        <input type="checkbox" id="terms" name="terms" class="mt-0.5 flex-shrink-0 cursor-pointer"
+                        <input type="checkbox" id="terms" name="terms" @change="termsAccepted = $event.target.checked"
+                            class="mt-0.5 flex-shrink-0 cursor-pointer"
                             style="width: 16px; height: 16px; accent-color: #1a2e1c;" required>
                         <label for="terms" class="text-sm cursor-pointer leading-relaxed" style="color: #6B7280;">
                             I agree to CittaLoka's
@@ -245,9 +255,11 @@
 
                     {{-- Submit --}}
                     <button type="submit"
-                        class="w-full py-2.5 rounded-lg text-sm font-medium text-white transition-all duration-200 hover:-translate-y-0.5"
-                        style="background: #1a2e1c;" onmouseover="this.style.background='#2D4A32'"
-                        onmouseout="this.style.background='#1a2e1c'">
+                        class="w-full py-2.5 rounded-lg text-sm font-medium text-white transition-all duration-200"
+                        :disabled="!termsAccepted"
+                        :style="termsAccepted ? 'background: #1a2e1c; cursor: pointer;' : 'background: #D1CFC8; cursor: not-allowed;'"
+                        @mouseover="if(termsAccepted) this.style.background='#2D4A32'"
+                        @mouseout="if(termsAccepted) this.style.background='#1a2e1c'">
                         Create Account
                     </button>
                 </form>

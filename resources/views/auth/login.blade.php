@@ -73,11 +73,13 @@
             <div class="w-full" style="max-width: 430px;">
 
                 {{-- Heading --}}
-                <p class="text-[11px] font-medium uppercase tracking-widest mb-3" style="color: #C4783A; letter-spacing: 0.15em;">
+                <p class="text-[11px] font-medium uppercase tracking-widest mb-3"
+                    style="color: #C4783A; letter-spacing: 0.15em;">
                     Welcome Back
                 </p>
 
-                <h1 class="font-normal mb-4" style="font-family:'Playfair Display',serif; font-size:28px; color:#1a2e1c; line-height:1.15;">
+                <h1 class="font-normal mb-4"
+                    style="font-family:'Playfair Display',serif; font-size:28px; color:#1a2e1c; line-height:1.15;">
                     Sign in to CittaLoka
                 </h1>
 
@@ -88,10 +90,10 @@
                 {{-- Errors --}}
                 @if ($errors->any())
                     <div class="rounded-lg px-4 py-3 mb-5 text-sm" style="
-                                background:#FEF2F2;
-                                border:1px solid #FECACA;
-                                color:#DC2626;
-                            ">
+                                    background:#FEF2F2;
+                                    border:1px solid #FECACA;
+                                    color:#DC2626;
+                                ">
                         @foreach ($errors->all() as $error)
                             <div>{{ $error }}</div>
                         @endforeach
@@ -101,10 +103,10 @@
                 {{-- Success --}}
                 @if (session('status'))
                     <div class="rounded-lg px-4 py-3 mb-5 text-sm" style="
-                                background:#F0FDF4;
-                                border:1px solid #BBF7D0;
-                                color:#16A34A;
-                            ">
+                                    background:#F0FDF4;
+                                    border:1px solid #BBF7D0;
+                                    color:#16A34A;
+                                ">
                         {{ session('status') }}
                     </div>
                 @endif
@@ -112,7 +114,8 @@
                 {{-- Google Login --}}
                 <a href="{{ route('auth.google.redirect') }}"
                     class="w-full flex items-center justify-center gap-3 py-2.5 rounded-2xl text-sm font-medium transition-all duration-200 mb-5"
-                    style="background:white; border:1.5px solid #E2DDD5; color:#1A2E1C;" onmouseover="this.style.borderColor='#1A2E1C'" onmouseout="this.style.borderColor='#E2DDD5'">
+                    style="background:white; border:1.5px solid #E2DDD5; color:#1A2E1C;"
+                    onmouseover="this.style.borderColor='#1A2E1C'" onmouseout="this.style.borderColor='#E2DDD5'">
 
                     <svg width="18" height="18" viewBox="0 0 48 48">
                         <path fill="#EA4335"
@@ -171,15 +174,22 @@
                                 placeholder="Enter your password" required
                                 class="w-full rounded-2xl border border-[#E2DDD5] bg-white px-3 py-1.5 pr-10 text-sm text-[#1A2E1C] outline-none transition duration-200 focus:border-[#1A2E1C] focus:ring-2 focus:ring-[#C8E6C9]">
 
-                            <button type="button" @click="showPass=!showPass" class="absolute right-4 top-1/2 -translate-y-1/2 text-[#B0A898]">
-                                <svg x-show="!showPass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
-                                    <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/>
-                                    <circle cx="12" cy="12" r="3"/>
+                            <button type="button" @click="showPass=!showPass"
+                                class="absolute right-4 top-1/2 -translate-y-1/2 text-[#B0A898]">
+                                <svg x-show="!showPass" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18"
+                                    height="18">
+                                    <path
+                                        d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+                                    <circle cx="12" cy="12" r="3" />
                                 </svg>
-                                <svg x-show="showPass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18" style="display:none;">
-                                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/>
-                                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/>
-                                    <line x1="2" x2="22" y1="2" y2="22"/>
+                                <svg x-show="showPass" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="18"
+                                    height="18" style="display:none;">
+                                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+                                    <path
+                                        d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+                                    <line x1="2" x2="22" y1="2" y2="22" />
                                 </svg>
                             </button>
 
@@ -206,8 +216,11 @@
                     </div>
 
                     {{-- Submit --}}
-                    <button type="submit" class="w-full rounded-2xl bg-[#1A2E1C] py-2.5 text-sm font-medium text-white transition duration-200 hover:bg-[#2D4A32]">
-                        Sign In 
+                    <button type="submit"
+                        class="w-full py-2.5 rounded-2xl text-sm font-medium text-white transition-all duration-200 hover:-translate-y-0.5"
+                        style="background: #1A2E1C;" onmouseover="this.style.background='#2D4A32'"
+                        onmouseout="this.style.background='#1A2E1C'">
+                        Sign In
                     </button>
 
                 </form>

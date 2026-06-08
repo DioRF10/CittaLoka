@@ -11,9 +11,7 @@ $user = computed(fn() => auth()->user());
 
         {{-- Logo --}}
         <a href="/" class="flex-shrink-0">
-            <span class="text-lg font-semibold tracking-wide" style="color: #1a2e1c; font-family: 'DM Sans', sans-serif; letter-spacing: 0.05em;">
-                CITTALOKA
-            </span>
+            <img src="{{ asset('images/auth/logo.png') }}" alt="CittaLoka" class="h-12 w-auto">
         </a>
 
         {{-- Menu Tengah --}}

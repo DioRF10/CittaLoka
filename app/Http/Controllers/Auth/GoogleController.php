@@ -53,9 +53,7 @@ class GoogleController extends Controller
         // Login user
         Auth::login($user, remember: true);
 
-        // Redirect berdasarkan role
-        return redirect()->intended(
-            $user->role === 'host' ? '/dashboard' : '/'
-        );
+        // Redirect langsung ke homepage
+        return redirect('/');
     }
 }

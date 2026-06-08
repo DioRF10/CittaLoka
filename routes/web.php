@@ -49,10 +49,7 @@ Route::get('/email/verify/{id}/{hash}', function (
     Illuminate\Foundation\Auth\EmailVerificationRequest $request
 ) {
     $request->fulfill();
-    $user = auth()->user();
-    return redirect()->intended(
-        $user->role === 'host' ? '/dashboard' : '/experiences'
-    );
+    return redirect()->route('login')->with('status', '✓ Email berhasil terverifikasi! Silakan login dengan akun Anda.');
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
 Route::post('/email/verification-notification', function (Request $request) {

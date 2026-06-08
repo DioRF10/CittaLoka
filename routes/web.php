@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Onboarding\TravelerOnboardingController;
+use App\Http\Controllers\Onboarding\HostOnboardingController;
+
 
 Route::get('/', function () {
     return view('pages.home');
@@ -91,3 +94,18 @@ Route::get('/experiences', function () {
 Route::get('/dashboard', function () {
     return '<h1>Dashboard Host — coming soon</h1>';
 })->name('dashboard.index');
+
+// =============================================================================
+// Onboarding
+// =============================================================================
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/onboarding/tourist', [TravelerOnboardingController::class, 'index'])
+        ->name('onboarding.traveler');
+    Route::post('/onboarding/tourist/save', [TravelerOnboardingController::class, 'save'])
+        ->name('onboarding.traveler.save');
+
+    Route::get('/onboarding/host', [HostOnboardingController::class, 'index'])
+        ->name('onboarding.host');
+    Route::post('/onboarding/host/save', [HostOnboardingController::class, 'save'])
+        ->name('onboarding.host.save');
+});

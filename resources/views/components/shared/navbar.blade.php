@@ -11,7 +11,7 @@ $user = computed(fn() => auth()->user());
 
         {{-- Logo --}}
         <a href="/" class="flex-shrink-0">
-            <img src="{{ asset('images/auth/logo.png') }}" alt="CittaLoka" class="h-12 w-auto">
+            <img src="{{ asset('images/auth/bb.png') }}" alt="CittaLoka" class="h-12 w-auto">
         </a>
 
         {{-- Menu Tengah --}}
@@ -89,7 +89,7 @@ $user = computed(fn() => auth()->user());
          style="background: #F0EDE6;">
 
         @if(auth()->user()->avatar)
-            <img src="{{ auth()->user()->avatar }}"
+            <img src="{{ auth()->user()->avatarUrl() }}"
                  alt="Avatar"
                  class="w-full h-full object-cover">
         @else

@@ -71,11 +71,20 @@ class LoginController extends Controller
 
     // Tentukan redirect setelah login berdasarkan role
     private function redirectAfterLogin($user): string
-    {
+{
+    // Belum onboarding → ke onboarding dulu
+    if (!$user->onboarding_completed_at) {
         return match($user->role) {
-            'host'  => '/dashboard',
-            'admin' => '/admin',
-            default => '/',
+            'host'  => route('onboarding.host'),
+            default => route('onboarding.traveler'),
         };
     }
+
+    // Sudah onboarding → ke halaman utama sesuai role
+    return match($user->role) {
+        'host'  => route('dashboard.index'),
+        'admin' => '/admin',
+        default => route('experiences.index'),
+    };
+}
 }

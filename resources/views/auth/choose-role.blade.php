@@ -345,8 +345,8 @@
             padding-top: 20px;
         }
 
-        .signin-link a {git 
-            color: #1a2e1c;
+        .signin-link a {
+            git color: #1a2e1c;
             font-weight: 600;
             text-decoration: none;
             transition: var(--transition-smooth);

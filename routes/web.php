@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Onboarding\TravelerOnboardingController;
 use App\Http\Controllers\Onboarding\HostOnboardingController;
+use App\Http\Controllers\ExperienceController;
 
 
 Route::get('/', function () {
@@ -48,9 +49,7 @@ Route::get('/email/verify', function () {
     return view('auth.verify-email');
 })->middleware('auth')->name('verification.notice');
 
-Route::get('/email/verify/{id}/{hash}', function (
-    Illuminate\Foundation\Auth\EmailVerificationRequest $request
-) {
+Route::get('/email/verify/{id}/{hash}', function (Illuminate\Foundation\Auth\EmailVerificationRequest $request) {
     $request->fulfill();
     return redirect()->route('login')->with('status', '✓ Email berhasil terverifikasi! Silakan login dengan akun Anda.');
 })->middleware(['auth', 'signed'])->name('verification.verify');
@@ -87,9 +86,9 @@ Route::get('/auth/google/callback', [App\Http\Controllers\Auth\GoogleController:
 // =============================================================================
 // Protected pages (sementara)
 // =============================================================================
-Route::get('/experiences', function () {
-    return view('pages.experiences');
-})->name('experiences.index');
+Route::get('/experiences', [ExperienceController::class, 'index'])->name('experiences.index');
+Route::get('/experiences/{slug}', [ExperienceController::class, 'show'])
+    ->name('experiences.show');
 
 Route::get('/dashboard', function () {
     return '<h1>Dashboard Host — coming soon</h1>';

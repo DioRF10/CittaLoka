@@ -28,13 +28,13 @@ class ExperienceController extends Controller
         // Filter harga (format: min-max)
         if ($request->harga) {
             [$min, $max] = explode('-', $request->input('harga'));
-            $query->whereBetween('harga', [(int) $min, (int) $max]);
+            $query->whereBetween('harga', [(int)$min, (int)$max]);
         }
 
         // Filter durasi (format: min-max dalam menit)
         if ($request->durasi) {
             [$min, $max] = explode('-', $request->input('durasi'));
-            $query->whereBetween('durasi_menit', [(int) $min, (int) $max]);
+            $query->whereBetween('durasi_menit', [(int)$min, (int)$max]);
         }
 
         // Filter indoor/outdoor
@@ -48,22 +48,23 @@ class ExperienceController extends Controller
         if ($request->search) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
-                $q->where('judul', 'like', "%{$search}%")
-                    ->orWhere('lokasi_nama', 'like', "%{$search}%")
-                    ->orWhere('kabupaten', 'like', "%{$search}%");
+                $q->whereRaw("JSON_EXTRACT(judul, '$.id') LIKE ?", ["%{$search}%"])
+                  ->orWhereRaw("JSON_EXTRACT(judul, '$.en') LIKE ?", ["%{$search}%"])
+                  ->orWhere('lokasi_nama', 'like', "%{$search}%")
+                  ->orWhere('kabupaten', 'like', "%{$search}%");
             });
         }
 
         // Sort
-        match ($request->input('sort', 'relevan')) {
-            'harga_asc' => $query->orderBy('harga', 'asc'),
+        match($request->input('sort', 'relevan')) {
+            'harga_asc'  => $query->orderBy('harga', 'asc'),
             'harga_desc' => $query->orderBy('harga', 'desc'),
-            'rating' => $query->orderBy('rating_avg', 'desc'),
-            default => $query->orderBy('is_featured', 'desc')->orderBy('rating_avg', 'desc'),
+            'rating'     => $query->orderBy('rating_avg', 'desc'),
+            default      => $query->orderBy('is_featured', 'desc')->orderBy('rating_avg', 'desc'),
         };
 
         $experiences = $query->paginate(12)->withQueryString();
-        $kategoris = Kategori::all();
+        $kategoris   = Kategori::all();
 
         return view('pages.experiences', compact('experiences', 'kategoris'));
     }
@@ -76,12 +77,12 @@ class ExperienceController extends Controller
             'photos',
             'availabilities' => function ($q) {
                 $q->where('date', '>=', now()->toDateString())
-                    ->where('is_blocked', false)
-                    ->orderBy('date');
+                  ->where('is_blocked', false)
+                  ->orderBy('date');
             },
         ])->where('slug', $slug)
-            ->where('status', 'active')
-            ->firstOrFail();
+          ->where('status', 'active')
+          ->firstOrFail();
 
         $reviews = [];
 

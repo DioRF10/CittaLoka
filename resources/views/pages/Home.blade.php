@@ -147,6 +147,9 @@
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        @php
+            /** @var \App\Models\Experience $exp */
+        @endphp
         @forelse($featuredExperiences ?? [] as $exp)
         <a href="/experiences/{{ $exp->slug }}" class="group block overflow-hidden rounded-[32px] border border-[#E8E4DC] bg-white shadow-[0_10px_40px_rgba(31,40,24,0.08)] transition-transform duration-300 hover:-translate-y-1">
             <div class="relative overflow-hidden">
@@ -156,7 +159,7 @@
 
                 <div class="absolute inset-x-0 top-4 px-4 flex items-start justify-between">
                     <span class="rounded-full bg-[#1A2E1C] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.24em] text-white shadow-sm">
-                        {{ strtoupper($exp->kategori?->nama ?? 'BEST SELLER') }}
+                        {{ strtoupper($exp->kategori ? $exp->kategori->getNama() : 'BEST SELLER') }}
                     </span>
                     <button type="button" class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-[#1A2E1C] shadow-sm transition hover:bg-white">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-5 w-5">
@@ -169,11 +172,11 @@
             <div class="space-y-3 p-5">
                 <div class="flex items-center justify-between text-[12px] text-[#6B7280]">
                     <span class="inline-flex items-center gap-2"><span>📍</span>{{ $exp->kabupaten }}</span>
-                    <span class="inline-flex items-center gap-1 rounded-full bg-[#EFF5EE] px-3 py-1 font-semibold text-[#1A2E1C]">★ {{ number_format($exp->rating_avg, 1) }}</span>
+                    <span class="inline-flex items-center gap-1 rounded-full bg-[#EFF5EE] px-3 py-1 font-semibold text-[#1A2E1C]">★ {{ number_format((float) $exp->rating_avg, 1) }}</span>
                 </div>
 
                 <h3 class="text-lg font-semibold leading-tight text-[#1a2e1c] group-hover:text-[#C4783A] transition-colors">
-                    {{ is_array($exp->judul) ? ($exp->judul['en'] ?? $exp->judul['id'] ?? '') : $exp->judul }}
+                    {{ $exp->getJudul() }}
                 </h3>
 
                 <p class="text-sm text-[#6B7280]">by {{ $exp->host?->user?->name }}</p>
@@ -181,10 +184,10 @@
                 <div class="flex items-center justify-between border-t border-[#E8E4DC] pt-4 text-sm text-[#6B7280]">
                     <div>
                         <span class="text-[#6B7280]">From </span>
-                        <span class="font-semibold text-[#1a2e1c]">Rp {{ number_format($exp->harga, 0, ',', '.') }}</span>
+                        <span class="font-semibold text-[#1a2e1c]">{{ $exp->getHargaFormatted() }}</span>
                         <span>/person</span>
                     </div>
-                    <span>⏱ {{ round($exp->durasi_menit / 60, 1) }} jam</span>
+                    <span>⏱ {{ $exp->getDurasiFormatted() }}</span>
                 </div>
             </div>
         </a>

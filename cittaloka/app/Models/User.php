@@ -26,7 +26,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'locale',
         'avatar',
         'google_id',
-        'email_verified_at',
         'soul_type_id',
         'preferred_currency',
         'terms_accepted_at',

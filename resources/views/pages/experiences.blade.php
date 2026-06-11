@@ -4,180 +4,391 @@
 
 @section('content')
 
-    {{-- Header --}}
-    <section class="py-12 text-center" style="background: #F0EDE6;">
-        <p class="text-xs font-medium uppercase tracking-widest mb-3" style="color: #C4783A; letter-spacing: 0.15em;">
-            Explore Experiences</p>
-        <h1 class="font-normal mb-6"
-            style="font-family: 'Playfair Display', serif; font-size: clamp(28px, 4vw, 48px); color: #1a2e1c;">
-            Find Your Perfect Bali Experience
-        </h1>
+    {{-- ===================== HEADER ===================== --}}
+    <section class="relative overflow-hidden py-16 text-center" style="background: #F0EDE6; min-height: 220px;">
 
-        {{-- Search Bar --}}
-        <div class="max-w-2xl mx-auto px-6">
+        {{-- Dekorasi kiri (daun) --}}
+        <div class="absolute left-0 top-0 h-full w-48 pointer-events-none select-none opacity-40"
+            style="background: url('/images/hero-leaf-left.png') left center / contain no-repeat;"></div>
+
+        {{-- Dekorasi kanan (pura) --}}
+        <div class="absolute right-0 bottom-0 h-full w-64 pointer-events-none select-none"
+            style="background: url('/images/hero-temple-right.png') right bottom / contain no-repeat;"></div>
+
+        <div class="relative z-10 max-w-2xl mx-auto px-6">
+            <p class="text-xs font-semibold uppercase tracking-widest mb-3" style="color: #C4783A; letter-spacing: 0.2em;">
+                Explore Experiences
+            </p>
+            <h1 class="font-normal mb-8"
+                style="font-family: 'Playfair Display', serif; font-size: clamp(32px, 5vw, 56px); color: #1a2e1c; line-height: 1.15;">
+                Find Your Perfect Bali Experience
+            </h1>
+
+            {{-- Search Bar --}}
             <div class="relative">
-                <svg class="absolute left-4 top-1/2 -translate-y-1/2" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                    stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="absolute left-5 top-1/2 -translate-y-1/2 flex-shrink-0" width="18" height="18"
+                    viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8" />
                     <path d="m21 21-4.35-4.35" />
                 </svg>
                 <input type="text" id="searchInput" value="{{ request('search') }}"
                     placeholder="Search experiences, hosts, or locations..."
-                    class="w-full pl-11 pr-4 py-4 rounded-2xl shadow-sm rounded-xl text-sm outline-none transition-all duration-200"
-                    style="background: white; border: 1.5px solid #E2DDD5; color: #1a2e1c;"
-                    onfocus="this.style.borderColor='#1a2e1c'" onblur="this.style.borderColor='#E2DDD5'">
+                    class="w-full pl-14 pr-6 py-4 text-sm outline-none transition-all duration-200"
+                    style="background: white; border: 1.5px solid #E2DDD5; color: #1a2e1c; border-radius: 999px; box-shadow: 0 2px 12px rgba(0,0,0,0.07);"
+                    onfocus="this.style.borderColor='#1a2e1c'; this.style.boxShadow='0 2px 16px rgba(0,0,0,0.12)';"
+                    onblur="this.style.borderColor='#E2DDD5'; this.style.boxShadow='0 2px 12px rgba(0,0,0,0.07)';">
             </div>
         </div>
     </section>
 
-    {{-- Category Pills --}}
-    <section class="bg-white border-b border-stone-200" x-data="filterBar()">
+    {{-- ===================== FILTER BAR ===================== --}}
+    <div class="sticky top-16 z-40 border-b" style="background: #FAFAF8; border-color: #E8E4DC;"
+        x-data="filterBar()" x-init="init()">
 
-        <div class="max-w-7xl mx-auto px-6 py-4">
+        {{-- Kategori Tabs --}}
+        <div class="max-w-7xl mx-auto px-6 pt-4 pb-3">
+            <div class="flex items-center gap-2 overflow-x-auto pb-1" style="scrollbar-width: none;">
 
-            <div class="flex gap-3 overflow-x-auto">
+                {{-- All button --}}
+                <button @click="filters.kategori = ''; applyFilters()"
+                    class="flex items-center gap-2 px-5 py-2.5 rounded-full border text-sm font-medium whitespace-nowrap transition-all flex-shrink-0"
+                    :class="!filters.kategori
+                        ? 'bg-[#1A2E1C] text-white border-[#1A2E1C]'
+                        : 'bg-white text-stone-600 border-stone-200 hover:border-stone-400'">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                        <rect x="3" y="3" width="7" height="7" rx="1"/>
+                        <rect x="14" y="3" width="7" height="7" rx="1"/>
+                        <rect x="3" y="14" width="7" height="7" rx="1"/>
+                        <rect x="14" y="14" width="7" height="7" rx="1"/>
+                    </svg>
+                    All
+                </button>
 
                 @foreach($kategoris as $kat)
-
-                    <button @click="
-                                            filters.kategori =
-                                            filters.kategori === '{{ $kat->slug }}'
-                                            ? ''
-                                            : '{{ $kat->slug }}';
-
-                                            applyFilters();
-                                        " class="px-5 py-2.5 rounded-full border whitespace-nowrap transition" :class="
-                                            filters.kategori === '{{ $kat->slug }}'
-                                            ? 'bg-[#1A2E1C] text-white border-[#1A2E1C]'
-                                            : 'bg-white text-stone-700 border-stone-200'
-                                        ">
+                    <button @click="filters.kategori = filters.kategori === '{{ $kat->slug }}' ? '' : '{{ $kat->slug }}'; applyFilters()"
+                        class="flex items-center gap-2 px-5 py-2.5 rounded-full border text-sm whitespace-nowrap transition-all flex-shrink-0"
+                        :class="filters.kategori === '{{ $kat->slug }}'
+                            ? 'bg-[#1A2E1C] text-white border-[#1A2E1C]'
+                            : 'bg-white text-stone-600 border-stone-200 hover:border-stone-400'">
+                        {{-- Ikon per kategori --}}
+                        @switch($kat->slug)
+                            @case('culture')
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M3 7v1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7H3l2-4h14l2 4"/><path d="M5 21V11m14 10V11M9 21V11m6 10V11"/></svg>
+                                @break
+                            @case('adventure')
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="3 17 12 3 21 17"/><polyline points="9 17 12 14 15 17"/></svg>
+                                @break
+                            @case('food-drink')
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+                                @break
+                            @case('wellness')
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                                @break
+                            @case('art-craft')
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                                @break
+                            @case('nature')
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 8C8 10 5.9 16.17 3.82 22"/><path d="M9.18 22L21 2"/></svg>
+                                @break
+                            @case('photography')
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                @break
+                            @default
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/></svg>
+                        @endswitch
                         {{ $kat->getNama(app()->getLocale()) }}
                     </button>
-
                 @endforeach
 
+                {{-- More arrow --}}
+                <button class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center border transition"
+                    style="border-color:#E2DDD5; background:white; color:#1a2e1c;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                </button>
             </div>
-
         </div>
 
-    </section>
+        {{-- Secondary Filter Row --}}
+        <div class="max-w-7xl mx-auto px-6 pb-3">
+            <div class="flex items-center gap-3 flex-wrap">
 
-    {{-- Filter Bar --}}
-    <div class="sticky top-16 z-40 border-b" style="background: #FAFAF8; border-color: #E8E4DC;" x-data="filterBar()"
-        x-init="init()">
-        <div class="max-w-7xl mx-auto px-6 py-3">
-            <div class="flex items-center gap-2 flex-wrap">
-
-                {{-- Kategori Dropdown --}}
-
-
-                {{-- Lokasi Dropdown --}}
+                {{-- Location --}}
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open"
-                        class="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium whitespace-nowrap transition-all"
-                        :style="filters.lokasi ? 'background:#1a2e1c; color:white; border:1px solid #1a2e1c;' : 'background:white; border:1px solid #E2DDD5; color:#1a2e1c;'">
-                        <span x-text="filters.lokasi || 'Lokasi'"></span>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="m6 9 6 6 6-6" />
+                        class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all"
+                        :style="filters.lokasi
+                            ? 'background:#1a2e1c; color:white; border:1.5px solid #1a2e1c;'
+                            : 'background:white; border:1.5px solid #E2DDD5; color:#1a2e1c;'">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
                         </svg>
+                        <span x-text="filters.lokasi || 'Location'"></span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
                     </button>
-                    <div x-show="open" @click.outside="open = false" x-cloak
-                        class="absolute top-full left-0 mt-1 rounded-xl shadow-lg z-50 min-w-40 overflow-hidden"
+                    <div x-show="open" @click.outside="open = false" x-cloak x-transition
+                        class="absolute top-full left-0 mt-2 rounded-2xl shadow-xl z-50 min-w-44 overflow-hidden"
                         style="background:white; border:1.5px solid #E2DDD5;">
                         <button @click="filters.lokasi = ''; open = false; applyFilters()"
-                            class="w-full text-left px-4 py-2.5 text-xs hover:bg-[#F0EDE6]"
-                            :style="!filters.lokasi ? 'font-weight:600;color:#1a2e1c;' : 'color:#4A4A4A;'">Semua
-                            Lokasi</button>
+                            class="w-full text-left px-4 py-3 text-sm hover:bg-[#F0EDE6] transition-colors"
+                            :style="!filters.lokasi ? 'font-weight:600; color:#1a2e1c;' : 'color:#4A4A4A;'">
+                            Semua Lokasi
+                        </button>
                         @foreach(['Gianyar', 'Ubud', 'Bangli', 'Badung', 'Tabanan', 'Klungkung', 'Buleleng', 'Jembrana', 'Karangasem'] as $lok)
                             <button @click="filters.lokasi = '{{ $lok }}'; open = false; applyFilters()"
-                                class="w-full text-left px-4 py-2.5 text-xs hover:bg-[#F0EDE6]"
-                                :style="filters.lokasi === '{{ $lok }}' ? 'font-weight:600;color:#1a2e1c;' : 'color:#4A4A4A;'">{{ $lok }}</button>
+                                class="w-full text-left px-4 py-3 text-sm hover:bg-[#F0EDE6] transition-colors"
+                                :style="filters.lokasi === '{{ $lok }}' ? 'font-weight:600; color:#1a2e1c;' : 'color:#4A4A4A;'">
+                                {{ $lok }}
+                            </button>
                         @endforeach
                     </div>
                 </div>
 
-                {{-- Harga Dropdown --}}
-                <button @click="showFilters = true" class="
-                px-4 py-2.5
-                rounded-full
-                border
-                bg-white
-                text-sm
-                hover:shadow-sm
-                transition">⚙️ All Filters</button>
-
+                {{-- All Filters Button (buka sidebar) --}}
+                <button @click="showFilters = true"
+                    class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all relative"
+                    :style="hasActiveSecondaryFilters
+                        ? 'background:#1a2e1c; color:white; border:1.5px solid #1a2e1c;'
+                        : 'background:white; border:1.5px solid #E2DDD5; color:#1a2e1c;'">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="10" y1="18" x2="14" y2="18"/>
+                    </svg>
+                    All Filters
+                    {{-- Dot indicator --}}
+                    <span x-show="hasActiveSecondaryFilters"
+                        class="w-2 h-2 rounded-full absolute -top-1 -right-1"
+                        style="background:#C4783A;"></span>
+                </button>
 
                 {{-- Sort --}}
-                <div class="ml-auto flex-shrink-0">
-                    <select x-model="filters.sort" @change="applyFilters()"
-                        class="px-3.5 py-2 rounded-lg text-xs font-medium"
-                        style="background: white; border: 1px solid #E2DDD5; color: #1a2e1c; outline:none;">
-                        <option value="relevan">Sort: Relevan</option>
+                <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium"
+                    style="background:white; border:1.5px solid #E2DDD5; color:#1a2e1c;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 6h18M6 12h12M9 18h6"/>
+                    </svg>
+                    <select x-model="filters.sort" @change="applyFilters()" class="outline-none bg-transparent text-sm"
+                        style="color:#1a2e1c;">
+                        <option value="relevan">Sort: Relevance</option>
                         <option value="rating">Rating Tertinggi</option>
                         <option value="harga_asc">Harga Terendah</option>
                         <option value="harga_desc">Harga Tertinggi</option>
                     </select>
                 </div>
 
+                {{-- Grid/List Toggle (ml-auto) --}}
+                <div class="ml-auto flex items-center gap-1 p-1 rounded-lg" style="background:#F0EDE6;">
+                    <button @click="viewMode = 'grid'"
+                        class="p-2 rounded-md transition-all"
+                        :style="viewMode === 'grid' ? 'background:white; box-shadow:0 1px 4px rgba(0,0,0,0.1);' : 'background:transparent;'">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a2e1c" stroke-width="2" stroke-linecap="round">
+                            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+                        </svg>
+                    </button>
+                    <button @click="viewMode = 'list'"
+                        class="p-2 rounded-md transition-all"
+                        :style="viewMode === 'list' ? 'background:white; box-shadow:0 1px 4px rgba(0,0,0,0.1);' : 'background:transparent;'">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a2e1c" stroke-width="2" stroke-linecap="round">
+                            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/>
+                            <line x1="3" y1="18" x2="21" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
 
-    {{-- Results Info --}}
-    <div class="max-w-7xl mx-auto px-6 py-4">
-        <p class="text-sm" style="color: #9CA3AF;">
-            Menampilkan {{ $experiences->firstItem() ?? 0 }}–{{ $experiences->lastItem() ?? 0 }} dari
-            {{ $experiences->total() }} experience di Bali
-        </p>
-    </div>
-    <div class="max-w-7xl mx-auto px-6 pb-4" x-show="hasActiveFilters">
-
-        <div class="flex flex-wrap gap-2">
-
-            <template x-if="filters.kategori">
-                <button @click="
-                                    filters.kategori='';
-                                    applyFilters();
-                                " class="
-                                    px-3 py-1.5
-                                    rounded-full
-                                    bg-stone-100
-                                    text-sm
-                                ">
-                    <span x-text="filters.kategori"></span> ✕
-                </button>
-            </template>
-
-            <template x-if="filters.lokasi">
-                <button @click="
-                                    filters.lokasi='';
-                                    applyFilters();
-                                " class="
-                                    px-3 py-1.5
-                                    rounded-full
-                                    bg-stone-100
-                                    text-sm
-                                ">
-                    <span x-text="filters.lokasi"></span> ✕
-                </button>
-            </template>
-
+        {{-- ===== SIDEBAR ALL FILTERS ===== --}}
+        {{-- Backdrop --}}
+        <div x-show="showFilters" @click="showFilters = false" x-cloak x-transition:enter="transition-opacity duration-300"
+            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+            x-transition:leave="transition-opacity duration-200" x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-50" style="background: rgba(0,0,0,0.35); backdrop-filter: blur(2px);">
         </div>
 
+        {{-- Panel --}}
+        <div x-show="showFilters" x-cloak
+            x-transition:enter="transition-transform duration-300 ease-out"
+            x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+            x-transition:leave="transition-transform duration-200 ease-in"
+            x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
+            class="fixed top-0 right-0 h-full z-50 flex flex-col overflow-y-auto"
+            style="width: 380px; background: white; box-shadow: -8px 0 40px rgba(0,0,0,0.12);">
+
+            {{-- Panel Header --}}
+            <div class="flex items-center justify-between px-6 py-5 border-b" style="border-color:#E8E4DC;">
+                <h3 class="text-base font-semibold" style="color:#1a2e1c;">All Filters</h3>
+                <button @click="showFilters = false" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-stone-100 transition">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a2e1c" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+
+            {{-- Panel Body --}}
+            <div class="flex-1 px-6 py-6 space-y-8 overflow-y-auto">
+
+                {{-- Price Range --}}
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h4 class="text-sm font-semibold" style="color:#1a2e1c;">Price Range</h4>
+                        <span class="text-xs" style="color:#9CA3AF;" x-text="getPriceLabel()"></span>
+                    </div>
+                    <input type="range" min="0" max="1000000" step="50000" x-model="filters.priceMin"
+                        class="w-full mb-1 accent-[#1a2e1c]">
+                    <input type="range" min="0" max="1000000" step="50000" x-model="filters.priceMax"
+                        class="w-full accent-[#1a2e1c]">
+                    <div class="flex justify-between mt-2 text-xs" style="color:#9CA3AF;">
+                        <span>0</span><span>200k</span><span>350k</span><span>500k</span><span>1M+</span>
+                    </div>
+                </div>
+
+                {{-- Duration --}}
+                <div>
+                    <h4 class="text-sm font-semibold mb-3" style="color:#1a2e1c;">Duration</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <template x-for="opt in durasiOptions" :key="opt.value">
+                            <button @click="filters.durasi = filters.durasi === opt.value ? '' : opt.value"
+                                class="px-3.5 py-2 rounded-full text-xs font-medium border transition-all"
+                                :style="filters.durasi === opt.value
+                                    ? 'background:#1A2E1C; color:white; border-color:#1A2E1C;'
+                                    : 'background:white; color:#4A4A4A; border-color:#E2DDD5;'"
+                                x-text="opt.label"></button>
+                        </template>
+                    </div>
+                </div>
+
+                {{-- Experience Type --}}
+                <div>
+                    <h4 class="text-sm font-semibold mb-3" style="color:#1a2e1c;">Experience Type</h4>
+                    <div class="grid grid-cols-2 gap-3">
+                        @foreach(['Outdoor', 'Indoor', 'Private', 'Family Friendly'] as $tipe)
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <div class="relative w-5 h-5 rounded flex-shrink-0">
+                                    <input type="checkbox" class="sr-only peer"
+                                        value="{{ $tipe }}"
+                                        x-model="filters.tipeArr">
+                                    <div class="w-5 h-5 rounded border-2 transition-all peer-checked:border-[#1a2e1c] peer-checked:bg-[#1a2e1c]"
+                                        style="border-color:#D1D5DB;"></div>
+                                    <svg class="absolute inset-0 m-auto w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity"
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="20 6 9 17 4 12"/>
+                                    </svg>
+                                </div>
+                                <span class="text-sm" style="color:#374151;">{{ $tipe }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                </div>
+
+                {{-- Rating --}}
+                <div>
+                    <h4 class="text-sm font-semibold mb-3" style="color:#1a2e1c;">Rating</h4>
+                    <div class="flex flex-wrap gap-2">
+                        <button @click="filters.rating = ''"
+                            class="px-3.5 py-2 rounded-full text-xs font-medium border transition-all"
+                            :style="!filters.rating
+                                ? 'background:#1A2E1C; color:white; border-color:#1A2E1C;'
+                                : 'background:white; color:#4A4A4A; border-color:#E2DDD5;'">
+                            Any
+                        </button>
+                        <template x-for="r in ['4.0', '4.5', '5.0']" :key="r">
+                            <button @click="filters.rating = filters.rating === r ? '' : r"
+                                class="flex items-center gap-1 px-3.5 py-2 rounded-full text-xs font-medium border transition-all"
+                                :style="filters.rating === r
+                                    ? 'background:#1A2E1C; color:white; border-color:#1A2E1C;'
+                                    : 'background:white; color:#4A4A4A; border-color:#E2DDD5;'">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1">
+                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                </svg>
+                                <span x-text="r + '+'"></span>
+                            </button>
+                        </template>
+                    </div>
+                </div>
+
+            </div>
+
+            {{-- Panel Footer --}}
+            <div class="px-6 py-4 border-t flex gap-3" style="border-color:#E8E4DC;">
+                <button @click="resetFilters()"
+                    class="flex-1 py-3 rounded-xl text-sm font-medium border transition-all hover:bg-stone-50"
+                    style="border:1.5px solid #E2DDD5; color:#1a2e1c; background:white;">
+                    Reset
+                </button>
+                <button @click="applyFilters(); showFilters = false"
+                    class="flex-2 flex-grow py-3 rounded-xl text-sm font-semibold text-white transition-all"
+                    style="background:#1a2e1c; flex-grow:2;"
+                    x-text="countActiveFilters() > 0 ? 'Apply Filters (' + countActiveFilters() + ')' : 'Apply Filters'">
+                </button>
+            </div>
+
+        </div>
     </div>
 
-    {{-- Experience Grid --}}
-    <div class="max-w-7xl mx-auto px-6 pb-16">
+    {{-- ===================== RESULTS INFO + ACTIVE TAGS ===================== --}}
+    <div class="max-w-7xl mx-auto px-6 pt-5 pb-2" x-data>
+        <div class="flex items-center justify-between mb-3">
+            <p class="text-sm font-medium" style="color:#4A4A4A;">
+                <span style="color:#1a2e1c;">{{ $experiences->total() }}</span> experiences found
+            </p>
+        </div>
+
+        {{-- Active Filter Tags --}}
+        <div class="flex flex-wrap gap-2">
+            @if(request('kategori'))
+                <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+                    style="background:#E8E4DC; color:#1a2e1c;">
+                    {{ ucfirst(request('kategori')) }}
+                    <a href="{{ request()->fullUrlWithQuery(['kategori' => null]) }}" class="hover:opacity-70">✕</a>
+                </span>
+            @endif
+            @if(request('lokasi'))
+                <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+                    style="background:#E8E4DC; color:#1a2e1c;">
+                    {{ request('lokasi') }}
+                    <a href="{{ request()->fullUrlWithQuery(['lokasi' => null]) }}" class="hover:opacity-70">✕</a>
+                </span>
+            @endif
+            @if(request('harga'))
+                <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+                    style="background:#E8E4DC; color:#1a2e1c;">
+                    {{ request('harga') }}
+                    <a href="{{ request()->fullUrlWithQuery(['harga' => null]) }}" class="hover:opacity-70">✕</a>
+                </span>
+            @endif
+            @if(request('kategori') || request('lokasi') || request('harga'))
+                <a href="{{ route('experiences.index') }}"
+                    class="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium hover:opacity-80 transition"
+                    style="color:#C0392B; background:#FEF2F2; border:1px solid #FECACA;">
+                    Clear all
+                </a>
+            @endif
+        </div>
+    </div>
+
+    {{-- ===================== EXPERIENCE GRID ===================== --}}
+    <div class="max-w-7xl mx-auto px-6 pb-20" x-data="{ viewMode: 'grid' }">
 
         @if($experiences->isEmpty())
-            <div class="text-center py-20">
-                <div style="font-size:3rem; margin-bottom:1rem;">🌿</div>
-                <h3 style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; color:#1a2e1c; margin-bottom:0.5rem;">No
-                    experiences found</h3>
-                <p style="color:#9CA3AF; font-size:0.875rem;">Try adjusting your search or filter.</p>
+            <div class="text-center py-24">
+                <div class="text-5xl mb-4">🌿</div>
+                <h3 class="mb-2" style="font-family:'Playfair Display',serif; font-size:1.5rem; color:#1a2e1c;">
+                    No experiences found
+                </h3>
+                <p style="color:#9CA3AF; font-size:0.875rem;">Try adjusting your search or filters.</p>
+                <a href="{{ route('experiences.index') }}"
+                    class="inline-block mt-6 px-6 py-3 rounded-xl text-sm font-medium text-white transition hover:opacity-90"
+                    style="background:#1a2e1c;">
+                    Clear all filters
+                </a>
             </div>
+
         @else
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
+
+            {{-- Grid Mode --}}
+            <div class="grid gap-6"
+                :class="viewMode === 'grid' ? 'grid-cols-2 lg:grid-cols-4' : 'grid-cols-1'">
+
                 @foreach($experiences as $exp)
                     @php
                         $locale = app()->getLocale();
@@ -187,87 +398,93 @@
                     @endphp
 
                     <a href="{{ route('experiences.show', $exp->slug) }}"
-                        class="group cursor-pointer transition-all duration-300 hover:-translate-y-1"
-                        style="text-decoration:none; color:inherit;" x-data="{ wishlisted: false }">
+                        class="group block rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                        style="text-decoration:none; color:inherit; box-shadow: 0 1px 6px rgba(0,0,0,0.07);"
+                        x-data="{ wishlisted: false }">
 
                         {{-- Foto --}}
-                        <div class="rounded-xl overflow-hidden mb-3 relative" style="height: 280px;">
+                        <div class="relative overflow-hidden" style="height: 220px;">
                             @if($cover)
                                 <img src="{{ $cover->url }}" alt="{{ $judul }}"
-                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                     loading="lazy">
                             @else
                                 <div class="w-full h-full flex items-center justify-center"
                                     style="background:linear-gradient(135deg,#2D5240,#C4A882);">
-                                    <span style="font-size:3rem;">🌿</span>
+                                    <span class="text-5xl">🌿</span>
                                 </div>
                             @endif
 
-                            {{-- Badge --}}
-                            <div class="absolute top-3 left-3">
+                            {{-- Gradient overlay --}}
+                            <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 50%);"></div>
+
+                            {{-- Badge (bottom-left, di atas gradient) --}}
+                            <div class="absolute bottom-3 left-3">
                                 @if($exp->is_seasonal)
-                                    <span class="text-xs font-medium px-2 py-1 rounded-md"
-                                        style="background:#C4783A; color:white;">SEASONAL</span>
+                                    <span class="text-xs font-semibold px-2.5 py-1 rounded-lg uppercase tracking-wide"
+                                        style="background:#C4783A; color:white; letter-spacing:0.08em;">SEASONAL</span>
                                 @else
-                                    <span class="text-xs font-medium px-2 py-1 rounded-md"
-                                        style="background:rgba(255,255,255,0.92); color:#1a2e1c;">{{$kategori}}</span>
+                                    <span class="text-xs font-semibold px-2.5 py-1 rounded-lg uppercase tracking-wide"
+                                        style="background:rgba(255,255,255,0.15); backdrop-filter:blur(8px); color:white; border:1px solid rgba(255,255,255,0.3); letter-spacing:0.08em;">
+                                        {{ strtoupper($kategori) }}
+                                    </span>
                                 @endif
                             </div>
 
                             {{-- Wishlist --}}
                             <button @click.prevent="wishlisted = !wishlisted"
-                                class="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center"
-                                style="background:rgba(255,255,255,0.92);">
-                                <svg width="14" height="14" viewBox="0 0 24 24" :fill="wishlisted ? '#EF4444' : 'none'"
-                                    :stroke="wishlisted ? '#EF4444' : '#1a2e1c'" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <path
-                                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                                class="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                                style="background:rgba(255,255,255,0.95); box-shadow:0 2px 8px rgba(0,0,0,0.15);">
+                                <svg width="15" height="15" viewBox="0 0 24 24"
+                                    :fill="wishlisted ? '#EF4444' : 'none'"
+                                    :stroke="wishlisted ? '#EF4444' : '#1a2e1c'" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                                 </svg>
                             </button>
                         </div>
 
                         {{-- Info --}}
-                        <div>
-                            <div class="flex items-center justify-between mb-1">
+                        <div class="p-4">
+                            {{-- Lokasi + Rating --}}
+                            <div class="flex items-center justify-between mb-2">
                                 <span class="text-xs flex items-center gap-1" style="color:#9CA3AF;">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                                        <circle cx="12" cy="10" r="3" />
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
                                     </svg>
                                     {{ $exp->kabupaten ?? $exp->lokasi_nama }}
                                 </span>
-                                <span class="text-xs flex items-center gap-1" style="color:#1a2e1c;">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B"
-                                        stroke-width="1">
-                                        <polygon
-                                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                <span class="text-xs flex items-center gap-1">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1">
+                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                                     </svg>
-                                    <span class="font-medium">{{ number_format($exp->rating_avg, 1) }}</span>
-                                    <span style="color:#9CA3AF;">({{ $exp->total_reviews }})</span>
+                                    <span class="font-semibold text-xs" style="color:#1a2e1c;">{{ number_format($exp->rating_avg, 1) }}</span>
+                                    <span class="text-xs" style="color:#9CA3AF;">({{ $exp->total_reviews }})</span>
                                 </span>
                             </div>
 
-                            <h3 class="text-sm font-medium mb-1 group-hover:text-[#C4783A] transition-colors leading-snug"
-                                style="color:#1a2e1c;">{{ $judul }}</h3>
-                            <p class="text-xs mb-3" style="color:#9CA3AF;">by {{ $exp->host->user->name ?? 'Host' }}</p>
+                            {{-- Judul --}}
+                            <h3 class="text-sm font-semibold mb-1 leading-snug group-hover:text-[#C4783A] transition-colors"
+                                style="color:#1a2e1c;">
+                                {{ $judul }}
+                            </h3>
 
-                            <div class="flex items-center justify-between">
-                                <div>
-                                    <span class="text-xs" style="color:#9CA3AF;">From </span>
-                                    <span class="text-sm font-semibold"
-                                        style="color:#1a2e1c;">{{ $exp->getHargaFormatted() }}</span>
-                                    <span class="text-xs" style="color:#9CA3AF;">/person</span>
-                                </div>
+                            {{-- Host + Durasi --}}
+                            <div class="flex items-center justify-between mt-1 mb-3">
+                                <p class="text-xs" style="color:#9CA3AF;">by {{ $exp->host->user->name ?? 'Host' }}</p>
                                 <span class="text-xs flex items-center gap-1" style="color:#9CA3AF;">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="12" cy="12" r="10" />
-                                        <polyline points="12 6 12 12 16 14" />
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                                     </svg>
                                     {{ $exp->getDurasiFormatted() }}
                                 </span>
+                            </div>
+
+                            {{-- Harga --}}
+                            <div class="pt-3 border-t" style="border-color:#F0EDE6;">
+                                <span class="text-xs" style="color:#9CA3AF;">From </span>
+                                <span class="text-base font-bold" style="color:#1a2e1c;">{{ $exp->getHargaFormatted() }}</span>
+                                <span class="text-xs" style="color:#9CA3AF;"> / person</span>
                             </div>
                         </div>
 
@@ -277,7 +494,7 @@
 
             {{-- Pagination --}}
             @if($experiences->hasPages())
-                <div class="text-center mt-12">
+                <div class="text-center mt-14">
                     {{ $experiences->links() }}
                 </div>
             @endif
@@ -288,73 +505,109 @@
 @endsection
 
 @push('scripts')
-    <script>
-        function filterBar() {
-            return {
-                showFilters: false,
-                filters: {
-                    kategori: '{{ request('kategori') }}',
-                    lokasi: '{{ request('lokasi') }}',
-                    harga: '{{ request('harga') }}',
-                    durasi: '{{ request('durasi') }}',
-                    tipe: '{{ request('tipe') }}',
-                    sort: '{{ request('sort', 'relevan') }}',
-                    search: '{{ request('search') }}',
-                },
+<script>
+function filterBar() {
+    return {
+        showFilters: false,
+        viewMode: 'grid',
 
-                kategoris: @json($kategoris->map(fn($k) => ['slug' => $k->slug, 'nama' => $k->getNama(app()->getLocale())])),
+        filters: {
+            kategori: '{{ request('kategori') }}',
+            lokasi: '{{ request('lokasi') }}',
+            harga: '{{ request('harga') }}',
+            durasi: '{{ request('durasi') }}',
+            tipeArr: [],
+            rating: '',
+            sort: '{{ request('sort', 'relevan') }}',
+            search: '{{ request('search') }}',
+            priceMin: 0,
+            priceMax: 1000000,
+        },
 
-                hargaOptions: [
-                    { value: '0-200000', label: 'Di bawah Rp 200.000' },
-                    { value: '200000-350000', label: 'Rp 200.000 – 350.000' },
-                    { value: '350000-500000', label: 'Rp 350.000 – 500.000' },
-                    { value: '500000-99999999', label: 'Di atas Rp 500.000' },
-                ],
+        hargaOptions: [
+            { value: '0-200000',       label: 'Di bawah Rp 200.000' },
+            { value: '200000-350000',  label: 'Rp 200.000 – 350.000' },
+            { value: '350000-500000',  label: 'Rp 350.000 – 500.000' },
+            { value: '500000-99999999',label: 'Di atas Rp 500.000' },
+        ],
 
-                durasiOptions: [
-                    { value: '0-120', label: 'Kurang dari 2 jam' },
-                    { value: '120-240', label: '2 – 4 jam' },
-                    { value: '240-360', label: '4 – 6 jam' },
-                    { value: '360-99999', label: 'Lebih dari 6 jam' },
-                ],
+        durasiOptions: [
+            { value: 'any',     label: 'Any' },
+            { value: '0-120',   label: '< 2 hours' },
+            { value: '120-240', label: '2 – 4 hours' },
+            { value: '240-360', label: '4 – 6 hours' },
+            { value: '360-99999', label: '6+ hours' },
+        ],
 
-                get hasActiveFilters() {
-                    return this.filters.kategori || this.filters.lokasi || this.filters.harga ||
-                        this.filters.durasi || this.filters.tipe || this.filters.search;
-                },
+        get hasActiveFilters() {
+            return this.filters.kategori || this.filters.lokasi || this.filters.harga ||
+                   this.filters.durasi || this.filters.search;
+        },
 
-                init() {
-                    // Search dengan debounce
-                    const searchInput = document.getElementById('searchInput');
-                    if (searchInput) {
-                        let timeout;
-                        searchInput.addEventListener('input', (e) => {
-                            clearTimeout(timeout);
-                            timeout = setTimeout(() => {
-                                this.filters.search = e.target.value;
-                                this.applyFilters();
-                            }, 500);
-                        });
-                    }
-                },
+        get hasActiveSecondaryFilters() {
+            return this.filters.harga || this.filters.durasi || this.filters.tipeArr.length > 0 || this.filters.rating;
+        },
 
-                applyFilters() {
-                    const params = new URLSearchParams();
-                    if (this.filters.search) params.set('search', this.filters.search);
-                    if (this.filters.kategori) params.set('kategori', this.filters.kategori);
-                    if (this.filters.lokasi) params.set('lokasi', this.filters.lokasi);
-                    if (this.filters.harga) params.set('harga', this.filters.harga);
-                    if (this.filters.durasi) params.set('durasi', this.filters.durasi);
-                    if (this.filters.tipe) params.set('tipe', this.filters.tipe);
-                    if (this.filters.sort && this.filters.sort !== 'relevan') params.set('sort', this.filters.sort);
+        countActiveFilters() {
+            let count = 0;
+            if (this.filters.harga || (this.filters.priceMin > 0 || this.filters.priceMax < 1000000)) count++;
+            if (this.filters.durasi) count++;
+            if (this.filters.tipeArr.length > 0) count += this.filters.tipeArr.length;
+            if (this.filters.rating) count++;
+            return count;
+        },
 
-                    window.location.href = '{{ route('experiences.index') }}?' + params.toString();
-                },
+        getPriceLabel() {
+            const min = parseInt(this.filters.priceMin);
+            const max = parseInt(this.filters.priceMax);
+            const fmt = (n) => n >= 1000000 ? '1M+' : (n >= 1000 ? (n/1000)+'k' : n);
+            return 'Rp' + fmt(min) + ' – Rp' + fmt(max);
+        },
 
-                resetFilters() {
-                    window.location.href = '{{ route('experiences.index') }}';
-                },
+        init() {
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                let timeout;
+                searchInput.addEventListener('input', (e) => {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        this.filters.search = e.target.value;
+                        this.applyFilters();
+                    }, 500);
+                });
             }
-        }
-    </script>
+        },
+
+        applyFilters() {
+            const params = new URLSearchParams();
+            if (this.filters.search)   params.set('search',   this.filters.search);
+            if (this.filters.kategori) params.set('kategori', this.filters.kategori);
+            if (this.filters.lokasi)   params.set('lokasi',   this.filters.lokasi);
+            if (this.filters.durasi && this.filters.durasi !== 'any') params.set('durasi', this.filters.durasi);
+            if (this.filters.rating)   params.set('rating',   this.filters.rating);
+            if (this.filters.tipeArr.length) params.set('tipe', this.filters.tipeArr.join(','));
+
+            // Price range
+            if (this.filters.priceMin > 0 || this.filters.priceMax < 1000000) {
+                params.set('harga', this.filters.priceMin + '-' + this.filters.priceMax);
+            } else if (this.filters.harga) {
+                params.set('harga', this.filters.harga);
+            }
+
+            if (this.filters.sort && this.filters.sort !== 'relevan') params.set('sort', this.filters.sort);
+
+            window.location.href = '{{ route('experiences.index') }}?' + params.toString();
+        },
+
+        resetFilters() {
+            this.filters = {
+                ...this.filters,
+                kategori: '', lokasi: '', harga: '', durasi: '',
+                tipeArr: [], rating: '', search: '',
+                priceMin: 0, priceMax: 1000000,
+            };
+        },
+    }
+}
+</script>
 @endpush

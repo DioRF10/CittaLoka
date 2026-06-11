@@ -330,105 +330,129 @@
                     <a href="#reviews" style="color:#7A7A6E; text-decoration:underline;">({{ $experience->total_reviews }} reviews)</a>
                 </div>
 
-                {{-- ── Kalender Mini ──────────────────────────────── --}}
-                <div style="margin-bottom:1.25rem;">
-                    <label style="display:block; font-size:0.72rem; font-weight:600; color:#7A7A6E; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.75rem;">Select Date</label>
+                {{-- ── Unified Input Group ── --}}
+                <div style="border:1.5px solid #E2DDD5; border-radius:10px; overflow:hidden; margin-bottom:1.25rem;" @click.away="showCalendar = false">
 
-                    {{-- Header Bulan --}}
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.75rem;">
-                        <button
-                            @click="prevMonth()"
-                            :disabled="isPrevDisabled()"
-                            style="width:28px; height:28px; border:1.5px solid #EDE7DC; border-radius:6px; background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.875rem; color:#7A7A6E;"
-                            :style="isPrevDisabled() ? 'opacity:0.3;cursor:not-allowed;' : ''"
-                        >‹</button>
-                        <span style="font-size:0.875rem; font-weight:500; color:#1E3A2F; font-family:'DM Sans',sans-serif;" x-text="monthLabel"></span>
-                        <button
-                            @click="nextMonth()"
-                            style="width:28px; height:28px; border:1.5px solid #EDE7DC; border-radius:6px; background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.875rem; color:#7A7A6E;"
-                        >›</button>
-                    </div>
-
-                    {{-- Nama Hari --}}
-                    <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:4px;">
-                        <template x-for="day in ['Mo','Tu','We','Th','Fr','Sa','Su']" :key="day">
-                            <div style="text-align:center; font-size:0.65rem; color:#7A7A6E; font-weight:500; padding:2px 0;" x-text="day"></div>
-                        </template>
-                    </div>
-
-                    {{-- Grid Tanggal --}}
-                    <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:2px;">
-                        <template x-for="n in firstDayOfMonth" :key="'e'+n">
-                            <div></div>
-                        </template>
-                        <template x-for="day in daysInMonth" :key="day">
-                            <button
-                                @click="selectDate(day)"
-                                :disabled="!isAvailable(day) || isPast(day)"
-                                x-text="day"
-                                :style="getDayStyle(day)"
-                                style="width:100%; aspect-ratio:1; border:none; border-radius:6px; font-size:0.78rem; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all 0.15s;"
-                            ></button>
-                        </template>
-                    </div>
-
-                    {{-- Legend --}}
-                    <div style="display:flex; gap:0.75rem; margin-top:0.75rem; font-size:0.65rem; color:#7A7A6E; flex-wrap:wrap;">
-                        <span style="display:flex; align-items:center; gap:0.3rem;">
-                            <span style="width:10px; height:10px; border-radius:3px; background:#EBF5EE; border:1px solid #B8DFC8; display:inline-block;"></span>
-                            Available
-                        </span>
-                        <span style="display:flex; align-items:center; gap:0.3rem;">
-                            <span style="width:10px; height:10px; border-radius:3px; background:#F0F0F0; display:inline-block;"></span>
-                            Unavailable
-                        </span>
-                        <span style="display:flex; align-items:center; gap:0.3rem;">
-                            <span style="width:10px; height:10px; border-radius:3px; background:#1E3A2F; display:inline-block;"></span>
-                            Selected
-                        </span>
-                    </div>
-                </div>
-
-                {{-- Tanggal dipilih --}}
-                <template x-if="selectedDate">
-                    <div style="background:#F7F3ED; border:1.5px solid #EDE7DC; border-radius:8px; padding:0.6rem 0.875rem; margin-bottom:1rem; font-size:0.82rem; color:#1E3A2F; display:flex; align-items:center; gap:0.5rem;">
-                        <span>📅</span>
-                        <span x-text="selectedDateLabel"></span>
-                    </div>
-                </template>
-
-                {{-- Guest Selector --}}
-                <div style="margin-bottom:1.25rem;">
-                    <label style="display:block; font-size:0.72rem; font-weight:600; color:#7A7A6E; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.35rem;">Guests</label>
+                    {{-- Date Row --}}
                     <div style="position:relative;">
-                        <select
-                            x-model="guests"
-                            style="width:100%; padding:0.65rem 0.875rem; border:1.5px solid #EDE7DC; border-radius:8px; font-size:0.875rem; font-family:'DM Sans',sans-serif; outline:none; appearance:none; color:#2C2C2C; background:white;"
-                        >
-                            @for($i = $experience->kapasitas_min; $i <= $experience->kapasitas_max; $i++)
-                                <option value="{{ $i }}">{{ $i }} {{ $i === 1 ? 'Guest' : 'Guests' }}</option>
-                            @endfor
-                        </select>
-                        <span style="position:absolute; right:0.875rem; top:50%; transform:translateY(-50%); color:#7A7A6E; pointer-events:none; font-size:0.75rem;">▾</span>
+                        <button @click="showCalendar = !showCalendar"
+                            style="width:100%; padding:0.85rem 1rem; border:none; border-bottom:1.5px solid #E2DDD5; font-size:0.85rem; font-family:'DM Sans',sans-serif; text-align:left; background:white; color:#2C2C2C; display:flex; justify-content:space-between; align-items:center; cursor:pointer; outline:none;">
+                            <div>
+                                <div style="font-size:0.65rem; font-weight:700; color:#7A7A6E; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.2rem;">Date</div>
+                                <div x-text="selectedDate ? selectedDateLabel : 'Select a date'" :style="!selectedDate ? 'color:#9CA3AF;' : 'color:#1E3A2F; font-weight:500;'" style="font-size:0.85rem;"></div>
+                            </div>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                        </button>
+
+                        {{-- Calendar Popup --}}
+                        <div x-show="showCalendar" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 transform -translate-y-1" x-transition:enter-end="opacity-100 transform translate-y-0" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                            style="position:absolute; top:calc(100% + 0.35rem); left:-1.5px; right:-1.5px; background:white; border:1.5px solid #E2DDD5; border-radius:12px; padding:1.25rem; box-shadow:0 12px 32px rgba(30,58,47,0.12); z-index:50;"
+                            x-init="$watch('showCalendar', val => { $el.style.display = val ? 'block' : 'none' })"
+                            :style="showCalendar ? '' : 'display:none'">
+
+                            {{-- Month Header --}}
+                            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:0.75rem;">
+                                <button @click.stop="prevMonth()" :disabled="isPrevDisabled()"
+                                    style="width:28px; height:28px; border:1.5px solid #E2DDD5; border-radius:6px; background:white; display:flex; align-items:center; justify-content:center; font-size:0.9rem; color:#7A7A6E;"
+                                    :style="isPrevDisabled() ? { opacity: 0.3, cursor: 'not-allowed' } : { cursor: 'pointer' }">‹</button>
+                                <span style="font-size:0.875rem; font-weight:600; color:#1E3A2F;" x-text="monthLabel"></span>
+                                <button @click.stop="nextMonth()"
+                                    style="width:28px; height:28px; border:1.5px solid #E2DDD5; border-radius:6px; background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.9rem; color:#7A7A6E;">›</button>
+                            </div>
+
+                            {{-- Day Names --}}
+                            <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:4px;">
+                                <template x-for="d in ['Mo','Tu','We','Th','Fr','Sa','Su']" :key="d">
+                                    <div style="text-align:center; font-size:0.65rem; color:#9CA3AF; font-weight:600; padding:2px 0;" x-text="d"></div>
+                                </template>
+                            </div>
+
+                            {{-- Day Grid --}}
+                            <div style="display:grid; grid-template-columns:repeat(7,1fr); gap:2px;">
+                                <template x-for="n in firstDayOfMonth" :key="'e'+n"><div></div></template>
+                                <template x-for="day in daysInMonth" :key="day">
+                                    <button @click.stop="selectDate(day); showCalendar = false" :disabled="!isAvailable(day) || isPast(day)"
+                                        x-text="day" :style="getDayStyle(day)"
+                                        style="width:100%; aspect-ratio:1; border:none; border-radius:6px; font-size:0.78rem; font-family:'DM Sans',sans-serif; transition:all 0.15s;"></button>
+                                </template>
+                            </div>
+
+                            {{-- Legend --}}
+                            <div style="display:flex; gap:1rem; margin-top:0.75rem; font-size:0.65rem; color:#9CA3AF; justify-content:center;">
+                                <span style="display:flex; align-items:center; gap:0.25rem;">
+                                    <span style="width:8px; height:8px; border-radius:2px; background:#EBF5EE; border:1px solid #B8DFC8; display:inline-block;"></span> Available
+                                </span>
+                                <span style="display:flex; align-items:center; gap:0.25rem;">
+                                    <span style="width:8px; height:8px; border-radius:2px; background:#1E3A2F; display:inline-block;"></span> Selected
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Time Row (Muncul setelah tanggal dipilih) --}}
+                    <div x-show="selectedDate" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 transform -translate-y-2" x-transition:enter-end="opacity-100 transform translate-y-0"
+                        style="position:relative; border-bottom:1.5px solid #E2DDD5; display:none;"
+                        x-init="$watch('selectedDate', val => { if(val) $el.style.display = 'block'; else $el.style.display = 'none'; })"
+                        :style="selectedDate ? '' : 'display:none'">
+                        <div style="padding:0.85rem 1rem;">
+                            <div style="font-size:0.65rem; font-weight:700; color:#7A7A6E; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.5rem;">Time</div>
+                            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0.4rem;">
+                                <template x-for="t in availableTimes" :key="t.time">
+                                    <button @click="if(t.slot > 0) selectedTime = t.time"
+                                        :disabled="t.slot === 0"
+                                        :style="selectedTime === t.time 
+                                            ? { background: '#1E3A2F', color: 'white', borderColor: '#1E3A2F' } 
+                                            : (t.slot === 0 ? { background: '#F9FAFB', color: '#D1D5DB', borderColor: '#E5E7EB', cursor: 'not-allowed' } : { background: 'white', color: '#1E3A2F', borderColor: '#D1D5DB', cursor: 'pointer' })"
+                                        style="padding:0.4rem 0.6rem; border:1px solid; border-radius:8px; text-align:center; transition:all 0.15s; outline:none; width:100%;">
+                                        <div x-text="t.time" style="font-size:0.8rem; font-weight:600; font-family:'DM Sans',sans-serif; margin-bottom:0.1rem;"></div>
+                                        <div x-text="t.slot > 0 ? t.slot + ' slots' : 'Full'" style="font-size:0.65rem; font-family:'DM Sans',sans-serif; opacity:0.85;"></div>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Guests Row --}}
+                    <div style="position:relative;">
+                        <div style="padding:0.85rem 1rem;">
+                            <div style="font-size:0.65rem; font-weight:700; color:#7A7A6E; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.2rem;">Guests</div>
+                            <select x-model="guests"
+                                style="width:100%; padding:0; border:none; font-size:0.85rem; font-family:'DM Sans',sans-serif; font-weight:500; outline:none; appearance:none; color:#1E3A2F; background:transparent; cursor:pointer;">
+                                @for($i = $experience->kapasitas_min; $i <= $experience->kapasitas_max; $i++)
+                                    <option value="{{ $i }}">{{ $i }} {{ $i === 1 ? 'Guest' : 'Guests' }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                        <svg style="position:absolute; right:1rem; top:50%; transform:translateY(-50%); pointer-events:none;" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="m6 9 6 6 6-6"/>
+                        </svg>
                     </div>
                 </div>
 
                 {{-- Book Button --}}
                 <button
                     @click="bookNow()"
-                    :disabled="!selectedDate"
-                    style="width:100%; padding:0.875rem; background:#1E3A2F; color:white; border:none; border-radius:8px; font-size:0.9rem; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; margin-bottom:0.75rem; transition:all 0.2s;"
-                    :style="!selectedDate ? 'opacity:0.5;cursor:not-allowed;' : 'opacity:1;'"
+                    :disabled="!selectedDate || !selectedTime || !isLoggedIn"
+                    style="width:100%; padding:0.9rem; background:#1E3A2F; color:white; border:none; border-radius:10px; font-size:0.9rem; font-weight:600; font-family:'DM Sans',sans-serif; margin-bottom:0.6rem; transition:all 0.2s; letter-spacing:0.01em;"
+                    :style="(!selectedDate || !selectedTime || !isLoggedIn) ? { opacity: 0.45, cursor: 'not-allowed' } : { opacity: 1, cursor: 'pointer' }"
+                    onmouseover="if(!this.disabled)this.style.background='#2D4A32'"
+                    onmouseout="this.style.background='#1E3A2F'"
                 >
-                    Book This Experience
+                    <span x-text="!isLoggedIn ? 'Login to Book' : 'Book This Experience'"></span>
                 </button>
 
                 {{-- Wishlist Button --}}
                 <button
                     @click="toggleWishlist()"
-                    style="width:100%; padding:0.75rem; background:white; color:#1E3A2F; border:1.5px solid #EDE7DC; border-radius:8px; font-size:0.875rem; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; margin-bottom:1rem; display:flex; align-items:center; justify-content:center; gap:0.4rem; transition:all 0.2s;"
+                    style="width:100%; padding:0.8rem; background:white; color:#1E3A2F; border:1.5px solid #E2DDD5; border-radius:10px; font-size:0.85rem; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; margin-bottom:1rem; display:flex; align-items:center; justify-content:center; gap:0.4rem; transition:all 0.2s;"
+                    onmouseover="this.style.borderColor='#1E3A2F'"
+                    onmouseout="this.style.borderColor='#E2DDD5'"
                 >
-                    <span x-text="inWishlist ? '♥' : '♡'" :style="inWishlist ? 'color:#C0392B' : ''"></span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" :fill="inWishlist ? '#EF4444' : 'none'" :stroke="inWishlist ? '#EF4444' : 'currentColor'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
                     <span x-text="inWishlist ? 'Saved to Wishlist' : 'Add to Wishlist'"></span>
                 </button>
 
@@ -437,26 +461,24 @@
                 </p>
 
                 {{-- Price Breakdown --}}
-                <template x-if="selectedDate">
-                    <div style="border-top:1.5px solid #EDE7DC; padding-top:1rem;">
-                        <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#4A4A4A; margin-bottom:0.5rem;">
-                            <span x-text="`${priceFormatted} × ${guests} person${guests > 1 ? 's' : ''}`"></span>
-                            <span x-text="subtotalFormatted" style="font-family:'DM Sans',sans-serif;"></span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#4A4A4A; margin-bottom:0.75rem;">
-                            <span>Service fee</span>
-                            <span style="font-family:'DM Sans',sans-serif;">Rp {{ number_format($serviceFee, 0, ',', '.') }}</span>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; font-size:1rem; font-weight:600; color:#1E3A2F; padding-top:0.75rem; border-top:1.5px solid #EDE7DC;">
-                            <span>Total</span>
-                            <span x-text="totalFormatted" style="font-family:'DM Sans',sans-serif;"></span>
-                        </div>
+                <div style="border-top:1px solid #EDE7DC; padding-top:1rem;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:#6B7280; margin-bottom:0.5rem;">
+                        <span x-text="`${priceFormatted} × ${guests} person${guests > 1 ? 's' : ''}`"></span>
+                        <span x-text="subtotalFormatted" style="color:#4A4A4A;"></span>
                     </div>
-                </template>
+                    <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:#6B7280; margin-bottom:0.85rem;">
+                        <span>Service fee</span>
+                        <span style="color:#4A4A4A;">Rp {{ number_format($serviceFee, 0, ',', '.') }}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.95rem; font-weight:700; color:#1E3A2F; padding-top:0.85rem; border-top:1px solid #EDE7DC;">
+                        <span>Total</span>
+                        <span x-text="totalFormatted"></span>
+                    </div>
+                </div>
 
                 {{-- Free Cancellation --}}
-                <div style="display:flex; align-items:center; gap:0.4rem; font-size:0.75rem; color:#2D5240; margin-top:1rem; padding-top:1rem; border-top:1.5px solid #EDE7DC;">
-                    <span>🛡</span>
+                <div style="display:flex; align-items:center; justify-content:center; gap:0.4rem; font-size:0.75rem; color:#2D5240; margin-top:1rem; padding-top:1rem; border-top:1px solid #EDE7DC;">
+                    <span>🛡️</span>
                     <span>Free cancellation up to 24 hours before</span>
                 </div>
 
@@ -474,15 +496,19 @@
 <script>
 function bookingWidget() {
     return {
+        showCalendar: false,
         selectedDate: null,
+        selectedTime: null,
+        availableTimes: [],
         guests: {{ $experience->kapasitas_min }},
         inWishlist: false,
+        isLoggedIn: @auth true @else false @endauth,
         currentYear: new Date().getFullYear(),
         currentMonth: new Date().getMonth(),
 
         basePrice: {{ $experience->harga }},
         serviceFee: {{ $serviceFee }},
-        availableDates: @json($avails->pluck('date')),
+        availableDates: @json($avails->pluck('date')->map(fn($d) => $d->format('Y-m-d'))),
 
         get monthLabel() {
             return new Date(this.currentYear, this.currentMonth, 1)
@@ -535,17 +561,27 @@ function bookingWidget() {
 
         getDayStyle(day) {
             if (this.isSelected(day)) {
-                return 'background:#1E3A2F; color:white; cursor:pointer; font-weight:500;';
+                return { background: '#1E3A2F', color: 'white', cursor: 'pointer', fontWeight: '500' };
             }
             if (this.isPast(day) || !this.isAvailable(day)) {
-                return 'background:#F5F5F5; color:#CCCCCC; cursor:not-allowed;';
+                return { background: '#F5F5F5', color: '#CCCCCC', cursor: 'not-allowed' };
             }
-            return 'background:#EBF5EE; color:#1E3A2F; cursor:pointer; border:1px solid #B8DFC8;';
+            return { background: '#EBF5EE', color: '#1E3A2F', cursor: 'pointer', border: '1px solid #B8DFC8' };
         },
 
         selectDate(day) {
             if (!this.isAvailable(day) || this.isPast(day)) return;
             this.selectedDate = this.getDateString(day);
+            this.selectedTime = null; // Reset time
+            
+            // Mock data jam dan slot
+            this.availableTimes = [
+                { time: '09:00', slot: Math.floor(Math.random() * 5) + 1 },
+                { time: '11:00', slot: Math.floor(Math.random() * 8) + 2 },
+                { time: '13:00', slot: Math.floor(Math.random() * 3) },
+                { time: '15:00', slot: Math.floor(Math.random() * 6) + 1 },
+                { time: '17:00', slot: Math.floor(Math.random() * 4) }
+            ];
         },
 
         prevMonth() {
@@ -566,8 +602,8 @@ function bookingWidget() {
 
         bookNow() {
             @auth
-                if (!this.selectedDate) { alert('Pilih tanggal terlebih dahulu.'); return; }
-                window.location.href = `/checkout/{{ $experience->slug }}?date=${this.selectedDate}&guests=${this.guests}`;
+                if (!this.selectedDate || !this.selectedTime) { alert('Pilih tanggal dan jam terlebih dahulu.'); return; }
+                window.location.href = `/checkout/{{ $experience->slug }}?date=${this.selectedDate}&time=${this.selectedTime}&guests=${this.guests}`;
             @else
                 window.location.href = '/login?returnUrl=' + encodeURIComponent(window.location.pathname);
             @endauth

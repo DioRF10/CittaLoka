@@ -21,9 +21,8 @@ class GoogleController extends Controller
         try {
             $googleUser = Socialite::driver('google')->user();
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Google Login Error: ' . $e->getMessage());
             return redirect()->route('login')
-                ->withErrors(['email' => 'Login Google gagal: ' . $e->getMessage()]);
+                ->withErrors(['email' => 'Login Google gagal. Coba lagi.']);
         }
 
         // Cek apakah email sudah terdaftar

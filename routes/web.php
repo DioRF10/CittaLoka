@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Onboarding\TravelerOnboardingController;
 use App\Http\Controllers\Onboarding\HostOnboardingController;
 use App\Http\Controllers\ExperienceController;
+use App\Http\Controllers\CheckoutController;
 
 
 Route::get('/', function () {
@@ -90,6 +91,11 @@ Route::get('/experiences', [ExperienceController::class, 'index'])->name('experi
 Route::get('/experiences/{slug}', [ExperienceController::class, 'show'])
     ->name('experiences.show');
 Route::get('/experiences/{slug}/times', [ExperienceController::class, 'getTimes'])->name('experiences.times');
+Route::middleware(['auth', 'verified'])->group(function () {
+Route::get('/checkout/{slug}',         [CheckoutController::class, 'show'])->name('checkout.show');
+Route::post('/checkout/{slug}',        [CheckoutController::class, 'store'])->name('checkout.store');
+Route::get('/checkout/success/{kode}', [CheckoutController::class, 'success'])->name('checkout.success');
+});
 
 Route::get('/dashboard', function () {
     return '<h1>Dashboard Host — coming soon</h1>';

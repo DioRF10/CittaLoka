@@ -89,6 +89,7 @@ Route::get('/auth/google/callback', [App\Http\Controllers\Auth\GoogleController:
 Route::get('/experiences', [ExperienceController::class, 'index'])->name('experiences.index');
 Route::get('/experiences/{slug}', [ExperienceController::class, 'show'])
     ->name('experiences.show');
+Route::get('/experiences/{slug}/times', [ExperienceController::class, 'getTimes'])->name('experiences.times');
 
 Route::get('/dashboard', function () {
     return '<h1>Dashboard Host — coming soon</h1>';

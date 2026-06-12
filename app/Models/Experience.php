@@ -100,22 +100,30 @@ class Experience extends Model
     // Default what_you_do jika belum diisi host
     public function getWhatYouDo(): array
     {
-        if ($this->what_you_do && count($this->what_you_do) > 0) {
-            return $this->what_you_do;
+        $data = $this->what_you_do;
+        if (is_string($data)) {
+            $data = json_decode($data, true);
         }
-        return [];
+        return is_array($data) && count($data) > 0 ? $data : [];
     }
 
     // Default included jika belum diisi host
     public function getIncluded(): array
     {
-        return $this->included ?? [];
+        $data = $this->included;
+        if (is_string($data)) {
+            $data = json_decode($data, true);
+        }
+        return is_array($data) ? $data : [];
     }
-
     // Default not_included jika belum diisi host
     public function getNotIncluded(): array
     {
-        return $this->not_included ?? [];
+        $data = $this->not_included;
+        if (is_string($data)) {
+            $data = json_decode($data, true);
+        }
+        return is_array($data) ? $data : [];
     }
 
     // ── Relationships ─────────────────────────────────────────────────────

@@ -11,6 +11,7 @@ class ExperienceAvailability extends Model
     protected $fillable = [
         'experience_id',
         'date',
+        'time',
         'max_slot',
         'booked_slot',
         'is_blocked',

@@ -8,6 +8,7 @@ use App\Http\Controllers\Onboarding\TravelerOnboardingController;
 use App\Http\Controllers\Onboarding\HostOnboardingController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\BookingController;
 
 
 Route::get('/', function () {
@@ -95,6 +96,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::get('/checkout/{slug}',         [CheckoutController::class, 'show'])->name('checkout.show');
 Route::post('/checkout/{slug}',        [CheckoutController::class, 'store'])->name('checkout.store');
 Route::get('/checkout/success/{kode}', [CheckoutController::class, 'success'])->name('checkout.success');
+Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
+Route::get('/bookings/{kode}', [BookingController::class, 'show'])->name('bookings.show');
+Route::patch('/bookings/{kode}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
 });
 
 Route::get('/dashboard', function () {

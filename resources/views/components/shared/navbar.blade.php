@@ -149,7 +149,7 @@ $user = computed(fn() => auth()->user());
                                 Earnings
                             </a>
                         @else
-                            <a href="/my-bookings" class="flex items-center gap-2.5 px-4 py-2.5 text-sm rounded-xl hover:bg-[#F5F2EC] hover:text-[#1a2e1c] transition-colors duration-150 cursor-pointer" style="color: #1a2e1c;">
+                            <a href="{{ route('bookings.index') }}" class="flex items-center gap-2.5 px-4 py-2.5 text-sm rounded-xl hover:bg-[#F5F2EC] hover:text-[#1a2e1c] transition-colors duration-150 cursor-pointer" style="color: #1a2e1c;">
                                 My Bookings
                             </a>
                             <a href="/wishlist" class="flex items-center gap-2.5 px-4 py-2.5 text-sm rounded-xl hover:bg-[#F5F2EC] hover:text-[#1a2e1c] transition-colors duration-150 cursor-pointer" style="color: #1a2e1c;">

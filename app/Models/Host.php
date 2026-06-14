@@ -27,7 +27,7 @@ class Host extends Model
     ];
 
     protected $casts = [
-        'is_active'   => 'boolean',
+        'is_active' => 'boolean',
         'is_verified' => 'boolean',
     ];
 

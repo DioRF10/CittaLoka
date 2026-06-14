@@ -144,7 +144,7 @@ class HostDashboardController extends Controller
 
         $selectedExpId = $request->input('experience_id', $experiences->first()?->id);
 
-        $availabilities = [];
+        $availabilities = collect();
         if ($selectedExpId) {
             $availabilities = ExperienceAvailability::where('experience_id', $selectedExpId)
                 ->where('date', '>=', now()->toDateString())

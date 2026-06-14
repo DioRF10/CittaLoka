@@ -9,6 +9,7 @@ use App\Http\Controllers\Onboarding\HostOnboardingController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\BookingController;
+ use App\Http\Controllers\Host\HostDashboardController;
 
 
 Route::get('/', function () {
@@ -101,9 +102,7 @@ Route::get('/bookings/{kode}', [BookingController::class, 'show'])->name('bookin
 Route::patch('/bookings/{kode}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
 });
 
-Route::get('/dashboard', function () {
-    return '<h1>Dashboard Host — coming soon</h1>';
-})->name('dashboard.index');
+
 
 // =============================================================================
 // Onboarding
@@ -118,4 +117,34 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('onboarding.host');
     Route::post('/onboarding/host/save', [HostOnboardingController::class, 'save'])
         ->name('onboarding.host.save');
+});
+
+Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('host.')->group(function () {
+
+    // Pastikan hanya role 'host' yang bisa akses
+    // Tambahkan middleware ini kalau sudah punya EnsureUserIsHost middleware:
+    // Route::middleware('role:host')->group(function () { ... });
+    // Atau pakai inline check di controller (sudah ada via getHost())
+
+    // Dashboard Overview
+    Route::get('/', [HostDashboardController::class, 'index'])->name('dashboard');
+
+    // My Experiences
+    Route::get('/experiences',        [HostDashboardController::class, 'experiences'])->name('experiences.index');
+    Route::get('/experiences/create', [HostDashboardController::class, 'createExperience'])->name('experiences.create');
+
+    // Bookings
+    Route::get('/bookings', [HostDashboardController::class, 'bookings'])->name('bookings.index');
+
+    // Availability
+    Route::get('/availability',         [HostDashboardController::class, 'availability'])->name('availability.index');
+    Route::post('/availability',        [HostDashboardController::class, 'storeAvailability'])->name('availability.store');
+    Route::delete('/availability/{id}', [HostDashboardController::class, 'deleteAvailability'])->name('availability.delete');
+
+    // Earnings
+    Route::get('/earnings', [HostDashboardController::class, 'earnings'])->name('earnings');
+
+    // Settings
+    Route::get('/settings', [HostDashboardController::class, 'settings'])->name('settings');
+    Route::put('/settings', [HostDashboardController::class, 'updateSettings'])->name('settings.update');
 });

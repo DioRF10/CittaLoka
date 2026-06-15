@@ -465,6 +465,8 @@
 @section('content')
 
 @php
+    use Illuminate\Support\Str;
+    use Illuminate\Support\Facades\Auth;
     $hostName = Auth::user()->name;
     $firstName = Str::of($hostName)->explode(' ')->first();
     $listingProgress = $totalExperiences > 0 ? round(($activeExperiences / $totalExperiences) * 100) : 0;

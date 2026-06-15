@@ -137,9 +137,13 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('host.')->gro
     // Dashboard Overview
     Route::get('/', [HostDashboardController::class, 'index'])->name('dashboard');
 
-    // My Experiences
-    Route::get('/experiences',        [HostDashboardController::class, 'experiences'])->name('experiences.index');
-    Route::get('/experiences/create', [HostDashboardController::class, 'createExperience'])->name('experiences.create');
+    // My Experiences — urutan penting: 'create' harus sebelum '{id}'
+    Route::get('/experiences',              [HostDashboardController::class, 'experiences'])->name('experiences.index');
+    Route::get('/experiences/create',       [HostDashboardController::class, 'createExperience'])->name('experiences.create');
+    Route::get('/experiences/{id}/edit',    [HostDashboardController::class, 'editExperience'])->name('experiences.edit');
+
+    // Memory Books
+    Route::get('/memory-books', [HostDashboardController::class, 'memoryBooks'])->name('memory-books.index');
 
     // Bookings
     Route::get('/bookings', [HostDashboardController::class, 'bookings'])->name('bookings.index');

@@ -105,6 +105,60 @@ class HostDashboardController extends Controller
         return view('host.experiences', compact('host', 'experiences', 'filter', 'stats', 'locale'));
     }
 
+    // ── Create / Edit Experience ──────────────────────────────────────────
+
+    public function createExperience()
+    {
+        $host = $this->getHost();
+        if (!$host) return redirect()->route('home');
+
+        // Pastikan KTP sudah verified
+        if ($host->ktp_status !== 'verified') {
+            return redirect()->route('host.experiences.index')
+                ->with('error', 'KTP kamu belum terverifikasi. Tunggu konfirmasi admin sebelum membuat experience.');
+        }
+
+        $categories = \App\Models\Kategori::orderBy('nama')->get();
+
+        return view('host.experiences.create', compact('host', 'categories'));
+    }
+
+    public function editExperience(int $id)
+    {
+        $host = $this->getHost();
+        if (!$host) return redirect()->route('home');
+
+        $experience = Experience::with(['photos', 'kategori'])
+            ->where('host_id', $host->id)
+            ->findOrFail($id);
+
+        $categories = \App\Models\Kategori::orderBy('nama')->get();
+
+        return view('host.experiences.create', compact('host', 'experience', 'categories'));
+    }
+
+    // ── Memory Books ──────────────────────────────────────────────────────
+
+    public function memoryBooks()
+    {
+        $host = $this->getHost();
+        if (!$host) return redirect()->route('home');
+
+        $urgent = \App\Models\MemoryBook::with(['booking.user', 'booking.experience'])
+            ->whereHas('booking', fn($q) => $q->where('host_id', $host->id))
+            ->where('status', 'pending_host')
+            ->where('updated_at', '<', now()->subHours(24))
+            ->orderBy('updated_at')
+            ->get();
+
+        $all = \App\Models\MemoryBook::with(['booking.user', 'booking.experience'])
+            ->whereHas('booking', fn($q) => $q->where('host_id', $host->id))
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('host.memory-books', compact('host', 'urgent', 'all'));
+    }
+
     // ── Bookings ──────────────────────────────────────────────────────────
 
     public function bookings(Request $request)

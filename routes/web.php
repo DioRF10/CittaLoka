@@ -9,11 +9,19 @@ use App\Http\Controllers\Onboarding\HostOnboardingController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\BookingController;
+use App\Models\Experience;
  use App\Http\Controllers\Host\HostDashboardController;
 
 
 Route::get('/', function () {
-    return view('pages.home');
+    $featuredExperiences = Experience::with(['host.user', 'kategori', 'photos'])
+        ->where('status', 'active')
+        ->orderBy('is_featured', 'desc')
+        ->orderBy('rating_avg', 'desc')
+        ->take(4)
+        ->get();
+
+    return view('pages.home', compact('featuredExperiences'));
 })->name('home');
 
 // =============================================================================

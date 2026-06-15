@@ -16,7 +16,7 @@ class ExpireBookings extends Command
     {
         // Expire booking yang pending_payment lebih dari 1 jam
         $expiredBookings = Booking::where('status', 'pending_payment')
-            ->where('created_at', '<', now()->subHour())
+            ->where('created_at', '<', now()->subMinutes(30))
             ->get();
 
         foreach ($expiredBookings as $booking) {

@@ -156,7 +156,7 @@
                 {{-- Actions --}}
                 <div style="display:flex; align-items:center; gap:0.5rem;" x-data="{ menuOpen: false }">
                     {{-- Edit --}}
-                    <a href="{{ route('host.experiences.create') }}" title="Edit"
+                    <a href="{{ route('host.experiences.edit', $exp->id) }}" title="Edit"
                         style="width:30px; height:30px; border-radius:6px; border:1.5px solid #EDE7DC; display:flex; align-items:center; justify-content:center; color:#7A7A6E; text-decoration:none; transition:all 0.15s;"
                         onmouseover="this.style.background='#F7F3ED'; this.style.color='#1E3A2F'"
                         onmouseout="this.style.background='white'; this.style.color='#7A7A6E'">

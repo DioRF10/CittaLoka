@@ -10,7 +10,8 @@ use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\BookingController;
 use App\Models\Experience;
- use App\Http\Controllers\Host\HostDashboardController;
+use App\Http\Controllers\Host\HostDashboardController;
+use App\Http\Controllers\Host\ExperienceFormController;
 
 
 Route::get('/', function () {
@@ -102,12 +103,12 @@ Route::get('/experiences/{slug}', [ExperienceController::class, 'show'])
     ->name('experiences.show');
 Route::get('/experiences/{slug}/times', [ExperienceController::class, 'getTimes'])->name('experiences.times');
 Route::middleware(['auth', 'verified'])->group(function () {
-Route::get('/checkout/{slug}',         [CheckoutController::class, 'show'])->name('checkout.show');
-Route::post('/checkout/{slug}',        [CheckoutController::class, 'store'])->name('checkout.store');
-Route::get('/checkout/success/{kode}', [CheckoutController::class, 'success'])->name('checkout.success');
-Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
-Route::get('/bookings/{kode}', [BookingController::class, 'show'])->name('bookings.show');
-Route::patch('/bookings/{kode}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
+    Route::get('/checkout/{slug}', [CheckoutController::class, 'show'])->name('checkout.show');
+    Route::post('/checkout/{slug}', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/checkout/success/{kode}', [CheckoutController::class, 'success'])->name('checkout.success');
+    Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
+    Route::get('/bookings/{kode}', [BookingController::class, 'show'])->name('bookings.show');
+    Route::patch('/bookings/{kode}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
 });
 
 
@@ -127,7 +128,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('onboarding.host.save');
 });
 
-Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('host.')->group(function () {
+Route::middleware(['auth', 'verified', 'host'])->prefix('dashboard')->name('host.')->group(function () {
 
     // Pastikan hanya role 'host' yang bisa akses
     // Tambahkan middleware ini kalau sudah punya EnsureUserIsHost middleware:
@@ -137,10 +138,18 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('host.')->gro
     // Dashboard Overview
     Route::get('/', [HostDashboardController::class, 'index'])->name('dashboard');
 
+
+    // Experience CRUD
+    Route::get('/experiences/create', [ExperienceFormController::class, 'create'])->name('experiences.create');
+    Route::post('/experiences', [ExperienceFormController::class, 'store'])->name('experiences.store');
+    Route::get('/experiences/{id}/edit', [ExperienceFormController::class, 'edit'])->name('experiences.edit');
+    Route::put('/experiences/{id}', [ExperienceFormController::class, 'update'])->name('experiences.update');
+    Route::post('/experiences/{id}/submit-review', [ExperienceFormController::class, 'submitReview'])->name('experiences.submitReview');
+    Route::delete('/experiences/photos/{photoId}', [ExperienceFormController::class, 'deletePhoto'])->name('experiences.deletePhoto');
+
     // My Experiences — urutan penting: 'create' harus sebelum '{id}'
-    Route::get('/experiences',              [HostDashboardController::class, 'experiences'])->name('experiences.index');
-    Route::get('/experiences/create',       [HostDashboardController::class, 'createExperience'])->name('experiences.create');
-    Route::get('/experiences/{id}/edit',    [HostDashboardController::class, 'editExperience'])->name('experiences.edit');
+    Route::get('/experiences', [HostDashboardController::class, 'experiences'])->name('experiences.index');
+
 
     // Memory Books
     Route::get('/memory-books', [HostDashboardController::class, 'memoryBooks'])->name('memory-books.index');
@@ -149,8 +158,8 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('host.')->gro
     Route::get('/bookings', [HostDashboardController::class, 'bookings'])->name('bookings.index');
 
     // Availability
-    Route::get('/availability',         [HostDashboardController::class, 'availability'])->name('availability.index');
-    Route::post('/availability',        [HostDashboardController::class, 'storeAvailability'])->name('availability.store');
+    Route::get('/availability', [HostDashboardController::class, 'availability'])->name('availability.index');
+    Route::post('/availability', [HostDashboardController::class, 'storeAvailability'])->name('availability.store');
     Route::delete('/availability/{id}', [HostDashboardController::class, 'deleteAvailability'])->name('availability.delete');
 
     // Earnings

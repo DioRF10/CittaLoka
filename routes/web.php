@@ -149,6 +149,7 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('dashboard')->name('host
 
     // My Experiences — urutan penting: 'create' harus sebelum '{id}'
     Route::get('/experiences', [HostDashboardController::class, 'experiences'])->name('experiences.index');
+    Route::delete('/experiences/{id}', [HostDashboardController::class, 'deleteExperience'])->name('experiences.destroy');
 
 
     // Memory Books
@@ -156,6 +157,7 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('dashboard')->name('host
 
     // Bookings
     Route::get('/bookings', [HostDashboardController::class, 'bookings'])->name('bookings.index');
+    Route::get('/bookings/{id}/detail', [HostDashboardController::class, 'bookingDetail'])->name('bookings.detail');
 
     // Availability
     Route::get('/availability', [HostDashboardController::class, 'availability'])->name('availability.index');

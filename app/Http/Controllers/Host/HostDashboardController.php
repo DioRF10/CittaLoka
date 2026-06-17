@@ -105,6 +105,28 @@ class HostDashboardController extends Controller
         return view('host.experiences', compact('host', 'experiences', 'filter', 'stats', 'locale'));
     }
 
+    public function deleteExperience(int $id)
+    {
+        $host = $this->getHost();
+        if (!$host) return redirect()->route('home');
+
+        $experience = Experience::where('host_id', $host->id)->findOrFail($id);
+
+        // Cegah hapus jika ada booking aktif
+        $activeBookings = Booking::where('experience_id', $experience->id)
+            ->whereIn('status', ['pending_payment', 'confirmed'])
+            ->count();
+
+        if ($activeBookings > 0) {
+            return back()->with('error', 'Tidak bisa menghapus experience — masih ada ' . $activeBookings . ' booking aktif.');
+        }
+
+        $experience->delete();
+
+        return redirect()->route('host.experiences.index')
+            ->with('success', 'Experience "' . $experience->judul_id . '" berhasil dihapus.');
+    }
+
     // ── Create / Edit Experience ──────────────────────────────────────────
 
     public function createExperience()
@@ -182,6 +204,49 @@ class HostDashboardController extends Controller
         $bookings = $query->paginate(15)->withQueryString();
 
         return view('host.bookings', compact('host', 'bookings', 'filter'));
+    }
+
+    public function bookingDetail(int $id)
+    {
+        $host = $this->getHost();
+        if (!$host) return response()->json(['error' => 'Unauthorized'], 403);
+
+        $booking = Booking::with(['experience', 'user', 'coupon'])
+            ->where('host_id', $host->id)
+            ->findOrFail($id);
+
+        return response()->json([
+            'kode_booking'               => $booking->kode_booking,
+            'status'                     => $booking->status,
+            'status_label'               => $booking->getStatusLabel(),
+            'guest_name'                 => $booking->user->name,
+            'guest_email'                => $booking->user->email,
+            'experience_title'           => $booking->experience_title_snapshot,
+            'location'                   => $booking->location_snapshot,
+            'tanggal'                    => Carbon::parse($booking->tanggal_experience)->format('d M Y'),
+            'jam'                        => $booking->jam_experience
+                                              ? Carbon::parse($booking->jam_experience)->format('H:i') . ' WITA'
+                                              : null,
+            'jumlah_peserta'             => $booking->jumlah_peserta,
+            'is_private'                 => $booking->is_private,
+            'harga_per_orang'            => 'Rp ' . number_format($booking->harga_per_orang_snapshot, 0, ',', '.'),
+            'total_harga'                => 'Rp ' . number_format($booking->total_harga, 0, ',', '.'),
+            'platform_fee'               => 'Rp ' . number_format($booking->platform_fee, 0, ',', '.'),
+            'host_earning'               => 'Rp ' . number_format($booking->host_earning, 0, ',', '.'),
+            'discount'                   => $booking->discount_amount > 0
+                                              ? 'Rp ' . number_format($booking->discount_amount, 0, ',', '.')
+                                              : null,
+            'coupon_code'                => $booking->coupon?->code,
+            'notes_for_host'             => $booking->notes_for_host,
+            'created_at'                 => Carbon::parse($booking->created_at)->format('d M Y, H:i'),
+            'cancelled_at'               => $booking->cancelled_at
+                                              ? Carbon::parse($booking->cancelled_at)->format('d M Y, H:i')
+                                              : null,
+            'cancel_reason'              => $booking->cancel_reason,
+            'completed_at'               => $booking->completed_at
+                                              ? Carbon::parse($booking->completed_at)->format('d M Y, H:i')
+                                              : null,
+        ]);
     }
 
     // ── Availability ──────────────────────────────────────────────────────

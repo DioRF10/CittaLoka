@@ -82,7 +82,7 @@ class LoginController extends Controller
 
     // Sudah onboarding → ke halaman utama sesuai role
     return match($user->role) {
-        'host'  => route('dashboard.index'),
+        'host'  => route('host.dashboard'),
         'admin' => '/admin',
         default => route('experiences.index'),
     };

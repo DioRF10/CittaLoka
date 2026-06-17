@@ -5,6 +5,17 @@
 
 @section('content')
 
+<div x-data="{
+    showDeleteModal: false,
+    deleteId: null,
+    deleteTitle: '',
+    confirmDelete(id, title) {
+        this.deleteId = id;
+        this.deleteTitle = title;
+        this.showDeleteModal = true;
+    }
+}">
+
 @php $locale = app()->getLocale(); @endphp
 
 {{-- Success/Error --}}
@@ -154,7 +165,7 @@
                 </div>
 
                 {{-- Actions --}}
-                <div style="display:flex; align-items:center; gap:0.5rem;" x-data="{ menuOpen: false }">
+                <div style="display:flex; align-items:center; gap:0.5rem;">
                     {{-- Edit --}}
                     <a href="{{ route('host.experiences.edit', $exp->id) }}" title="Edit"
                         style="width:30px; height:30px; border-radius:6px; border:1.5px solid #EDE7DC; display:flex; align-items:center; justify-content:center; color:#7A7A6E; text-decoration:none; transition:all 0.15s;"
@@ -169,11 +180,13 @@
                         onmouseout="this.style.background='white'; this.style.color='#7A7A6E'">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                     </a>
-                    {{-- More --}}
-                    <button title="More" style="width:30px; height:30px; border-radius:6px; border:1.5px solid #EDE7DC; background:white; display:flex; align-items:center; justify-content:center; color:#7A7A6E; cursor:pointer; transition:all 0.15s;"
-                        onmouseover="this.style.background='#F7F3ED'; this.style.color='#1E3A2F'"
-                        onmouseout="this.style.background='white'; this.style.color='#7A7A6E'">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+                    {{-- Delete --}}
+                    <button title="Hapus"
+                        @click="confirmDelete({{ $exp->id }}, '{{ addslashes($judul) }}')"
+                        style="width:30px; height:30px; border-radius:6px; border:1.5px solid #FECACA; background:white; display:flex; align-items:center; justify-content:center; color:#C0392B; cursor:pointer; transition:all 0.15s;"
+                        onmouseover="this.style.background='#FEF2F2'"
+                        onmouseout="this.style.background='white'">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
                     </button>
                 </div>
 
@@ -203,5 +216,65 @@
         @endif
     @endif
 </div>
+
+{{-- Delete Confirmation Modal --}}
+<div x-show="showDeleteModal"
+    style="position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center;"
+    x-cloak>
+    {{-- Backdrop --}}
+    <div style="position:absolute; inset:0; background:rgba(0,0,0,0.45); backdrop-filter:blur(3px);"
+        @click="showDeleteModal = false"></div>
+
+    {{-- Modal Box --}}
+    <div style="position:relative; background:white; border-radius:16px; padding:2rem; width:100%; max-width:420px; box-shadow:0 20px 60px rgba(0,0,0,0.18); margin:1rem;"
+        x-show="showDeleteModal"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 scale-95"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-95">
+
+        {{-- Icon --}}
+        <div style="width:52px; height:52px; background:#FEF2F2; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C0392B" stroke-width="2" stroke-linecap="round">
+                <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+            </svg>
+        </div>
+
+        <h3 style="text-align:center; font-size:1.05rem; font-weight:700; color:#1E3A2F; margin:0 0 0.5rem;">Hapus Experience?</h3>
+        <p style="text-align:center; font-size:0.85rem; color:#7A7A6E; margin:0 0 0.35rem;">
+            Experience berikut akan dihapus secara permanen:
+        </p>
+        <p style="text-align:center; font-size:0.85rem; font-weight:600; color:#1E3A2F; margin:0 0 1.5rem;" x-text="'\"' + deleteTitle + '\"'"></p>
+        <p style="text-align:center; font-size:0.78rem; color:#C0392B; margin:0 0 1.5rem;">&#9888; Tindakan ini tidak bisa dibatalkan.</p>
+
+        <div style="display:flex; gap:0.75rem;">
+            <button @click="showDeleteModal = false"
+                style="flex:1; padding:0.65rem; border:1.5px solid #EDE7DC; border-radius:8px; background:white; font-size:0.875rem; font-weight:500; color:#4A4A4A; cursor:pointer;"
+                onmouseover="this.style.background='#F7F3ED'"
+                onmouseout="this.style.background='white'">
+                Batal
+            </button>
+            <form :action="'{{ url('dashboard/experiences') }}/' + deleteId" method="POST" style="flex:1;">
+                @csrf
+                @method('DELETE')
+                <button type="submit"
+                    style="width:100%; padding:0.65rem; border:none; border-radius:8px; background:#C0392B; font-size:0.875rem; font-weight:600; color:white; cursor:pointer;"
+                    onmouseover="this.style.background='#A93226'"
+                    onmouseout="this.style.background='#C0392B'">
+                    Ya, Hapus
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</div>{{-- /x-data wrapper --}}
+
+<style>
+[x-cloak] { display: none !important; }
+</style>
 
 @endsection

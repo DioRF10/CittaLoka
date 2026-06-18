@@ -9,184 +9,124 @@
 
     /* ── Hero ── */
     .host-hero {
-        background: #F7F3ED;
-        padding: 3rem 0 0;
-        border-bottom: 1px solid #EDE7DC;
+        background: #F4F1ED;
+        padding: 4rem 0;
+        border-bottom: 1px solid #EBE5D9;
     }
     .host-hero-inner {
         max-width: 1080px;
         margin: 0 auto;
-        padding: 0 2rem 0;
+        padding: 0 2rem;
         display: grid;
-        grid-template-columns: 1fr 380px;
-        gap: 3rem;
-        align-items: start;
+        grid-template-columns: 1fr 340px;
+        gap: 3.5rem;
+        align-items: center;
     }
-    .host-hero-left {
-        padding-bottom: 3rem;
-        padding-top: 0.5rem;
-    }
-    .host-hero-right {
-        position: relative;
-        align-self: stretch;
-        display: flex;
-        align-items: flex-end;
-    }
-    .host-hero-photo {
+    .hero-photo-wrap {
         width: 100%;
-        aspect-ratio: 3/4;
-        object-fit: cover;
-        border-radius: 14px 14px 0 0;
-        display: block;
-        background: #E8E0D3;
-    }
-    .host-hero-photo-placeholder {
-        width: 100%;
-        aspect-ratio: 3/4;
-        border-radius: 14px 14px 0 0;
-        background: linear-gradient(160deg, #E8E4DC, #D4CCBC);
+        border-radius: 16px;
+        overflow: hidden;
+        aspect-ratio: 4/3;
+        background: #EBE5D9;
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 1.5px solid #EDE7DC;
-        border-bottom: none;
+        color: #8C9990;
+        font-size: 0.9rem;
+        box-shadow: 0 10px 30px rgba(30,58,47,0.06);
     }
-    .host-avatar-wrap {
-        position: relative;
-        flex-shrink: 0;
-        margin-bottom: 0;
+    .hero-photo {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
-    .host-avatar {
-        width: 0;
-        height: 0;
-        display: none;
-    }
-    .host-verified-badge {
-        display: none;
-    }
-    .host-hero-info { padding-bottom: 0; }
     .host-verified-text {
         display: inline-flex;
         align-items: center;
         gap: 0.35rem;
-        font-size: 0.68rem;
+        font-size: 0.65rem;
         font-weight: 700;
         letter-spacing: 0.1em;
         text-transform: uppercase;
-        color: #2D5240;
-        background: #EBF5EE;
-        border: 1px solid #B8DFC8;
-        padding: 0.25rem 0.75rem;
+        color: #1A5336;
+        background: #D8EADF;
+        padding: 0.35rem 0.8rem;
         border-radius: 999px;
-        margin-bottom: 1rem;
+        margin-bottom: 1.25rem;
     }
     .host-name {
         font-family: 'Cormorant Garamond', Georgia, serif;
-        font-size: clamp(2.2rem, 4vw, 3.25rem);
+        font-size: clamp(2.5rem, 5vw, 3.5rem);
         font-weight: 500;
         color: #1E3A2F;
-        line-height: 1.05;
+        line-height: 1.1;
         margin-bottom: 0.5rem;
     }
     .host-subtitle {
-        font-size: 0.9rem;
-        color: #7A7A6E;
-        margin-bottom: 1.25rem;
+        font-size: 1.1rem;
+        color: #5C7164;
+        margin-bottom: 1.5rem;
         font-style: italic;
     }
     .host-meta-row {
         display: flex;
         align-items: center;
-        gap: 1.5rem;
+        gap: 1rem;
         flex-wrap: wrap;
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
+        font-size: 0.9rem;
+        color: #4A5D53;
     }
     .host-meta-item {
         display: flex;
         align-items: center;
-        gap: 0.35rem;
-        font-size: 0.82rem;
-        color: #4A4A4A;
+        gap: 0.4rem;
     }
-    .host-meta-item svg { opacity: 0.5; }
+    .meta-divider {
+        width: 1px;
+        height: 14px;
+        background: #D4CCC0;
+    }
     .host-cta {
         display: flex;
         flex-direction: row;
-        gap: 0.75rem;
+        gap: 1rem;
         flex-wrap: wrap;
     }
     .btn-cta-primary {
-        padding: 0.65rem 1.5rem;
+        padding: 0.75rem 1.75rem;
         background: #1E3A2F;
         color: white;
         border: none;
         border-radius: 8px;
-        font-size: 0.875rem;
+        font-size: 0.9rem;
         font-weight: 600;
         cursor: pointer;
         font-family: 'DM Sans', sans-serif;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        gap: 0.4rem;
-        white-space: nowrap;
-        transition: background 0.15s;
+        gap: 0.5rem;
+        transition: background 0.2s;
     }
-    .btn-cta-primary:hover { background: #2D4A32; }
+    .btn-cta-primary:hover { background: #2D4A32; color: white; }
     .btn-cta-secondary {
-        padding: 0.65rem 1.5rem;
+        padding: 0.75rem 1.75rem;
         background: white;
         color: #1E3A2F;
         border: 1.5px solid #D4CCC0;
         border-radius: 8px;
-        font-size: 0.875rem;
-        font-weight: 500;
+        font-size: 0.9rem;
+        font-weight: 600;
         cursor: pointer;
         font-family: 'DM Sans', sans-serif;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        gap: 0.4rem;
-        white-space: nowrap;
-        transition: all 0.15s;
+        gap: 0.5rem;
+        transition: all 0.2s;
     }
-    .btn-cta-secondary:hover { background: #F7F3ED; border-color: #1E3A2F; }
-
-    /* ── Stats bar ── */
-    .host-stats-bar {
-        background: white;
-        border-bottom: 1px solid #EDE7DC;
-        border-top: 1px solid #EDE7DC;
-    }
-    .host-stats-inner {
-        max-width: 1080px;
-        margin: 0 auto;
-        padding: 0 2rem;
-        display: flex;
-        gap: 0;
-    }
-    .host-stat {
-        padding: 1.1rem 2rem 1.1rem 0;
-        margin-right: 2rem;
-        border-right: 1px solid #EDE7DC;
-        text-align: center;
-    }
-    .host-stat:last-child { border-right: none; }
-    .host-stat-num {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #1E3A2F;
-        font-family: 'DM Sans', sans-serif;
-        line-height: 1;
-    }
-    .host-stat-label {
-        font-size: 0.7rem;
-        color: #9CA3AF;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        margin-top: 0.2rem;
-        font-weight: 600;
-    }
+    .btn-cta-secondary:hover { background: #F4F1ED; border-color: #1E3A2F; }
 
     /* ── Page body ── */
     .host-page-body {
@@ -201,35 +141,36 @@
     }
     .section-title {
         font-family: 'Cormorant Garamond', Georgia, serif;
-        font-size: 2rem;
+        font-size: 2.2rem;
         font-weight: 500;
         color: #1E3A2F;
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.5rem;
         text-align: center;
     }
     .section-sub {
-        font-size: 0.875rem;
-        color: #7A7A6E;
+        font-size: 0.9rem;
+        color: #5C7164;
         text-align: center;
-        margin-bottom: 3rem;
+        margin-bottom: 3.5rem;
         line-height: 1.6;
     }
 
     /* ── About layout ── */
     .about-grid {
         display: grid;
-        grid-template-columns: 1fr 300px;
-        gap: 3rem;
+        grid-template-columns: 1fr 340px;
+        gap: 3.5rem;
         align-items: start;
     }
     .about-video {
         width: 100%;
         aspect-ratio: 16/9;
         background: #1E3A2F;
-        border-radius: 14px;
+        border-radius: 16px;
         overflow: hidden;
         position: relative;
-        margin-bottom: 2rem;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
     }
     .about-video iframe {
         width: 100%;
@@ -245,101 +186,144 @@
         background: linear-gradient(135deg, #1E3A2F, #2D5240);
         flex-direction: column;
         gap: 1rem;
-        color: rgba(255,255,255,0.5);
-        font-size: 0.85rem;
+        color: rgba(255,255,255,0.7);
+        font-size: 0.9rem;
     }
     .play-btn {
-        width: 56px;
-        height: 56px;
+        width: 64px;
+        height: 64px;
         border-radius: 50%;
-        background: rgba(255,255,255,0.15);
-        border: 2px solid rgba(255,255,255,0.3);
+        background: rgba(255,255,255,0.2);
+        border: 2px solid rgba(255,255,255,0.4);
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
         transition: all 0.2s;
     }
-    .play-btn:hover { background: rgba(255,255,255,0.25); }
-    .about-bio {
-        font-size: 0.9rem;
-        color: #3A3A3A;
-        line-height: 1.8;
-        margin-bottom: 1.5rem;
-    }
-    .soul-type-chips {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-    }
-    .soul-type-label {
-        font-size: 0.72rem;
-        font-weight: 700;
-        color: #7A7A6E;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-    }
-    .soul-chip {
-        padding: 0.3rem 0.875rem;
-        background: #F0EBE3;
+    .play-btn:hover { background: rgba(255,255,255,0.3); }
+    .about-title {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 1.8rem;
+        font-weight: 600;
         color: #1E3A2F;
-        border-radius: 999px;
-        font-size: 0.78rem;
-        font-weight: 500;
+        margin-bottom: 1.2rem;
+    }
+    .about-bio {
+        font-size: 0.95rem;
+        color: #4A5D53;
+        line-height: 1.8;
+        margin-bottom: 2rem;
     }
 
     /* ── Info sidebar ── */
     .info-card {
         background: white;
-        border: 1.5px solid #EDE7DC;
-        border-radius: 14px;
-        padding: 1.5rem;
+        border: 1px solid #EBE5D9;
+        border-radius: 16px;
+        padding: 1.75rem;
         position: sticky;
-        top: 80px;
+        top: 100px;
+        box-shadow: 0 10px 30px rgba(30,58,47,0.03);
     }
     .info-row {
         display: flex;
         align-items: flex-start;
-        gap: 0.75rem;
-        padding: 0.75rem 0;
-        border-bottom: 1px solid #F3EFE8;
+        gap: 0.85rem;
+        padding: 0.85rem 0;
+        border-bottom: 1px solid #F4F1ED;
     }
-    .info-row:last-of-type { border-bottom: none; }
+    .info-row:first-of-type { padding-top: 0; }
     .info-icon {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        background: #F0EBE3;
+        width: 24px;
+        height: 24px;
         display: flex;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        color: #C4783A;
+        color: #5C7164;
     }
     .info-label {
-        font-size: 0.7rem;
+        font-size: 0.75rem;
         font-weight: 700;
-        color: #9CA3AF;
+        color: #8C9990;
         text-transform: uppercase;
-        letter-spacing: 0.07em;
-        margin-bottom: 0.15rem;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.2rem;
     }
     .info-value {
-        font-size: 0.875rem;
+        font-size: 0.9rem;
         color: #1E3A2F;
         font-weight: 500;
+        line-height: 1.4;
+    }
+    .btn-contact {
+        width: 100%;
+        padding: 0.85rem;
+        background: #1EC876;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: 'DM Sans', sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
+        transition: background 0.2s;
+        text-decoration: none;
+    }
+    .btn-contact:hover { background: #1AB569; color: white; }
+    
+    .info-stats-divider {
+        height: 1px;
+        background: #EBE5D9;
+        margin: 1.75rem 0;
+    }
+    .info-stats-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .info-stat {
+        text-align: center;
+        flex: 1;
+        border-right: 1px solid #EBE5D9;
+    }
+    .info-stat:last-child { border-right: none; }
+    .stat-num {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #1E3A2F;
+        line-height: 1.2;
+    }
+    .stat-label {
+        font-size: 0.7rem;
+        color: #8C9990;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 0.2rem;
     }
 
     /* ── Heritage Tree ── */
+    .heritage-section {
+        background: #F4F1ED;
+        padding-top: 5rem;
+        padding-bottom: 5rem;
+        margin-top: 5rem;
+        max-width: none;
+    }
     .heritage-wrap {
         position: relative;
-        max-width: 680px;
+        max-width: 720px;
         margin: 0 auto;
     }
     .heritage-timeline {
         position: relative;
-        padding: 0;
+        padding: 2rem 0;
     }
     .heritage-timeline::before {
         content: '';
@@ -347,187 +331,99 @@
         left: 50%;
         top: 0;
         bottom: 0;
-        width: 2px;
-        background: linear-gradient(to bottom, #EDE7DC, #C4783A, #EDE7DC);
+        width: 1px;
+        background: #D4CCC0;
         transform: translateX(-50%);
     }
     .heritage-item {
         display: grid;
         grid-template-columns: 1fr 40px 1fr;
-        gap: 1.5rem;
+        gap: 2rem;
         align-items: center;
-        margin-bottom: 3rem;
+        margin-bottom: 4rem;
         position: relative;
     }
     .heritage-item:last-child { margin-bottom: 0; }
     .heritage-dot {
-        width: 14px;
-        height: 14px;
+        width: 12px;
+        height: 12px;
         border-radius: 50%;
-        background: #C4783A;
-        border: 3px solid white;
-        box-shadow: 0 0 0 2px #C4783A;
+        background: #1E3A2F;
         justify-self: center;
         z-index: 1;
     }
     .heritage-content {
-        background: white;
-        border: 1.5px solid #EDE7DC;
-        border-radius: 14px;
-        padding: 1.25rem;
-        box-shadow: 0 4px 16px rgba(30,58,47,0.06);
+        padding: 0 1rem;
     }
-    .heritage-content.right { grid-column: 3; }
+    .heritage-content.right { grid-column: 3; text-align: left; }
     .heritage-content.left { grid-column: 1; text-align: right; }
+    
     .heritage-photo-wrap {
-        grid-column: 1;
         display: flex;
-        justify-content: flex-end;
     }
-    .heritage-photo-wrap.right {
-        grid-column: 3;
-        justify-content: flex-start;
-    }
+    .heritage-photo-wrap.right { grid-column: 3; justify-content: flex-start; padding-left: 1rem; }
+    .heritage-photo-wrap.left { grid-column: 1; justify-content: flex-end; padding-right: 1rem; }
     .heritage-photo {
-        width: 72px;
-        height: 72px;
-        border-radius: 50%;
+        width: 110px;
+        height: 110px;
+        border-radius: 12px;
         object-fit: cover;
-        border: 2px solid #EDE7DC;
-        background: #F0EBE3;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        flex-shrink: 0;
+        background: #EBE5D9;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
     .heritage-year {
-        font-size: 0.72rem;
-        font-weight: 700;
-        color: #C4783A;
-        letter-spacing: 0.1em;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2D5240;
         margin-bottom: 0.3rem;
+        font-family: 'DM Sans', sans-serif;
     }
     .heritage-name {
         font-family: 'Cormorant Garamond', Georgia, serif;
-        font-size: 1.05rem;
-        font-weight: 500;
+        font-size: 1.4rem;
+        font-weight: 600;
         color: #1E3A2F;
-        margin-bottom: 0.3rem;
+        margin-bottom: 0.5rem;
     }
     .heritage-desc {
-        font-size: 0.8rem;
-        color: #7A7A6E;
+        font-size: 0.9rem;
+        color: #5C7164;
         line-height: 1.6;
-    }
-    .heritage-gen-badge {
-        display: inline-block;
-        font-size: 0.65rem;
-        font-weight: 700;
-        padding: 0.15rem 0.5rem;
-        background: #F0EBE3;
-        color: #C4783A;
-        border-radius: 999px;
-        letter-spacing: 0.06em;
-        margin-bottom: 0.4rem;
-        text-transform: uppercase;
     }
     .heritage-empty {
         text-align: center;
         padding: 3rem;
-        color: #9CA3AF;
-        font-size: 0.875rem;
-        background: white;
-        border: 1.5px dashed #EDE7DC;
-        border-radius: 14px;
+        color: #8C9990;
+        font-size: 0.9rem;
     }
 
     /* ── Experiences ── */
     .exp-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-        gap: 1.25rem;
-    }
-    .exp-card {
-        background: white;
-        border-radius: 14px;
-        overflow: hidden;
-        border: 1.5px solid #EDE7DC;
-        text-decoration: none;
-        transition: transform 0.2s, box-shadow 0.2s;
-        display: block;
-    }
-    .exp-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 32px rgba(30,58,47,0.1);
-    }
-    .exp-card-img {
-        width: 100%;
-        height: 160px;
-        object-fit: cover;
-        background: linear-gradient(135deg, #2D5240, #C4A882);
-        display: block;
-    }
-    .exp-card-body { padding: 1rem; }
-    .exp-card-cat {
-        font-size: 0.68rem;
-        font-weight: 700;
-        color: #C4783A;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        margin-bottom: 0.3rem;
-    }
-    .exp-card-title {
-        font-family: 'Cormorant Garamond', Georgia, serif;
-        font-size: 1rem;
-        font-weight: 500;
-        color: #1E3A2F;
-        margin-bottom: 0.4rem;
-        line-height: 1.3;
-    }
-    .exp-card-meta {
-        display: flex;
-        align-items: center;
-        gap: 0.6rem;
-        font-size: 0.75rem;
-        color: #7A7A6E;
-        margin-bottom: 0.75rem;
-        flex-wrap: wrap;
-    }
-    .exp-card-price {
-        font-size: 0.875rem;
-        font-weight: 700;
-        color: #1E3A2F;
-        font-family: 'DM Sans', sans-serif;
-    }
-    .exp-card-price span {
-        font-size: 0.75rem;
-        font-weight: 400;
-        color: #9CA3AF;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1.5rem;
     }
     .exp-empty {
         text-align: center;
-        padding: 3rem;
-        color: #9CA3AF;
-        font-size: 0.875rem;
+        padding: 4rem;
+        color: #8C9990;
+        font-size: 0.9rem;
         background: white;
-        border: 1.5px dashed #EDE7DC;
-        border-radius: 14px;
+        border: 1px dashed #EBE5D9;
+        border-radius: 16px;
         grid-column: 1 / -1;
     }
 
     @media (max-width: 768px) {
-        .host-hero-inner { grid-template-columns: auto 1fr; }
-        .host-cta { display: none; }
+        .host-hero-inner { grid-template-columns: 1fr; gap: 2rem; }
+        .hero-photo-wrap { display: none; /* Hide on mobile to keep text focus */ }
         .about-grid { grid-template-columns: 1fr; }
         .info-card { position: static; }
-        .heritage-timeline::before { left: 20px; }
-        .heritage-item { grid-template-columns: 1fr; padding-left: 3rem; }
-        .heritage-dot { position: absolute; left: 13px; top: 1.5rem; }
-        .heritage-content.left { text-align: left; grid-column: 1; }
-        .heritage-content.right { grid-column: 1; }
-        .heritage-photo-wrap, .heritage-photo-wrap.right { display: none; }
-        .exp-grid { grid-template-columns: 1fr 1fr; }
+        .heritage-timeline::before { left: 30px; }
+        .heritage-item { grid-template-columns: 1fr; padding-left: 50px; gap: 1rem; }
+        .heritage-dot { position: absolute; left: 24px; top: 1.5rem; }
+        .heritage-content.left, .heritage-content.right { text-align: left; grid-column: 1; padding: 0; }
+        .heritage-photo-wrap { display: none !important; }
     }
 </style>
 @endpush
@@ -536,8 +432,7 @@
 
 @php
     $locale   = app()->getLocale();
-    $avatar   = $host->user->avatar
-        ?? 'https://ui-avatars.com/api/?name=' . urlencode($host->user->name) . '&background=1E3A2F&color=fff&size=200';
+    $avatar   = $host->user->avatarUrl();
     $hostingSince = $host->created_at ? $host->created_at->year : null;
     $experiences  = $host->experiences->where('status', 'active');
 @endphp
@@ -547,127 +442,96 @@
 {{-- ═══════════════════════════════════════ --}}
 <div class="host-hero">
     <div class="host-hero-inner">
-
-        {{-- Kiri: Info --}}
-        <div class="host-hero-left">
-
-            {{-- Verified badge --}}
+        {{-- Kiri: Text Content --}}
+        <div>
             @if($host->is_verified)
                 <div class="host-verified-text">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    Verified Host
+                    ✨ Verified Host
                 </div>
             @endif
 
-            {{-- Nama --}}
             <h1 class="host-name">{{ $host->user->name }}</h1>
 
-            {{-- Subtitle: keahlian + lokasi --}}
             @if($host->village)
-                <div class="host-subtitle">{{ $host->village }}</div>
+                <div class="host-subtitle">{{ $host->bio_title ?? 'Master Host' }} - {{ $host->village }}, Bali</div>
             @endif
 
-            {{-- Meta row --}}
             <div class="host-meta-row">
                 @if($host->rating_avg > 0)
                     <div class="host-meta-item">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="#C4783A" stroke="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <span style="color: #F59E0B;">⭐</span>
                         <strong style="color:#1E3A2F;">{{ number_format($host->rating_avg, 1) }}</strong>
-                        <span style="color:#7A7A6E;">({{ $host->total_reviews }} Reviews)</span>
+                        <span>({{ $host->total_reviews }} Reviews)</span>
                     </div>
+                    <div class="meta-divider"></div>
                 @endif
-                @if($hostingSince)
+                @if($host->village)
                     <div class="host-meta-item">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                        Hosting since {{ $hostingSince }}
+                        <span>📍</span> {{ $host->village }}, Bali
                     </div>
+                    <div class="meta-divider"></div>
                 @endif
                 <div class="host-meta-item">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-                    ID · EN
+                    <span>🌐</span> English, ID
                 </div>
+                @if($hostingSince)
+                    <div class="meta-divider"></div>
+                    <div class="host-meta-item">
+                        <span>📅</span> Hosting since {{ $hostingSince }}
+                    </div>
+                @endif
             </div>
 
-            {{-- CTA --}}
             <div class="host-cta">
                 <a href="#experiences" class="btn-cta-primary">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                     View Experiences
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
                 </a>
                 @auth
                     @if(auth()->user()->role !== 'host')
                         <button class="btn-cta-secondary">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                            Follow Host
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            Save Host
                         </button>
                     @endif
                 @else
                     <a href="{{ route('login') }}" class="btn-cta-secondary">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                        Follow Host
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        Save Host
                     </a>
                 @endauth
             </div>
         </div>
 
-        {{-- Kanan: Foto besar --}}
-        <div class="host-hero-right">
-            @if($host->user->avatar)
-                <img src="{{ $host->user->avatar }}"
-                    alt="{{ $host->user->name }}"
-                    class="host-hero-photo">
-            @else
-                <div class="host-hero-photo-placeholder">
-                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#C4A882" stroke-width="1" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                </div>
-            @endif
+        {{-- Kanan: Image Placeholder --}}
+        <div>
+            <div class="hero-photo-wrap">
+                @if($host->user->avatar && strpos($host->user->avatar, 'ui-avatars') === false)
+                    <img src="{{ $host->user->avatarUrl() }}" alt="{{ $host->user->name }}" class="hero-photo">
+                @else
+                    <div style="text-align: center; line-height: 1.5;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 0.5rem; color:#C4A882;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        Host Photo
+                    </div>
+                @endif
+            </div>
         </div>
-
     </div>
 </div>
 
 {{-- ═══════════════════════════════════════ --}}
-{{-- STATS BAR                              --}}
-{{-- ═══════════════════════════════════════ --}}
-<div class="host-stats-bar">
-    <div class="host-stats-inner">
-        <div class="host-stat">
-            <div class="host-stat-num">{{ $host->total_reviews ?? 0 }}</div>
-            <div class="host-stat-label">Guests</div>
-        </div>
-        <div class="host-stat">
-            <div class="host-stat-num">{{ $experiences->count() }}</div>
-            <div class="host-stat-label">Experiences</div>
-        </div>
-        @if($host->rating_avg > 0)
-            <div class="host-stat">
-                <div class="host-stat-num">{{ number_format($host->rating_avg, 1) }}</div>
-                <div class="host-stat-label">Rating</div>
-            </div>
-        @endif
-        @if($hostingSince)
-            <div class="host-stat">
-                <div class="host-stat-num">{{ now()->year - $hostingSince }}+</div>
-                <div class="host-stat-label">Years Hosting</div>
-            </div>
-        @endif
-    </div>
-</div>
-
-{{-- ═══════════════════════════════════════ --}}
-{{-- ABOUT                                  --}}
+{{-- PAGE BODY                              --}}
 {{-- ═══════════════════════════════════════ --}}
 <div class="host-page-body">
-    <div class="host-section">
+    
+    {{-- About & Info --}}
+    <div class="host-section" style="padding-top: 3rem;">
         <div class="about-grid">
-
-            {{-- Left: Video + Bio --}}
+            {{-- Kiri: Video & Bio --}}
             <div>
-                {{-- Video --}}
                 <div class="about-video">
                     @if($host->video_url)
                         @php
-                            // Convert YouTube URL ke embed
                             $videoUrl = $host->video_url;
                             if (preg_match('/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/', $videoUrl, $matches)) {
                                 $videoUrl = 'https://www.youtube.com/embed/' . $matches[1];
@@ -679,36 +543,28 @@
                     @else
                         <div class="about-video-placeholder">
                             <div class="play-btn">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                             </div>
-                            <span>No video yet</span>
+                            <span>Video Profile Coming Soon</span>
                         </div>
                     @endif
                 </div>
 
-                {{-- Bio --}}
+                <h2 class="about-title">About {{ explode(' ', $host->user->name)[0] }}</h2>
                 @if($host->bio)
-                    <h2 style="font-family:'Cormorant Garamond',Georgia,serif; font-size:1.5rem; font-weight:500; color:#1E3A2F; margin-bottom:1rem;">
-                        About {{ explode(' ', $host->user->name)[0] }}
-                    </h2>
                     <div class="about-bio">{{ $host->bio }}</div>
+                @else
+                    <div class="about-bio">This host hasn't added a bio yet.</div>
                 @endif
-
-                {{-- Soul Type chips (placeholder) --}}
-                <div class="soul-type-chips">
-                    <span class="soul-type-label">Best match for</span>
-                    <span class="soul-chip">The Creator</span>
-                    <span class="soul-chip">The Seeker</span>
-                </div>
             </div>
 
-            {{-- Right: Info Card --}}
+            {{-- Kanan: Info Card --}}
             <div>
                 <div class="info-card">
                     @if($host->village)
                         <div class="info-row">
                             <div class="info-icon">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
                             </div>
                             <div>
                                 <div class="info-label">Location</div>
@@ -719,7 +575,7 @@
 
                     <div class="info-row">
                         <div class="info-icon">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                         </div>
                         <div>
                             <div class="info-label">Languages</div>
@@ -733,26 +589,22 @@
                             $maxDur = $experiences->max('durasi_menit');
                             $minCap = $experiences->min('kapasitas_min');
                             $maxCap = $experiences->max('kapasitas_max');
+                            
+                            $durText = $minDur === $maxDur ? ($minDur / 60) . ' hours' : ($minDur / 60) . '–' . ($maxDur / 60) . ' hours';
                         @endphp
                         <div class="info-row">
                             <div class="info-icon">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                             </div>
                             <div>
                                 <div class="info-label">Duration</div>
-                                <div class="info-value">
-                                    @if($minDur === $maxDur)
-                                        {{ $minDur }} minutes
-                                    @else
-                                        {{ $minDur }}–{{ $maxDur }} minutes
-                                    @endif
-                                </div>
+                                <div class="info-value">Experiences typically {{ $durText }}</div>
                             </div>
                         </div>
 
                         <div class="info-row">
                             <div class="info-icon">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                             </div>
                             <div>
                                 <div class="info-label">Group Size</div>
@@ -761,134 +613,110 @@
                         </div>
                     @endif
 
-                    {{-- View all experiences CTA --}}
-                    <a href="#experiences" class="btn-cta-primary" style="width:100%; justify-content:center; margin-top:1.25rem; text-decoration:none;">
-                        View All Experiences
+                    <a href="#contact" class="btn-contact">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                        Contact {{ explode(' ', $host->user->name)[0] }}
                     </a>
+
+                    <div class="info-stats-divider"></div>
+
+                    <div class="info-stats-row">
+                        <div class="info-stat">
+                            <div class="stat-num">{{ $host->total_reviews ?? 0 }}</div>
+                            <div class="stat-label">Guests</div>
+                        </div>
+                        <div class="info-stat">
+                            <div class="stat-num">{{ $experiences->count() }}</div>
+                            <div class="stat-label">Experiences</div>
+                        </div>
+                        <div class="info-stat">
+                            <div class="stat-num">{{ $host->rating_avg > 0 ? number_format($host->rating_avg, 1) : '-' }}</div>
+                            <div class="stat-label">Rating</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
 
-    {{-- ═══════════════════════════════════════ --}}
-    {{-- HERITAGE TREE                          --}}
-    {{-- ═══════════════════════════════════════ --}}
-    <div class="host-section">
-        <h2 class="section-title">The Heritage Tree</h2>
-        <p class="section-sub">
-            A timeline of artistic evolution across generations
-            @if($host->village) of the {{ explode(',', $host->village)[0] }} family @endif.
-        </p>
+    {{-- Heritage Tree --}}
+    <div class="heritage-section">
+        <div class="host-section" style="padding-top: 0;">
+            <h2 class="section-title">The Heritage Tree</h2>
+            <p class="section-sub">A timeline of artistic evolution across generations of the {{ explode(',', $host->village ?? 'Sudarsana')[0] }} family.</p>
 
-        <div class="heritage-wrap">
-            @if($heritageTree->isEmpty())
-                <div class="heritage-empty">
-                    <div style="font-size:1.5rem; margin-bottom:0.5rem;">🌳</div>
-                    Heritage story coming soon.
-                </div>
-            @else
-                <div class="heritage-timeline">
-                    @foreach($heritageTree as $i => $node)
-                        @php $isLeft = $i % 2 === 0; @endphp
-                        <div class="heritage-item">
+            <div class="heritage-wrap">
+                @if($heritageTree->isEmpty())
+                    <div class="heritage-empty">
+                        <div style="font-size:1.5rem; margin-bottom:0.5rem;">🌳</div>
+                        Heritage story coming soon.
+                    </div>
+                @else
+                    <div class="heritage-timeline">
+                        @foreach($heritageTree as $i => $node)
+                            @php $isLeft = $i % 2 === 0; @endphp
+                            <div class="heritage-item">
 
-                            @if($isLeft)
-                                {{-- Content kiri --}}
-                                <div class="heritage-content left">
-                                    <div class="heritage-gen-badge">Gen {{ $node->generation_number ?? $loop->iteration }}</div>
-                                    @if($node->learned_from_year)
-                                        <div class="heritage-year">{{ $node->learned_from_year }}</div>
-                                    @endif
-                                    <div class="heritage-name">{{ $node->teacher_name }}</div>
-                                    @if($node->skill_description)
-                                        <div class="heritage-desc">{{ $node->skill_description }}</div>
-                                    @endif
-                                </div>
-                                {{-- Dot --}}
-                                <div class="heritage-dot"></div>
-                                {{-- Foto placeholder kanan --}}
-                                <div class="heritage-photo-wrap right">
-                                    <div class="heritage-photo">
-                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C4A882" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                @if($isLeft)
+                                    {{-- Content kiri --}}
+                                    <div class="heritage-content left">
+                                        <div class="heritage-year">{{ $node->learned_from_year ?? 'Gen ' . ($node->generation_number ?? $loop->iteration) }}</div>
+                                        <div class="heritage-name">{{ $node->teacher_name }} [Gen {{ $node->generation_number ?? $loop->iteration }}]</div>
+                                        @if($node->skill_description)
+                                            <div class="heritage-desc">{{ $node->skill_description }}</div>
+                                        @endif
                                     </div>
-                                </div>
-                            @else
-                                {{-- Foto placeholder kiri --}}
-                                <div class="heritage-photo-wrap">
-                                    <div class="heritage-photo">
-                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C4A882" stroke-width="1.5" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    {{-- Dot --}}
+                                    <div class="heritage-dot"></div>
+                                    {{-- Foto kanan --}}
+                                    <div class="heritage-photo-wrap right">
+                                        @if($node->photo_url)
+                                            <img src="{{ asset('storage/' . $node->photo_url) }}" alt="{{ $node->teacher_name }}" class="heritage-photo">
+                                        @else
+                                            <div class="heritage-photo" style="display:flex; align-items:center; justify-content:center;">
+                                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D4CCC0" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                            </div>
+                                        @endif
                                     </div>
-                                </div>
-                                {{-- Dot --}}
-                                <div class="heritage-dot"></div>
-                                {{-- Content kanan --}}
-                                <div class="heritage-content right">
-                                    <div class="heritage-gen-badge">Gen {{ $node->generation_number ?? $loop->iteration }}</div>
-                                    @if($node->learned_from_year)
-                                        <div class="heritage-year">{{ $node->learned_from_year }}</div>
-                                    @endif
-                                    <div class="heritage-name">{{ $node->teacher_name }}</div>
-                                    @if($node->skill_description)
-                                        <div class="heritage-desc">{{ $node->skill_description }}</div>
-                                    @endif
-                                </div>
-                            @endif
+                                @else
+                                    {{-- Foto kiri --}}
+                                    <div class="heritage-photo-wrap left">
+                                        @if($node->photo_url)
+                                            <img src="{{ asset('storage/' . $node->photo_url) }}" alt="{{ $node->teacher_name }}" class="heritage-photo">
+                                        @else
+                                            <div class="heritage-photo" style="display:flex; align-items:center; justify-content:center;">
+                                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#D4CCC0" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    {{-- Dot --}}
+                                    <div class="heritage-dot"></div>
+                                    {{-- Content kanan --}}
+                                    <div class="heritage-content right">
+                                        <div class="heritage-year">{{ $node->learned_from_year ?? 'Gen ' . ($node->generation_number ?? $loop->iteration) }}</div>
+                                        <div class="heritage-name">{{ $node->teacher_name }} [Gen {{ $node->generation_number ?? $loop->iteration }}]</div>
+                                        @if($node->skill_description)
+                                            <div class="heritage-desc">{{ $node->skill_description }}</div>
+                                        @endif
+                                    </div>
+                                @endif
 
-                        </div>
-                    @endforeach
-                </div>
-            @endif
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
         </div>
     </div>
 
-    {{-- ═══════════════════════════════════════ --}}
-    {{-- EXPERIENCES                            --}}
-    {{-- ═══════════════════════════════════════ --}}
+    {{-- Experiences --}}
     <div class="host-section" id="experiences">
         <h2 class="section-title">Learn from the master</h2>
-        <p class="section-sub">Experiences from 2–8 hours led personally by {{ explode(' ', $host->user->name)[0] }}.</p>
+        <p class="section-sub">Experiences led personally by {{ explode(' ', $host->user->name)[0] }}.</p>
 
         <div class="exp-grid">
             @forelse($experiences as $exp)
-                @php
-                    $cover = $exp->photos->where('is_cover', true)->first() ?? $exp->photos->first();
-                    $judul = is_array($exp->judul)
-                        ? ($exp->judul[$locale] ?? $exp->judul['id'] ?? $exp->judul['en'] ?? '')
-                        : $exp->judul;
-                    $katNama = '';
-                    if ($exp->kategori) {
-                        $katNama = is_array($exp->kategori->nama)
-                            ? ($exp->kategori->nama[$locale] ?? $exp->kategori->nama['id'] ?? '')
-                            : $exp->kategori->nama;
-                    }
-                @endphp
-                <a href="{{ route('experiences.show', $exp->slug) }}" class="exp-card">
-                    @if($cover)
-                        <img src="{{ $cover->url }}" alt="{{ $judul }}" class="exp-card-img">
-                    @else
-                        <div class="exp-card-img" style="display:flex; align-items:center; justify-content:center;">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                        </div>
-                    @endif
-                    <div class="exp-card-body">
-                        @if($katNama)
-                            <div class="exp-card-cat">{{ $katNama }}</div>
-                        @endif
-                        <div class="exp-card-title">{{ $judul }}</div>
-                        <div class="exp-card-meta">
-                            <span>📍 {{ $exp->kabupaten }}</span>
-                            <span>⏱ {{ $exp->durasi_menit }} min</span>
-                            @if($exp->rating_avg > 0)
-                                <span>★ {{ number_format($exp->rating_avg, 1) }}</span>
-                            @endif
-                        </div>
-                        <div class="exp-card-price">
-                            Rp {{ number_format($exp->harga, 0, ',', '.') }}
-                            <span>/ person</span>
-                        </div>
-                    </div>
-                </a>
+                @include('components.experience.card', ['exp' => $exp])
             @empty
                 <div class="exp-empty">
                     <div style="font-size:1.5rem; margin-bottom:0.5rem;">🌿</div>

@@ -116,11 +116,12 @@
             <div class="form-section">
                 <div class="form-section-header">
                     <div class="form-section-title">Profile Photo</div>
+                    <a href="{{ route('hosts.show', $host->id) }}" target="_blank" class="btn-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;">View Public Profile</a>
                 </div>
                 <div class="form-section-body" x-data="{ preview: null }">
                     <div style="display:flex; align-items:center; gap:1.5rem;">
                         <div style="position:relative;">
-                            <img :src="preview || '{{ auth()->user()->avatar ?? 'https://ui-avatars.com/api/?name=' . urlencode(auth()->user()->name) . '&background=1E3A2F&color=fff&size=200' }}'" alt=""
+                            <img :src="preview || '{{ auth()->user()->avatarUrl() }}'" alt=""
                                 style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid #EDE7DC;">
                         </div>
                         <div>
@@ -192,19 +193,36 @@
                 @foreach($heritageTree as $node)
                     <div class="heritage-node">
                         <div class="heritage-node-num">Generation {{ $node->generation_number ?? $loop->iteration }}</div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:0.75rem;">
+                        <div style="display:grid; grid-template-columns:auto 1fr; gap:1.25rem; align-items:start; margin-bottom:0.75rem;">
+                            {{-- Foto --}}
                             <div>
-                                <div style="font-size:0.72rem; font-weight:700; color:#7A7A6E; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.3rem;">Teacher / Mentor</div>
-                                <div style="font-size:0.875rem; font-weight:500; color:#1E3A2F;">{{ $node->teacher_name }}</div>
+                                @if($node->photo_url)
+                                    <img src="{{ asset('storage/' . $node->photo_url) }}"
+                                         alt="{{ $node->teacher_name }}"
+                                         style="width:72px; height:72px; border-radius:10px; object-fit:cover; border:1.5px solid #EDE7DC;">
+                                @else
+                                    <div style="width:72px; height:72px; border-radius:10px; background:#F7F3ED; border:1.5px dashed #EDE7DC; display:flex; align-items:center; justify-content:center;">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C4A882" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    </div>
+                                @endif
                             </div>
+                            {{-- Info --}}
                             <div>
-                                <div style="font-size:0.72rem; font-weight:700; color:#7A7A6E; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.3rem;">Year Learned</div>
-                                <div style="font-size:0.875rem; color:#1E3A2F;">{{ $node->learned_from_year ?? '—' }}</div>
+                                <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:0.5rem;">
+                                    <div>
+                                        <div style="font-size:0.72rem; font-weight:700; color:#7A7A6E; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.3rem;">Teacher / Mentor</div>
+                                        <div style="font-size:0.875rem; font-weight:500; color:#1E3A2F;">{{ $node->teacher_name }}</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size:0.72rem; font-weight:700; color:#7A7A6E; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:0.3rem;">Year Learned</div>
+                                        <div style="font-size:0.875rem; color:#1E3A2F;">{{ $node->learned_from_year ?? '—' }}</div>
+                                    </div>
+                                </div>
+                                @if($node->skill_description)
+                                    <div style="font-size:0.82rem; color:#4A4A4A; line-height:1.6;">{{ $node->skill_description }}</div>
+                                @endif
                             </div>
                         </div>
-                        @if($node->skill_description)
-                            <div style="font-size:0.82rem; color:#4A4A4A; line-height:1.6;">{{ $node->skill_description }}</div>
-                        @endif
                         <form method="POST" action="{{ route('host.profile.heritage.delete', $node->id) }}" style="margin-top:0.75rem;">
                             @csrf
                             @method('DELETE')
@@ -221,7 +239,7 @@
                     <div style="font-size:0.875rem; font-weight:600; color:#1E3A2F; margin-bottom:1rem;">
                         + Add {{ $heritageTree->count() > 0 ? 'Another' : 'First' }} Generation
                     </div>
-                    <form method="POST" action="{{ route('host.profile.heritage.store') }}">
+                    <form method="POST" action="{{ route('host.profile.heritage.store') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="form-grid-2" style="margin-bottom:1rem;">
                             <div class="form-group">
@@ -245,6 +263,32 @@
                             <input type="number" name="generation_number" class="form-input"
                                 value="{{ $heritageTree->count() + 1 }}" min="1" style="max-width:120px;">
                         </div>
+
+                        {{-- Photo Upload --}}
+                        <div class="form-group" style="margin-bottom:1.25rem;" x-data="{ preview: null }">
+                            <label class="form-label">Photo of Teacher / Ancestor</label>
+                            <div style="display:flex; align-items:center; gap:1.25rem; margin-top:0.4rem;">
+                                <div style="width:72px; height:72px; border-radius:10px; overflow:hidden; background:#F7F3ED; border:1.5px dashed #EDE7DC; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <template x-if="preview">
+                                        <img :src="preview" style="width:100%; height:100%; object-fit:cover;">
+                                    </template>
+                                    <template x-if="!preview">
+                                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C4A882" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                    </template>
+                                </div>
+                                <div>
+                                    <label style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.5rem 0.875rem; border:1.5px solid #EDE7DC; border-radius:8px; cursor:pointer; font-size:0.8rem; font-weight:500; color:#1E3A2F; background:white;"
+                                        onmouseover="this.style.background='#F7F3ED'" onmouseout="this.style.background='white'">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                        Upload Photo
+                                        <input type="file" name="photo" accept="image/*" style="display:none;"
+                                            x-on:change="preview = URL.createObjectURL($event.target.files[0])">
+                                    </label>
+                                    <div style="font-size:0.7rem; color:#9CA3AF; margin-top:0.3rem;">JPG, PNG — Max 3MB</div>
+                                </div>
+                            </div>
+                        </div>
+
                         <button type="submit" class="btn-primary">Add to Heritage Tree</button>
                     </form>
                 </div>

@@ -46,14 +46,15 @@ class HostProfileController extends Controller
                 'avatar'    => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
             ]);
 
-            // Upload avatar ke Cloudinary
+            // Upload avatar ke Storage Local
             if ($request->hasFile('avatar')) {
-                $cloudinary = new CloudinaryService();
-                $uploaded   = $cloudinary->upload(
-                    $request->file('avatar'),
-                    'cittaloka/avatars'
-                );
-                Auth::user()->update(['avatar' => $uploaded['url']]);
+                // Delete old avatar if exists
+                if (Auth::user()->avatar && !str_starts_with(Auth::user()->avatar, 'http')) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete(Auth::user()->avatar);
+                }
+                
+                $path = $request->file('avatar')->store('avatars', 'public');
+                Auth::user()->update(['avatar' => $path]);
             }
 
             Auth::user()->update(['name' => $request->name]);
@@ -92,9 +93,15 @@ class HostProfileController extends Controller
             'skill_description' => 'nullable|string',
             'learned_from_year' => 'nullable|integer|min:1900|max:' . date('Y'),
             'generation_number' => 'nullable|integer|min:1',
+            'photo'             => 'nullable|image|mimes:jpeg,jpg,png|max:3072',
         ]);
 
         $sortOrder = HeritageTree::where('host_id', $host->id)->max('sort_order') + 1;
+
+        $photoUrl = null;
+        if ($request->hasFile('photo')) {
+            $photoUrl = $request->file('photo')->store('heritage', 'public');
+        }
 
         HeritageTree::create([
             'host_id'           => $host->id,
@@ -103,6 +110,7 @@ class HostProfileController extends Controller
             'learned_from_year' => $request->learned_from_year,
             'generation_number' => $request->generation_number,
             'sort_order'        => $sortOrder,
+            'photo_url'         => $photoUrl,
         ]);
 
         return back()->with('success', 'Heritage tree berhasil ditambahkan!');

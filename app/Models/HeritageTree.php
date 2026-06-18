@@ -15,6 +15,7 @@ class HeritageTree extends Model
         'learned_from_year',
         'generation_number',
         'sort_order',
+        'photo_url',
     ];
 
     // Tidak ada updated_at di migration (hanya created_at)

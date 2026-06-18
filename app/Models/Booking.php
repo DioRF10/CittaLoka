@@ -114,8 +114,8 @@ class Booking extends Model
         return $this->hasOne(Payment::class);
     }
 
-    public function coupon()
-    {
-        return $this->belongsTo(Coupon::class);
-    }
+    // public function coupon()
+    // {
+    //     return $this->belongsTo(Coupon::class);
+    // }
 }

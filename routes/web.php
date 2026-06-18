@@ -12,6 +12,8 @@ use App\Http\Controllers\BookingController;
 use App\Models\Experience;
 use App\Http\Controllers\Host\HostDashboardController;
 use App\Http\Controllers\Host\ExperienceFormController;
+use App\Http\Controllers\Host\HostProfileController;
+use App\Http\Controllers\HostPublicController;
 
 
 Route::get('/', function () {
@@ -102,6 +104,8 @@ Route::get('/experiences', [ExperienceController::class, 'index'])->name('experi
 Route::get('/experiences/{slug}', [ExperienceController::class, 'show'])
     ->name('experiences.show');
 Route::get('/experiences/{slug}/times', [ExperienceController::class, 'getTimes'])->name('experiences.times');
+Route::get('/hosts/{id}', [HostPublicController::class, 'show'])->name('hosts.show');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/checkout/{slug}', [CheckoutController::class, 'show'])->name('checkout.show');
     Route::post('/checkout/{slug}', [CheckoutController::class, 'store'])->name('checkout.store');
@@ -170,4 +174,12 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('dashboard')->name('host
     // Settings
     Route::get('/settings', [HostDashboardController::class, 'settings'])->name('settings');
     Route::put('/settings', [HostDashboardController::class, 'updateSettings'])->name('settings.update');
+
+     // Profile
+    Route::get('/profile',  [HostProfileController::class, 'index'])->name('profile.index');
+    Route::put('/profile',  [HostProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/heritage', [HostProfileController::class, 'storeHeritage'])->name('profile.heritage.store');
+    Route::delete('/profile/heritage/{id}', [HostProfileController::class, 'deleteHeritage'])->name('profile.heritage.delete');
+
 });
+

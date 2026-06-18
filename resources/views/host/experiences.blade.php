@@ -218,8 +218,9 @@
 </div>
 
 {{-- Delete Confirmation Modal --}}
+<template x-teleport="body">
 <div x-show="showDeleteModal"
-    style="position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center;"
+    class="fixed inset-0 z-[99999] flex items-center justify-center"
     x-cloak>
     {{-- Backdrop --}}
     <div style="position:absolute; inset:0; background:rgba(0,0,0,0.45); backdrop-filter:blur(3px);"
@@ -270,6 +271,7 @@
         </div>
     </div>
 </div>
+</template>
 
 </div>{{-- /x-data wrapper --}}
 

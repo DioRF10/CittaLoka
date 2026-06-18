@@ -211,41 +211,55 @@ class HostDashboardController extends Controller
         $host = $this->getHost();
         if (!$host) return response()->json(['error' => 'Unauthorized'], 403);
 
-        $booking = Booking::with(['experience', 'user', 'coupon'])
+        $booking = Booking::with(['experience', 'user'])
             ->where('host_id', $host->id)
             ->findOrFail($id);
 
+        $user = $booking->user;
+        $isConfirmed = in_array($booking->status, ['confirmed', 'completed']);
+
+        // Hitung jam selesai
+        $jamSelesai = null;
+        if ($booking->jam_experience && $booking->experience?->durasi_menit) {
+            $jamSelesai = Carbon::parse($booking->jam_experience)
+                ->addMinutes($booking->experience->durasi_menit)
+                ->format('H:i') . ' WITA';
+        }
+
         return response()->json([
-            'kode_booking'               => $booking->kode_booking,
-            'status'                     => $booking->status,
-            'status_label'               => $booking->getStatusLabel(),
-            'guest_name'                 => $booking->user->name,
-            'guest_email'                => $booking->user->email,
-            'experience_title'           => $booking->experience_title_snapshot,
-            'location'                   => $booking->location_snapshot,
-            'tanggal'                    => Carbon::parse($booking->tanggal_experience)->format('d M Y'),
-            'jam'                        => $booking->jam_experience
-                                              ? Carbon::parse($booking->jam_experience)->format('H:i') . ' WITA'
-                                              : null,
-            'jumlah_peserta'             => $booking->jumlah_peserta,
-            'is_private'                 => $booking->is_private,
-            'harga_per_orang'            => 'Rp ' . number_format($booking->harga_per_orang_snapshot, 0, ',', '.'),
-            'total_harga'                => 'Rp ' . number_format($booking->total_harga, 0, ',', '.'),
-            'platform_fee'               => 'Rp ' . number_format($booking->platform_fee, 0, ',', '.'),
-            'host_earning'               => 'Rp ' . number_format($booking->host_earning, 0, ',', '.'),
-            'discount'                   => $booking->discount_amount > 0
-                                              ? 'Rp ' . number_format($booking->discount_amount, 0, ',', '.')
-                                              : null,
-            'coupon_code'                => $booking->coupon?->code,
-            'notes_for_host'             => $booking->notes_for_host,
-            'created_at'                 => Carbon::parse($booking->created_at)->format('d M Y, H:i'),
-            'cancelled_at'               => $booking->cancelled_at
-                                              ? Carbon::parse($booking->cancelled_at)->format('d M Y, H:i')
-                                              : null,
-            'cancel_reason'              => $booking->cancel_reason,
-            'completed_at'               => $booking->completed_at
-                                              ? Carbon::parse($booking->completed_at)->format('d M Y, H:i')
-                                              : null,
+            'kode_booking'      => $booking->kode_booking,
+            'status'            => $booking->status,
+            'status_label'      => $booking->getStatusLabel(),
+            'guest_name'        => $user->name,
+            'guest_email'       => $user->email,
+            'guest_avatar'      => $user->avatar
+                                    ? asset('storage/' . $user->avatar)
+                                    : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) . '&background=2D5240&color=fff&size=200',
+            'guest_phone'       => $isConfirmed
+                                    ? ($user->country_code && $user->phone_number
+                                        ? $user->country_code . ' ' . $user->phone_number
+                                        : $user->phone_number)
+                                    : null,
+            'guest_is_verified' => !is_null($user->email_verified_at),
+            'experience_title'  => $booking->experience_title_snapshot,
+            'location'          => $booking->location_snapshot,
+            'meeting_point'     => $booking->experience?->meeting_point,
+            'tanggal'           => Carbon::parse($booking->tanggal_experience)->format('d M Y'),
+            'jam'               => $booking->jam_experience
+                                    ? Carbon::parse($booking->jam_experience)->format('H:i') . ' WITA'
+                                    : null,
+            'jam_selesai'       => $jamSelesai,
+            'jumlah_peserta'    => $booking->jumlah_peserta,
+            'is_private'        => $booking->is_private,
+            'harga_per_orang'   => 'Rp ' . number_format($booking->harga_per_orang_snapshot, 0, ',', '.'),
+            'total_harga'       => 'Rp ' . number_format($booking->total_harga, 0, ',', '.'),
+            'platform_fee'      => 'Rp ' . number_format($booking->platform_fee, 0, ',', '.'),
+            'host_earning'      => 'Rp ' . number_format($booking->host_earning, 0, ',', '.'),
+            'discount'          => $booking->discount_amount > 0
+                                    ? 'Rp ' . number_format($booking->discount_amount, 0, ',', '.')
+                                    : null,
+            'coupon_code'       => null,
+            'notes_for_host'    => $booking->notes_for_host,
         ]);
     }
 

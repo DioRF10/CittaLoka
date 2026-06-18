@@ -35,4 +35,14 @@ class Host extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function experiences()
+    {
+        return $this->hasMany(Experience::class, 'host_id');
+    }
+
+    public function heritageTree()
+    {
+        return $this->hasMany(HeritageTree::class, 'host_id');
+    }
 }

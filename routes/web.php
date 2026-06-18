@@ -14,7 +14,7 @@ use App\Http\Controllers\Host\HostDashboardController;
 use App\Http\Controllers\Host\ExperienceFormController;
 use App\Http\Controllers\Host\HostProfileController;
 use App\Http\Controllers\HostPublicController;
-
+use App\Http\Controllers\MemoryBookController;
 
 Route::get('/', function () {
     $featuredExperiences = Experience::with(['host.user', 'kategori', 'photos'])
@@ -106,6 +106,11 @@ Route::get('/experiences/{slug}', [ExperienceController::class, 'show'])
 Route::get('/experiences/{slug}/times', [ExperienceController::class, 'getTimes'])->name('experiences.times');
 Route::get('/hosts/{id}', [HostPublicController::class, 'show'])->name('hosts.show');
 
+
+
+// =============================================================================
+// Booking
+// =============================================================================
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/checkout/{slug}', [CheckoutController::class, 'show'])->name('checkout.show');
     Route::post('/checkout/{slug}', [CheckoutController::class, 'store'])->name('checkout.store');
@@ -115,7 +120,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/bookings/{kode}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
 });
 
-
+Route::get('/memory-book/{kode}', [MemoryBookController::class, 'show'])
+    ->name('memory-book.show');
 
 // =============================================================================
 // Onboarding

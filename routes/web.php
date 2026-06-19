@@ -15,6 +15,7 @@ use App\Http\Controllers\Host\ExperienceFormController;
 use App\Http\Controllers\Host\HostProfileController;
 use App\Http\Controllers\HostPublicController;
 use App\Http\Controllers\MemoryBookController;
+use App\Http\Controllers\Host\MemoryBookFillController;
 
 Route::get('/', function () {
     $featuredExperiences = Experience::with(['host.user', 'kategori', 'photos'])
@@ -164,6 +165,12 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('dashboard')->name('host
 
     // Memory Books
     Route::get('/memory-books', [HostDashboardController::class, 'memoryBooks'])->name('memory-books.index');
+    Route::get('/memory-books/{id}/fill', [MemoryBookFillController::class, 'show'])
+        ->name('memory-books.fill');
+    Route::put('/memory-books/{id}/fill', [MemoryBookFillController::class, 'update'])
+        ->name('memory-books.fill.update');
+    Route::delete('/memory-books/photos/{photoId}', [MemoryBookFillController::class, 'deletePhoto'])
+        ->name('memory-books.photos.delete');
 
     // Bookings
     Route::get('/bookings', [HostDashboardController::class, 'bookings'])->name('bookings.index');

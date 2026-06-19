@@ -23,7 +23,6 @@ class CloudinaryService
         );
     }
 
-    // Upload foto ke Cloudinary
     public function upload($file, string $folder = 'cittaloka/experiences'): array
     {
         $result = $this->cloudinary->uploadApi()->upload(
@@ -42,7 +41,6 @@ class CloudinaryService
         ];
     }
 
-    // Hapus foto dari Cloudinary
     public function delete(string $publicId): void
     {
         $this->cloudinary->uploadApi()->destroy($publicId);

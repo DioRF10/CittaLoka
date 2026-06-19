@@ -48,7 +48,7 @@
                                 Waiting {{ $hoursAgo }} hours
                             </div>
                         </div>
-                        <a href="#"
+                        <a href="{{ route('host.memory-books.fill', $mb->id) }}"
                             style="padding:0.5rem 1rem; background:#C4783A; color:white; border-radius:8px; font-size:0.8rem; font-weight:600; text-decoration:none; white-space:nowrap;">
                             Fill Now
                         </a>
@@ -135,12 +135,12 @@
                     {{-- Action --}}
                     <div>
                         @if(in_array($mb->status, ['pending_host', 'overdue']))
-                            <a href="#"
+                            <a href="{{ route('host.memory-books.fill', $mb->id) }}"
                                 style="font-size:0.78rem; font-weight:600; color:#1E3A2F; text-decoration:underline;">
                                 Fill Memory Book
                             </a>
                         @elseif($mb->status === 'sent')
-                            <a href="#"
+                            <a href="{{ route('memory-book.show', $mb->booking->kode_booking) }}"
                                 style="font-size:0.78rem; color:#7A7A6E; text-decoration:underline;">
                                 View
                             </a>

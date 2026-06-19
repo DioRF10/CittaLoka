@@ -8,6 +8,8 @@ class MemoryBookPhoto extends Model
 {
     protected $table = 'memory_book_photos';
 
+    const UPDATED_AT = null; // tabel ini tidak punya kolom updated_at
+
     protected $fillable = [
         'memory_book_id',
         'url',

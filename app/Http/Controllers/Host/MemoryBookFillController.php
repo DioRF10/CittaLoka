@@ -86,7 +86,6 @@ class MemoryBookFillController extends Controller
             }
         }
 
-        // ── Update memory book ──
         $memoryBook->update([
             'judul'           => $request->judul,
             'host_message'    => $request->host_message,
@@ -98,8 +97,7 @@ class MemoryBookFillController extends Controller
         ]);
 
         if ($action === 'send') {
-            // TODO: kirim email ke traveler (bisa tambahkan Mailable di sini)
-            // Mail::to($memoryBook->booking->user->email)->send(new MemoryBookSent($memoryBook));
+    
 
             return redirect()
                 ->route('host.memory-books.index')
@@ -111,8 +109,6 @@ class MemoryBookFillController extends Controller
             ->with('success', 'Draft tersimpan.');
     }
 
-    // ── Delete photo ───────────────────────────────────────────────────────
-    // DELETE /dashboard/memory-books/photos/{photoId}
 
     public function deletePhoto(int $photoId)
     {

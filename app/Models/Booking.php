@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use App\Models\MemoryBook;
 
 class Booking extends Model
 {
@@ -112,6 +113,11 @@ class Booking extends Model
     public function payment()
     {
         return $this->hasOne(Payment::class);
+    }
+
+    public function memoryBook()
+    {
+        return $this->hasOne(MemoryBook::class);
     }
 
     // public function coupon()

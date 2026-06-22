@@ -221,19 +221,74 @@
             </div>
         </div>
 
-        {{-- ── Section 3: Foto ── --}}
+        {{-- ── Section 3: Foto Cover ── --}}
+        <div style="background:white; border:1.5px solid #E8E0D3; border-radius:14px; overflow:hidden;">
+            <div style="padding:1rem 1.5rem; border-bottom:1px solid #EFE7DC; display:flex; align-items:center; gap:0.6rem;">
+                <div style="width:28px; height:28px; border-radius:8px; background:#F7F3ED; display:flex; align-items:center; justify-content:center; font-size:0.9rem;">🖼️</div>
+                <span style="font-size:0.95rem; font-weight:700; color:#1E3A2F;">Foto Cover</span>
+                <span style="font-size:0.72rem; color:#9CA3AF;">(1 foto, untuk hero & cerita host)</span>
+            </div>
+            <div style="padding:1.5rem;">
+
+                @if($memoryBook->cover_photo_url)
+                {{-- Cover yang sudah ada --}}
+                <div style="position:relative; max-width:320px; aspect-ratio:4/5; border-radius:12px; overflow:hidden; border:1.5px solid #E8E0D3;">
+                    <img src="{{ $memoryBook->cover_photo_url }}" alt="Cover" style="width:100%; height:100%; object-fit:cover;">
+                    <label style="position:absolute; bottom:0.5rem; right:0.5rem; padding:0.4rem 0.75rem; background:rgba(0,0,0,0.65); color:white; border-radius:8px; font-size:0.75rem; cursor:pointer;">
+                        Ganti foto
+                        <input type="file"
+                               name="cover_photo"
+                               accept="image/jpeg,image/png,image/jpg"
+                               style="display:none;"
+                               x-on:change="previewCover($event)">
+                    </label>
+                </div>
+                <div x-show="coverPreview" style="margin-top:0.75rem;">
+                    <div style="font-size:0.72rem; color:#C4783A; margin-bottom:0.5rem;">Foto baru (belum disimpan):</div>
+                    <div style="max-width:320px; aspect-ratio:4/5; border-radius:12px; overflow:hidden; border:1.5px solid #C4783A;">
+                        <img :src="coverPreview" style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                </div>
+                @else
+                {{-- Upload cover baru --}}
+                <label style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.5rem; padding:2rem; border:2px dashed #E8E0D3; border-radius:12px; cursor:pointer; background:#FAFAF8; transition:border-color 0.2s; max-width:320px;"
+                       onmouseover="this.style.borderColor='#1E3A2F'"
+                       onmouseout="this.style.borderColor='#E8E0D3'">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C4783A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    <span style="font-size:0.82rem; color:#7A7A6E; text-align:center;">Klik untuk upload foto cover<br><span style="font-size:0.72rem; color:#9CA3AF;">JPG, PNG — maks 5MB</span></span>
+                    <input type="file"
+                           name="cover_photo"
+                           accept="image/jpeg,image/png,image/jpg"
+                           style="display:none;"
+                           x-on:change="previewCover($event)">
+                </label>
+
+                <div x-show="coverPreview" style="margin-top:0.75rem; max-width:320px;">
+                    <div style="font-size:0.72rem; color:#9CA3AF; margin-bottom:0.5rem;">Preview:</div>
+                    <div style="aspect-ratio:4/5; border-radius:12px; overflow:hidden; border:1.5px solid #E8E0D3;">
+                        <img :src="coverPreview" style="width:100%; height:100%; object-fit:cover;">
+                    </div>
+                </div>
+                @endif
+
+            </div>
+        </div>
+
+        {{-- ── Section 4: Gallery Foto (Momen Berharga) ── --}}
         <div style="background:white; border:1.5px solid #E8E0D3; border-radius:14px; overflow:hidden;">
             <div style="padding:1rem 1.5rem; border-bottom:1px solid #EFE7DC; display:flex; align-items:center; gap:0.6rem;">
                 <div style="width:28px; height:28px; border-radius:8px; background:#F7F3ED; display:flex; align-items:center; justify-content:center; font-size:0.9rem;">📸</div>
-                <span style="font-size:0.95rem; font-weight:700; color:#1E3A2F;">Foto Kenangan</span>
-                <span style="font-size:0.72rem; color:#9CA3AF;">(maks 8 foto)</span>
+                <span style="font-size:0.95rem; font-weight:700; color:#1E3A2F;">Galeri Momen Berharga</span>
+                <span style="font-size:0.72rem; color:#9CA3AF;">(maks 20 foto)</span>
             </div>
             <div style="padding:1.5rem; display:flex; flex-direction:column; gap:1rem;">
 
-                {{-- Existing photos --}}
+                {{-- Existing gallery photos --}}
                 @if($memoryBook->photos->isNotEmpty())
                 <div>
-                    <div style="font-size:0.78rem; font-weight:600; color:#4A4A4A; margin-bottom:0.75rem;">Foto yang sudah ada:</div>
+                    <div style="font-size:0.78rem; font-weight:600; color:#4A4A4A; margin-bottom:0.75rem;">
+                        Foto yang sudah ada ({{ $memoryBook->photos->count() }}/20):
+                    </div>
                     <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:0.75rem;">
                         @foreach($memoryBook->photos as $photo)
                         <div style="position:relative; aspect-ratio:4/3; border-radius:10px; overflow:hidden; border:1.5px solid #E8E0D3;">
@@ -249,8 +304,8 @@
                 </div>
                 @endif
 
-                {{-- Upload baru --}}
-                @php $maxUpload = 8 - $memoryBook->photos->count(); @endphp
+                {{-- Upload gallery baru --}}
+                @php $maxUpload = 20 - $memoryBook->photos->count(); @endphp
                 @if($maxUpload > 0)
                 <div>
                     @if($memoryBook->photos->isNotEmpty())
@@ -260,14 +315,13 @@
                            onmouseover="this.style.borderColor='#1E3A2F'"
                            onmouseout="this.style.borderColor='#E8E0D3'">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C4783A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                        <span style="font-size:0.82rem; color:#7A7A6E; text-align:center;">Klik untuk upload foto<br><span style="font-size:0.72rem; color:#9CA3AF;">JPG, PNG — maks 5MB per foto</span></span>
+                        <span style="font-size:0.82rem; color:#7A7A6E; text-align:center;">Klik untuk upload beberapa foto sekaligus<br><span style="font-size:0.72rem; color:#9CA3AF;">JPG, PNG — maks 5MB per foto, maks {{ $maxUpload }} foto</span></span>
                         <input type="file"
                                name="photos[]"
                                multiple
                                accept="image/jpeg,image/png,image/jpg"
                                style="display:none;"
-                               x-on:change="previewPhotos($event)"
-                               max="{{ $maxUpload }}">
+                               x-on:change="previewPhotos($event)">
                     </label>
 
                     {{-- Preview foto baru --}}
@@ -281,6 +335,10 @@
                             </template>
                         </div>
                     </div>
+                </div>
+                @else
+                <div style="text-align:center; padding:1rem; color:#9CA3AF; font-size:0.8rem;">
+                    Sudah mencapai batas maksimal 20 foto.
                 </div>
                 @endif
 
@@ -333,6 +391,7 @@ function memoryBookForm() {
                 : []
         ),
         newPhotos: [],
+        coverPreview: null,
 
         addHighlight() {
             if (this.highlights.length < 4) {
@@ -342,6 +401,14 @@ function memoryBookForm() {
 
         removeHighlight(index) {
             this.highlights.splice(index, 1);
+        },
+
+        previewCover(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => this.coverPreview = e.target.result;
+            reader.readAsDataURL(file);
         },
 
         previewPhotos(event) {

@@ -329,66 +329,102 @@
             margin-bottom: 3rem;
         }
 
-        /* Slider */
-        .slider-wrapper {
+        /* Scrollable Gallery */
+        .gallery-scroll-wrapper {
             position: relative;
-            overflow: hidden;
         }
 
-        .slider-track {
+        .gallery-scroll-track {
             display: flex;
             gap: 1rem;
-            transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding-bottom: 0.5rem;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #C4783A transparent;
         }
 
-        .slide-item {
-            flex: 0 0 calc(20% - 0.8rem);
+        .gallery-scroll-track::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .gallery-scroll-track::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .gallery-scroll-track::-webkit-scrollbar-thumb {
+            background: #D9C6B0;
+            border-radius: 999px;
+        }
+
+        .gallery-scroll-track::-webkit-scrollbar-thumb:hover {
+            background: #C4783A;
+        }
+
+        .gallery-photo-item {
+            flex: 0 0 280px;
             aspect-ratio: 4/3;
             border-radius: 12px;
             overflow: hidden;
+            cursor: zoom-in;
+            scroll-snap-align: start;
         }
 
-        .slide-item img {
+        .gallery-photo-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: transform 0.4s ease;
         }
 
-        .slide-item:hover img {
+        .gallery-photo-item:hover img {
             transform: scale(1.05);
         }
 
-        @media (max-width: 1024px) {
-            .slide-item { flex: 0 0 calc(33.333% - 0.667rem); }
-        }
-
         @media (max-width: 640px) {
-            .slide-item { flex: 0 0 calc(50% - 0.5rem); }
+            .gallery-photo-item { flex: 0 0 220px; }
         }
 
-        .slider-dots {
+        .gallery-scroll-hint {
             display: flex;
+            align-items: center;
             justify-content: center;
             gap: 0.5rem;
-            margin-top: 2rem;
+            margin-top: 1rem;
+            font-size: 0.75rem;
+            color: #9CA3AF;
         }
 
-        .slider-dot {
-            width: 8px;
-            height: 8px;
+        .gallery-nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: #C4BEB1;
+            background: rgba(255,255,255,0.95);
+            border: 1px solid #E8E4DC;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
+            z-index: 10;
+            color: #1E3A2F;
             transition: all 0.2s;
-            border: none;
-            padding: 0;
         }
 
-        .slider-dot.active {
-            background: var(--green-dark);
-            width: 24px;
-            border-radius: 4px;
+        .gallery-nav-btn:hover {
+            background: #1E3A2F;
+            color: #fff;
+        }
+
+        .gallery-nav-prev { left: -8px; }
+        .gallery-nav-next { right: -8px; }
+
+        @media (max-width: 768px) {
+            .gallery-nav-btn { display: none; }
         }
 
         /* ── Bottom 3-col ── */
@@ -644,7 +680,8 @@
 
     {{-- Cover photo --}}
     @php
-        $coverPhoto = $booking->experience?->getCoverPhoto();
+        $coverPhoto = $memoryBook->cover_photo_url
+            ?? $booking->experience?->getCoverPhoto();
     @endphp
 
     @if ($coverPhoto)
@@ -780,7 +817,7 @@
 
             {{-- Foto kanan — ambil foto pertama dari memory book, fallback ke foto experience --}}
             @php
-                $storyPhoto = $memoryBook->photos->first()?->url
+                $storyPhoto = $memoryBook->cover_photo_url
                     ?? $booking->experience?->getCoverPhoto();
             @endphp
 
@@ -799,7 +836,7 @@
      GALLERY — MOMEN-MOMEN BERHARGA
 ═══════════════════════════════════════════════════ --}}
 @if ($memoryBook->photos->count() > 0)
-<section class="section gallery-section" x-data="gallerySlider()">
+<section class="section gallery-section" x-data="galleryScroll()">
     <div class="container">
 
         <p class="section-eyebrow" style="text-align:center;">Moments to Remember</p>
@@ -813,12 +850,22 @@
             </svg>
         </div>
 
-        {{-- Slider --}}
-        <div class="slider-wrapper">
-            <div class="slider-track" :style="`transform: translateX(-${currentPage * slideWidth}px)`">
+        {{-- Scrollable gallery --}}
+        <div class="gallery-scroll-wrapper">
+
+            {{-- Nav buttons (desktop only) --}}
+            @if ($memoryBook->photos->count() > 4)
+            <button class="gallery-nav-btn gallery-nav-prev" x-on:click="scrollGallery(-1)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <button class="gallery-nav-btn gallery-nav-next" x-on:click="scrollGallery(1)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            @endif
+
+            <div class="gallery-scroll-track" x-ref="scrollTrack">
                 @foreach ($memoryBook->photos as $photo)
-                <div class="slide-item"
-                     style="cursor:zoom-in;"
+                <div class="gallery-photo-item"
                      x-on:click="openLightbox('{{ $photo->url }}')">
                     <img src="{{ $photo->url }}"
                          alt="Memory foto {{ $loop->iteration }}"
@@ -828,15 +875,10 @@
             </div>
         </div>
 
-        {{-- Dots --}}
-        @if ($memoryBook->photos->count() > 5)
-        <div class="slider-dots">
-            @for ($i = 0; $i < ceil($memoryBook->photos->count() / 5); $i++)
-            <button class="slider-dot"
-                    :class="{ active: currentPage === {{ $i }} }"
-                    x-on:click="goToPage({{ $i }})">
-            </button>
-            @endfor
+        @if ($memoryBook->photos->count() > 4)
+        <div class="gallery-scroll-hint">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            Geser untuk melihat {{ $memoryBook->photos->count() }} foto lainnya
         </div>
         @endif
 
@@ -873,16 +915,11 @@
         <div class="bottom-grid">
 
             {{-- Kolom 1: Highlight hari itu --}}
-            @php
-                $highlights = is_array($memoryBook->highlight_items)
-                    ? $memoryBook->highlight_items
-                    : json_decode($memoryBook->highlight_items, true);
-            @endphp
-            @if ($highlights && count($highlights) > 0)
+            @if ($memoryBook->highlight_items && count($memoryBook->highlight_items) > 0)
             <div>
                 <p class="highlight-title">Highlight Hari Itu</p>
 
-                @foreach ($highlights as $item)
+                @foreach ($memoryBook->highlight_items as $item)
                 <div class="highlight-item">
                     <div class="highlight-icon">
                         {{ $item['icon'] ?? '✦' }}
@@ -964,27 +1001,16 @@
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
 <script>
-    function gallerySlider() {
+    function galleryScroll() {
         return {
-            currentPage: 0,
             lightboxOpen: false,
             lightboxSrc: '',
-            slideWidth: 0,
 
-            init() {
-                this.$nextTick(() => {
-                    const track = this.$el.querySelector('.slider-track');
-                    if (track) {
-                        const firstSlide = track.querySelector('.slide-item');
-                        if (firstSlide) {
-                            this.slideWidth = firstSlide.offsetWidth + 16; // + gap
-                        }
-                    }
-                });
-            },
-
-            goToPage(page) {
-                this.currentPage = page;
+            scrollGallery(direction) {
+                const track = this.$refs.scrollTrack;
+                if (!track) return;
+                const scrollAmount = 280 + 16; // item width + gap
+                track.scrollBy({ left: direction * scrollAmount * 2, behavior: 'smooth' });
             },
 
             openLightbox(src) {

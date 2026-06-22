@@ -11,6 +11,7 @@ class MemoryBook extends Model
     protected $fillable = [
         'booking_id',
         'judul',             // "Terima kasih, Sarah!" — kolom baru
+        'cover_photo_url',   // foto cover untuk hero & cerita host — kolom baru
         'host_message',      // pesan personal dari host (kolom lama)
         'translated_message',// terjemahan pesan (kolom lama)
         'tourist_language',  // bahasa traveler: id / en (kolom lama)

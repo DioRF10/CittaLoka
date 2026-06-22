@@ -52,10 +52,13 @@ class MemoryBookFillController extends Controller
             'quote_highlight'  => 'nullable|string|max:255',
             'pesan_penutup'    => 'nullable|string',
             'highlight_items'  => 'nullable|string',
+            'cover_photo'      => 'nullable|image|mimes:jpeg,jpg,png|max:5120',
             'photos.*'         => 'nullable|image|mimes:jpeg,jpg,png|max:5120',
         ]);
 
         $action = $request->input('action', 'draft'); // 'draft' atau 'send'
+
+        $cloudinary = app(CloudinaryService::class);
 
         // ── Parse highlight items ──
         $highlightItems = null;
@@ -69,14 +72,20 @@ class MemoryBookFillController extends Controller
             }
         }
 
-        // ── Upload foto baru ke Cloudinary ──
+        // ── Upload cover photo (1 foto) ──
+        $coverPhotoUrl = $memoryBook->cover_photo_url;
+        if ($request->hasFile('cover_photo')) {
+            $uploadedCover = $cloudinary->upload($request->file('cover_photo'), 'cittaloka/memory-books/cover');
+            $coverPhotoUrl = $uploadedCover['url'];
+        }
+
+        // ── Upload foto gallery baru ke Cloudinary (maks 20) ──
         if ($request->hasFile('photos')) {
             $existingCount = $memoryBook->photos()->count();
-            $maxAllowed    = 8 - $existingCount;
-            $cloudinary    = app(CloudinaryService::class);
+            $maxAllowed    = 20 - $existingCount;
 
             foreach (array_slice($request->file('photos'), 0, $maxAllowed) as $index => $file) {
-                $uploaded = $cloudinary->upload($file, 'cittaloka/memory-books');
+                $uploaded = $cloudinary->upload($file, 'cittaloka/memory-books/gallery');
 
                 MemoryBookPhoto::create([
                     'memory_book_id' => $memoryBook->id,
@@ -86,8 +95,10 @@ class MemoryBookFillController extends Controller
             }
         }
 
+        // ── Update memory book ──
         $memoryBook->update([
             'judul'           => $request->judul,
+            'cover_photo_url' => $coverPhotoUrl,
             'host_message'    => $request->host_message,
             'quote_highlight' => $request->quote_highlight,
             'pesan_penutup'   => $request->pesan_penutup,
@@ -97,7 +108,8 @@ class MemoryBookFillController extends Controller
         ]);
 
         if ($action === 'send') {
-    
+            // TODO: kirim email ke traveler (bisa tambahkan Mailable di sini)
+            // Mail::to($memoryBook->booking->user->email)->send(new MemoryBookSent($memoryBook));
 
             return redirect()
                 ->route('host.memory-books.index')
@@ -109,6 +121,8 @@ class MemoryBookFillController extends Controller
             ->with('success', 'Draft tersimpan.');
     }
 
+    // ── Delete photo ───────────────────────────────────────────────────────
+    // DELETE /dashboard/memory-books/photos/{photoId}
 
     public function deletePhoto(int $photoId)
     {

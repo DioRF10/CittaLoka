@@ -49,6 +49,60 @@
     }
 @endphp
 
+@php $isPreview = request()->has('preview'); @endphp
+
+{{-- ── Preview Mode Banner (khusus host) ── --}}
+@if($isPreview)
+<div id="preview-banner"
+    style="position:fixed; top:0; left:0; right:0; z-index:9999;
+           background:linear-gradient(135deg,#1E3A2F,#2D5240);
+           color:white; padding:0.65rem 1.5rem;
+           display:flex; align-items:center; justify-content:space-between;
+           box-shadow:0 2px 12px rgba(0,0,0,0.25); font-family:'DM Sans',sans-serif;">
+    <div style="display:flex; align-items:center; gap:0.75rem;">
+        <span style="font-size:1.1rem;">👁</span>
+        <div>
+            <div style="font-size:0.8rem; font-weight:700; letter-spacing:0.04em;">MODE PREVIEW — Tampilan Publik Experience</div>
+            <div style="font-size:0.72rem; opacity:0.75;">Kamu sedang melihat tampilan yang dilihat traveler. Navigasi dinonaktifkan.</div>
+        </div>
+    </div>
+    <a href="{{ route('host.experiences.index') }}"
+        style="background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.3);
+               color:white; text-decoration:none; padding:0.45rem 1rem;
+               border-radius:8px; font-size:0.8rem; font-weight:500;
+               transition:background 0.2s;"
+        onmouseover="this.style.background='rgba(255,255,255,0.25)'"
+        onmouseout="this.style.background='rgba(255,255,255,0.15)'">← Kembali ke Dashboard</a>
+</div>
+<div style="height:52px;"></div>{{-- spacer agar konten tidak tertutup banner --}}
+@endif
+
+{{-- Blokir klik link saat preview mode --}}
+@if($isPreview)
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('click', function (e) {
+            const link = e.target.closest('a');
+            if (!link) return;
+            // Izinkan hanya tombol kembali ke dashboard
+            if (link.closest('#preview-banner')) return;
+            e.preventDefault();
+            e.stopPropagation();
+            const toast = document.getElementById('preview-nav-toast');
+            if (toast) { toast.style.opacity='1'; setTimeout(()=>toast.style.opacity='0', 2000); }
+        }, true);
+    });
+</script>
+<div id="preview-nav-toast"
+    style="position:fixed; bottom:2rem; left:50%; transform:translateX(-50%);
+           background:#1E3A2F; color:white; padding:0.6rem 1.25rem;
+           border-radius:999px; font-size:0.8rem; font-family:'DM Sans',sans-serif;
+           opacity:0; transition:opacity 0.3s; z-index:99999; pointer-events:none;
+           white-space:nowrap; box-shadow:0 4px 16px rgba(0,0,0,0.2);">
+    🔒 Navigasi dinonaktifkan dalam mode preview
+</div>
+@endif
+
 <div x-data="bookingWidget()" x-init="init()">
 
     {{-- ── Breadcrumb ── --}}
@@ -408,14 +462,42 @@
                     </div>
 
                     {{-- Book Button --}}
-                    <button @click="bookNow()"
-                        :disabled="!selectedDate || !selectedTime"
-                        style="width:100%; padding:0.9rem; background:#1E3A2F; color:white; border:none; border-radius:10px; font-size:0.9rem; font-weight:600; font-family:'DM Sans',sans-serif; margin-bottom:0.6rem; transition:all 0.2s; letter-spacing:0.01em;"
-                        :style="(!selectedDate || !selectedTime) ? {opacity:0.45,cursor:'not-allowed'} : {opacity:1,cursor:'pointer'}"
-                        onmouseover="if(!this.disabled)this.style.background='#2D4A32'"
-                        onmouseout="this.style.background='#1E3A2F'">
-                        <span x-text="isLoggedIn ? 'Book This Experience' : 'Login to Book'"></span>
-                    </button>
+                    @auth
+                        @if(Auth::user()->isHost())
+                            {{-- HOST: tidak boleh booking --}}
+                            <div style="background:#FDF6EE; border:1.5px solid #F3D9B8; border-radius:10px;
+                                        padding:1rem; text-align:center; margin-bottom:0.6rem;">
+                                <div style="font-size:1.1rem; margin-bottom:0.35rem;">🏡</div>
+                                <div style="font-size:0.8rem; font-weight:600; color:#C4783A; margin-bottom:0.2rem;">
+                                    Kamu adalah Host
+                                </div>
+                                <div style="font-size:0.75rem; color:#7A7A6E; line-height:1.5;">
+                                    Host tidak bisa melakukan booking.<br>
+                                    Gunakan akun traveler untuk memesan.
+                                </div>
+                            </div>
+                        @else
+                            {{-- TRAVELER: tombol booking normal --}}
+                            <button @click="bookNow()"
+                                :disabled="!selectedDate || !selectedTime"
+                                style="width:100%; padding:0.9rem; background:#1E3A2F; color:white; border:none; border-radius:10px; font-size:0.9rem; font-weight:600; font-family:'DM Sans',sans-serif; margin-bottom:0.6rem; transition:all 0.2s; letter-spacing:0.01em;"
+                                :style="(!selectedDate || !selectedTime) ? {opacity:0.45,cursor:'not-allowed'} : {opacity:1,cursor:'pointer'}"
+                                onmouseover="if(!this.disabled)this.style.background='#2D4A32'"
+                                onmouseout="this.style.background='#1E3A2F'">
+                                Book This Experience
+                            </button>
+                        @endif
+                    @else
+                        {{-- GUEST: arahkan ke login --}}
+                        <button @click="bookNow()"
+                            :disabled="!selectedDate || !selectedTime"
+                            style="width:100%; padding:0.9rem; background:#1E3A2F; color:white; border:none; border-radius:10px; font-size:0.9rem; font-weight:600; font-family:'DM Sans',sans-serif; margin-bottom:0.6rem; transition:all 0.2s; letter-spacing:0.01em;"
+                            :style="(!selectedDate || !selectedTime) ? {opacity:0.45,cursor:'not-allowed'} : {opacity:1,cursor:'pointer'}"
+                            onmouseover="if(!this.disabled)this.style.background='#2D4A32'"
+                            onmouseout="this.style.background='#1E3A2F'">
+                            Login to Book
+                        </button>
+                    @endauth
 
                     {{-- Wishlist --}}
                     <button @click="toggleWishlist()"

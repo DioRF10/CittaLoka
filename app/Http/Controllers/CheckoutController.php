@@ -16,6 +16,12 @@ class CheckoutController extends Controller
 
     public function show(string $slug, Request $request)
     {
+        // Host tidak boleh melakukan booking
+        if (Auth::check() && Auth::user()->isHost()) {
+            return redirect()->route('experiences.show', $slug)
+                ->with('error', 'Sebagai host, kamu tidak bisa melakukan booking. Gunakan akun traveler untuk memesan experience.');
+        }
+
         $experience = Experience::with(['host.user', 'kategori', 'photos'])
             ->where('slug', $slug)
             ->where('status', 'active')
@@ -84,6 +90,12 @@ class CheckoutController extends Controller
 
     public function store(Request $request, string $slug)
     {
+        // Host tidak boleh melakukan booking
+        if (Auth::check() && Auth::user()->isHost()) {
+            return redirect()->route('experiences.show', $slug)
+                ->with('error', 'Sebagai host, kamu tidak bisa melakukan booking.');
+        }
+
         $request->validate([
             'date'         => 'required|date',
             'time'         => 'required',

@@ -174,7 +174,7 @@
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     </a>
                     {{-- View --}}
-                    <a href="{{ route('experiences.show', $exp->slug) }}" target="_blank" title="View"
+                    <a href="{{ route('experiences.show', $exp->slug) }}?preview=1" target="_blank" title="Preview tampilan publik"
                         style="width:30px; height:30px; border-radius:6px; border:1.5px solid #EDE7DC; display:flex; align-items:center; justify-content:center; color:#7A7A6E; text-decoration:none; transition:all 0.15s;"
                         onmouseover="this.style.background='#F7F3ED'; this.style.color='#1E3A2F'"
                         onmouseout="this.style.background='white'; this.style.color='#7A7A6E'">

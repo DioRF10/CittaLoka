@@ -120,7 +120,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/bookings/{kode}', [BookingController::class, 'show'])->name('bookings.show');
     Route::patch('/bookings/{kode}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
 });
-
+Route::get('/memory-books', [MemoryBookController::class, 'index'])
+    ->name('memory-books.index');
 Route::get('/memory-book/{kode}', [MemoryBookController::class, 'show'])
     ->name('memory-book.show');
 

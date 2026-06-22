@@ -145,6 +145,11 @@ $user = computed(fn() => auth()->user());
                                 style="color: #1a2e1c;">
                                 My Bookings
                             </a>
+                            <a href="{{ route('memory-books.index') }}"
+                                class="flex items-center gap-2.5 px-4 py-2.5 text-sm rounded-xl hover:bg-[#F5F2EC] hover:text-[#1a2e1c] transition-colors duration-150 cursor-pointer"
+                                style="color: #1a2e1c;">
+                                My Memory Books
+                            </a>
                             <a href="/wishlist"
                                 class="flex items-center gap-2.5 px-4 py-2.5 text-sm rounded-xl hover:bg-[#F5F2EC] hover:text-[#1a2e1c] transition-colors duration-150 cursor-pointer"
                                 style="color: #1a2e1c;">

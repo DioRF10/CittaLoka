@@ -38,10 +38,8 @@ class ExperienceFormController extends Controller
 
         $request->validate([
             'judul_id'        => 'required|string|max:200',
-            'judul_en'        => 'required|string|max:200',
             'category_id'     => 'required|exists:kategori,id',
             'deskripsi_id'    => 'nullable|string',
-            'deskripsi_en'    => 'nullable|string',
             'harga'           => 'required|numeric|min:1000',
             'durasi_menit'    => 'required|integer|min:30',
             'kapasitas_min'   => 'required|integer|min:1',
@@ -63,7 +61,7 @@ class ExperienceFormController extends Controller
         ]);
 
         // Buat slug unik
-        $slug = Str::slug($request->judul_en ?: $request->judul_id);
+        $slug = Str::slug($request->judul_id);
         $originalSlug = $slug;
         $count = 1;
         while (Experience::where('slug', $slug)->exists()) {
@@ -75,8 +73,8 @@ class ExperienceFormController extends Controller
             'host_id'        => $host->id,
             'category_id'    => $request->category_id,
             'slug'           => $slug,
-            'judul'          => ['id' => $request->judul_id, 'en' => $request->judul_en],
-            'deskripsi'      => ['id' => $request->deskripsi_id ?? '', 'en' => $request->deskripsi_en ?? ''],
+            'judul'          => ['id' => $request->judul_id, 'en' => null],
+            'deskripsi'      => ['id' => $request->deskripsi_id ?? '', 'en' => null],
             'harga'          => $request->harga,
             'durasi_menit'   => $request->durasi_menit,
             'kapasitas_min'  => $request->kapasitas_min,
@@ -141,10 +139,8 @@ class ExperienceFormController extends Controller
 
         $request->validate([
             'judul_id'       => 'required|string|max:200',
-            'judul_en'       => 'required|string|max:200',
             'category_id'    => 'required|exists:kategori,id',
             'deskripsi_id'   => 'nullable|string',
-            'deskripsi_en'   => 'nullable|string',
             'harga'          => 'required|numeric|min:1000',
             'durasi_menit'   => 'required|integer|min:30',
             'kapasitas_min'  => 'required|integer|min:1',
@@ -159,10 +155,13 @@ class ExperienceFormController extends Controller
             'photos.*'       => 'image|mimes:jpeg,jpg,png,webp|max:5120',
         ]);
 
+        $oldJudul = is_string($experience->judul) ? json_decode($experience->judul, true) : $experience->judul;
+        $oldDeskripsi = is_string($experience->deskripsi) ? json_decode($experience->deskripsi, true) : $experience->deskripsi;
+
         $experience->update([
             'category_id'    => $request->category_id,
-            'judul'          => ['id' => $request->judul_id, 'en' => $request->judul_en],
-            'deskripsi'      => ['id' => $request->deskripsi_id ?? '', 'en' => $request->deskripsi_en ?? ''],
+            'judul'          => ['id' => $request->judul_id, 'en' => $oldJudul['en'] ?? null],
+            'deskripsi'      => ['id' => $request->deskripsi_id ?? '', 'en' => $oldDeskripsi['en'] ?? null],
             'harga'          => $request->harga,
             'durasi_menit'   => $request->durasi_menit,
             'kapasitas_min'  => $request->kapasitas_min,

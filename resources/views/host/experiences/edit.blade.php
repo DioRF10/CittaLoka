@@ -372,14 +372,11 @@
                 <h2 class="form-card-title">Basic Information</h2>
             </div>
             <div class="form-card-body">
-                <div class="form-grid form-grid-2" style="margin-bottom:1.5rem;">
+                <div class="form-grid" style="margin-bottom:1.5rem;">
                     <div class="form-group">
-                        <label class="form-label">Title (English) <span class="req">*</span></label>
-                        <input type="text" name="judul_en" class="form-control" value="{{ old('judul_en', $judulArr['en'] ?? '') }}" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Judul (Indonesia) <span class="req">*</span></label>
+                        <label class="form-label">Judul Experience <span class="req">*</span></label>
                         <input type="text" name="judul_id" class="form-control" value="{{ old('judul_id', $judulArr['id'] ?? '') }}" required>
+                        <p class="form-hint">Versi Bahasa Inggris akan diterjemahkan otomatis nanti.</p>
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom:1.5rem;">
@@ -392,13 +389,9 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="form-grid form-grid-2">
+                <div class="form-grid">
                     <div class="form-group">
-                        <label class="form-label">Description (English)</label>
-                        <textarea name="deskripsi_en" class="form-control">{{ old('deskripsi_en', $deskArr['en'] ?? '') }}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Deskripsi (Indonesia)</label>
+                        <label class="form-label">Deskripsi</label>
                         <textarea name="deskripsi_id" class="form-control">{{ old('deskripsi_id', $deskArr['id'] ?? '') }}</textarea>
                     </div>
                 </div>

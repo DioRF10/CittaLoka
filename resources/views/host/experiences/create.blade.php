@@ -445,14 +445,11 @@
                     <p class="form-card-desc">Give your experience a catchy title and select the most fitting category.</p>
                 </div>
                 <div class="form-card-body">
-                    <div class="form-grid form-grid-2">
+                    <div class="form-grid">
                         <div class="form-group">
-                            <label class="form-label">Title (English) <span class="req">*</span></label>
-                            <input type="text" name="judul_en" class="form-control" placeholder="e.g. Traditional Batik Class in Ubud" value="{{ old('judul_en') }}" required>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Judul (Indonesia) <span class="req">*</span></label>
+                            <label class="form-label">Judul Experience <span class="req">*</span></label>
                             <input type="text" name="judul_id" class="form-control" placeholder="contoh: Kelas Membatik Tradisional di Ubud" value="{{ old('judul_id') }}" required>
+                            <p class="form-hint">Versi Bahasa Inggris akan diterjemahkan otomatis nanti.</p>
                         </div>
                     </div>
                     
@@ -478,11 +475,7 @@
                 <div class="form-card-body">
                     <div class="form-grid">
                         <div class="form-group">
-                            <label class="form-label">Description (English)</label>
-                            <textarea name="deskripsi_en" class="form-control" placeholder="Describe this experience in English...">{{ old('deskripsi_en') }}</textarea>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">Deskripsi (Indonesia)</label>
+                            <label class="form-label">Deskripsi</label>
                             <textarea name="deskripsi_id" class="form-control" placeholder="Ceritakan pengalaman ini dalam Bahasa Indonesia...">{{ old('deskripsi_id') }}</textarea>
                         </div>
                     </div>
@@ -857,11 +850,10 @@ function experienceForm() {
 
         validateStep() {
             if (this.currentStep === 1) {
-                const judulEn = document.querySelector('[name="judul_en"]').value;
                 const judulId = document.querySelector('[name="judul_id"]').value;
                 const category = document.querySelector('[name="category_id"]').value;
-                if (!judulEn || !judulId) {
-                    alert('Please enter the experience title in both English and Indonesian.');
+                if (!judulId) {
+                    alert('Mohon isi judul experience.');
                     return false;
                 }
                 if (!category) {

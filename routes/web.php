@@ -16,6 +16,9 @@ use App\Http\Controllers\Host\HostProfileController;
 use App\Http\Controllers\HostPublicController;
 use App\Http\Controllers\MemoryBookController;
 use App\Http\Controllers\Host\MemoryBookFillController;
+use App\Http\Controllers\XenditWebhookController;
+
+
 
 Route::get('/', function () {
     $featuredExperiences = Experience::with(['host.user', 'kategori', 'photos'])
@@ -197,3 +200,8 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('dashboard')->name('host
 
 });
 
+Route::post('/webhooks/xendit/invoice', [XenditWebhookController::class, 'handleInvoice'])
+    ->name('webhooks.xendit.invoice');
+
+Route::post('/webhooks/xendit/disbursement', [XenditWebhookController::class, 'handleDisbursement'])
+    ->name('webhooks.xendit.disbursement');

@@ -14,6 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'host' => \App\Http\Middleware\EnsureUserIsHost::class,
         ]);
+        $middleware->validateCsrfTokens(except: [
+    'webhooks/xendit/*',
+]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

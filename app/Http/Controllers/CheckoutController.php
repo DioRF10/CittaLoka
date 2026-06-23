@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Experience;
 use App\Models\ExperienceAvailability;
+use App\Services\XenditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -86,7 +87,7 @@ class CheckoutController extends Controller
         ));
     }
 
-    // ── Step 3: Proses Simpan Booking ─────────────────────────────────────
+    // ── Step 3: Proses Simpan Booking + Buat Invoice Xendit ───────────────
 
     public function store(Request $request, string $slug)
     {
@@ -106,7 +107,7 @@ class CheckoutController extends Controller
             'agree_terms.accepted' => 'Kamu harus menyetujui Terms & Conditions.',
         ]);
 
-        $experience = Experience::with('host')
+        $experience = Experience::with('host.user')
             ->where('slug', $slug)
             ->where('status', 'active')
             ->firstOrFail();
@@ -117,16 +118,16 @@ class CheckoutController extends Controller
             ->where('is_blocked', false)
             ->firstOrFail();
 
-        $guests      = (int) $request->guests;
+        $guests        = (int) $request->guests;
         $hargaPerOrang = (float) $experience->harga;
-        $subtotal    = $hargaPerOrang * $guests;
-        $platformFee = round($subtotal * 0.10);
-        $total       = $subtotal + $platformFee;
-        $hostEarning = $subtotal;
+        $subtotal      = $hargaPerOrang * $guests;
+        $platformFee   = round($subtotal * 0.10);
+        $total         = $subtotal + $platformFee;
+        $hostEarning   = $subtotal;
 
         $locale = app()->getLocale();
 
-        // Buat booking
+        // Buat booking dengan status pending_payment
         $booking = Booking::create([
             'kode_booking'              => Booking::generateKode(),
             'user_id'                   => Auth::id(),
@@ -150,19 +151,54 @@ class CheckoutController extends Controller
             'notes_for_host'            => $request->input('notes_for_host'),
         ]);
 
-        // Update booked_slot di availability
+        // Tahan slot dulu (akan dikembalikan otomatis kalau invoice expired)
         $availability->increment('booked_slot', $guests);
 
-        // Untuk sementara (sebelum Midtrans), langsung confirmed
-        $booking->update([
-            'status'         => 'confirmed',
-            'payment_status' => 'paid',
-        ]);
+        // ── Buat Invoice Xendit ──
+        try {
+            $xendit = app(XenditService::class);
 
-        return redirect()->route('checkout.success', $booking->kode_booking);
+            $invoice = $xendit->createInvoice(
+                externalId: $booking->kode_booking,
+                amount: (int) $total,
+                description: "Booking: {$booking->experience_title_snapshot}",
+                customer: [
+                    'given_names'   => Auth::user()->name,
+                    'email'         => Auth::user()->email,
+                    'mobile_number' => $request->phone_number,
+                    'items'         => [
+                        [
+                            'name'     => $booking->experience_title_snapshot,
+                            'quantity' => $guests,
+                            'price'    => (int) $hargaPerOrang,
+                        ],
+                    ],
+                ],
+                successRedirectUrl: route('checkout.success', $booking->kode_booking),
+                failureRedirectUrl: route('experiences.show', $slug),
+            );
+
+            $booking->update([
+                'xendit_invoice_id'   => $invoice['id'],
+                'xendit_invoice_url'  => $invoice['invoice_url'],
+                'payment_expired_at'  => $invoice['expiry_date'] ?? now()->addHours(24),
+            ]);
+
+        } catch (\Exception $e) {
+            // Kalau gagal buat invoice, rollback booking & slot
+            $availability->decrement('booked_slot', $guests);
+            $booking->delete();
+
+            return redirect()
+                ->route('experiences.show', $slug)
+                ->with('error', 'Gagal membuat invoice pembayaran. Silakan coba lagi.');
+        }
+
+        // Redirect ke halaman pembayaran Xendit
+        return redirect()->away($booking->xendit_invoice_url);
     }
 
-    // ── Step 4: Halaman Success ───────────────────────────────────────────
+    // ── Step 4: Halaman Success (setelah dibayar) ─────────────────────────
 
     public function success(string $kodeBooking)
     {
@@ -170,6 +206,11 @@ class CheckoutController extends Controller
             ->where('kode_booking', $kodeBooking)
             ->where('user_id', Auth::id())
             ->firstOrFail();
+
+        // Catatan: status sebenarnya di-update via webhook, bukan di sini.
+        // Halaman ini hanya tampilan setelah redirect dari Xendit.
+        // Kalau status masih pending_payment saat halaman ini dibuka,
+        // tampilkan pesan "menunggu konfirmasi pembayaran".
 
         return view('pages.checkout-success', compact('booking'));
     }

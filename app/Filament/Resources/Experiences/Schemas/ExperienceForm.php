@@ -32,10 +32,11 @@ class ExperienceForm
                             ->dehydrated(false)
                             ->afterStateHydrated(fn ($component, ?Experience $record) => $component->state($record?->host?->user?->name)),
 
-                        TextInput::make('kategori.slug')
+                        TextInput::make('kategori_display')
                             ->label('Kategori')
                             ->disabled()
-                            ->dehydrated(false),
+                            ->dehydrated(false)
+                            ->afterStateHydrated(fn ($component, ?Experience $record) => $component->state($record?->kategori?->getNama() ?? '-')),
 
                         TextInput::make('kabupaten')
                             ->label('Kabupaten')

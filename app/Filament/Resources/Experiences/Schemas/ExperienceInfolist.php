@@ -27,34 +27,16 @@ class ExperienceInfolist
 
                 TextEntry::make('judul')
                     ->label('Judul')
-                    ->formatStateUsing(function ($state): string {
-                        if (is_string($state)) {
-                            $state = json_decode($state, true);
-                        }
-
-                        return is_array($state) ? ($state['id'] ?? $state['en'] ?? '-') : '-';
-                    }),
+                    ->getStateUsing(fn (Experience $record): string => $record->getJudul()),
                 TextEntry::make('deskripsi')
                     ->label('Deskripsi')
-                    ->formatStateUsing(function ($state): string {
-                        if (is_string($state)) {
-                            $state = json_decode($state, true);
-                        }
-
-                        return is_array($state) ? ($state['id'] ?? $state['en'] ?? '-') : '-';
-                    })
+                    ->getStateUsing(fn (Experience $record): string => $record->getDeskripsi())
                     ->columnSpanFull(),
                 TextEntry::make('host.user.name')
                     ->label('Host'),
                 TextEntry::make('kategori.nama')
                     ->label('Kategori')
-                    ->formatStateUsing(function ($state) {
-                        if (is_string($state)) {
-                            $state = json_decode($state, true);
-                        }
-
-                        return is_array($state) ? ($state['id'] ?? '-') : ($state ?? '-');
-                    }),
+                    ->getStateUsing(fn (Experience $record): string => $record->kategori?->getNama() ?? '-'),
                 TextEntry::make('slug'),
                 TextEntry::make('harga')
                     ->numeric(),

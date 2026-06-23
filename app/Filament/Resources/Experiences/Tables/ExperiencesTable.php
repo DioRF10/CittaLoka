@@ -24,14 +24,11 @@ class ExperiencesTable
             ->columns([
                 TextColumn::make('judul')
                     ->label('Judul')
-                    ->formatStateUsing(function ($state): string {
-                        if (is_string($state)) {
-                            $state = json_decode($state, true);
-                        }
-
-                        return is_array($state) ? ($state['id'] ?? $state['en'] ?? '-') : '-';
+                    ->getStateUsing(fn (Experience $record): string => $record->getJudul())
+                    ->searchable(query: function ($query, string $search) {
+                        $query->where('judul->id', 'like', "%{$search}%")
+                              ->orWhere('judul->en', 'like', "%{$search}%");
                     })
-                    ->searchable()
                     ->limit(40),
 
                 TextColumn::make('host.user.name')
@@ -40,13 +37,7 @@ class ExperiencesTable
 
                 TextColumn::make('kategori.nama')
                     ->label('Kategori')
-                    ->formatStateUsing(function ($state) {
-                        if (is_string($state)) {
-                            $state = json_decode($state, true);
-                        }
-
-                        return is_array($state) ? ($state['id'] ?? '-') : ($state ?? '-');
-                    }),
+                    ->getStateUsing(fn (Experience $record): string => $record->kategori?->getNama() ?? '-'),
 
                 TextColumn::make('harga')
                     ->label('Harga')

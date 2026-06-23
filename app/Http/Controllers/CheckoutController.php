@@ -185,13 +185,14 @@ class CheckoutController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Checkout Error: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
             // Kalau gagal buat invoice, rollback booking & slot
             $availability->decrement('booked_slot', $guests);
             $booking->delete();
 
             return redirect()
                 ->route('experiences.show', $slug)
-                ->with('error', 'Gagal membuat invoice pembayaran. Silakan coba lagi.');
+                ->with('error', 'Gagal membuat invoice pembayaran. Silakan coba lagi. (' . $e->getMessage() . ')');
         }
 
         // Redirect ke halaman pembayaran Xendit

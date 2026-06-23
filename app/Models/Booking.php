@@ -35,6 +35,15 @@ class Booking extends Model
         'cancelled_at',
         'cancel_reason',
         'completed_at',
+        'xendit_invoice_id',
+        'xendit_invoice_url',
+        'xendit_payment_method',
+        'payment_expired_at',
+        'paid_at',
+        'xendit_disbursement_id',
+        'disbursement_status',
+        'disbursed_at',
+        'disbursement_failure_reason',
     ];
 
     protected $casts = [
@@ -42,6 +51,9 @@ class Booking extends Model
         'is_private'         => 'boolean',
         'cancelled_at'       => 'datetime',
         'completed_at'       => 'datetime',
+        'payment_expired_at' => 'datetime',
+        'paid_at'            => 'datetime',
+        'disbursed_at'       => 'datetime',
     ];
 
     // ── Generate kode booking unik ────────────────────────────────────────

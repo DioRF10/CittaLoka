@@ -24,11 +24,16 @@ class Host extends Model
         'bank_name',
         'bank_account_name',
         'bank_account_number',
+        'bank_account_holder',
+        'bank_account_last4',
+        'xendit_account_token',
+        'bank_verified_at',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'is_verified' => 'boolean',
+        'bank_verified_at' => 'datetime',
     ];
 
     public function user()

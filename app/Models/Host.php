@@ -28,12 +28,21 @@ class Host extends Model
         'bank_account_last4',
         'xendit_account_token',
         'bank_verified_at',
+        'phone_number',
+        'age',
+        'expertise',
+        'story',
+        'language_preference',
+        'ktp_selfie_path',
+
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'is_verified' => 'boolean',
         'bank_verified_at' => 'datetime',
+        'bank_reviewed_at'  => 'datetime',
+        'expertise'        => 'array', 
     ];
 
     public function user()

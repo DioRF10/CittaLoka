@@ -20,7 +20,7 @@ class HostOnboardingController extends Controller
         }
 
         if ($user->onboarding_completed_at) {
-            return redirect()->route('dashboard.index');
+            return redirect()->route('host.dashboard');
         }
 
         Host::firstOrCreate(['user_id' => $user->id]);

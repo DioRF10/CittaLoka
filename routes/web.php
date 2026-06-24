@@ -17,6 +17,7 @@ use App\Http\Controllers\HostPublicController;
 use App\Http\Controllers\MemoryBookController;
 use App\Http\Controllers\Host\MemoryBookFillController;
 use App\Http\Controllers\XenditWebhookController;
+use App\Http\Controllers\HostBankController;
 
 
 
@@ -141,6 +142,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('onboarding.host');
     Route::post('/onboarding/host/save', [HostOnboardingController::class, 'save'])
         ->name('onboarding.host.save');
+    Route::post('/host/bank-account/verify', [HostBankController::class, 'verify'])
+        ->name('host.bank-account.verify');
+ 
 });
 
 Route::middleware(['auth', 'verified', 'host'])->prefix('dashboard')->name('host.')->group(function () {

@@ -126,9 +126,55 @@ class XenditService
             ]);
             throw new \Exception('Gagal verifikasi rekening: ' . $response->body());
         }
-
+        
         return $response->json();
     }
+    public function verifyHostBankAccount(string $bankCode, string $accountNumber, string $ktpName): array
+    {
+        try {
+        $result = $this->bankAccountInquiry($bankCode, $accountNumber);
+ 
+        $accountName = $result['account_holder_name'] ?? $result['bank_account']['account_holder_name'] ?? null;
+ 
+        if (!$accountName) {
+            return [
+                'success'       => false,
+                'is_match'      => false,
+                'account_name'  => null,
+                'error_message' => 'Nama pemilik rekening tidak ditemukan. Periksa kembali nomor rekening.',
+            ];
+        }
+ 
+        $isMatch = $this->normalizeNameForComparison($accountName) === $this->normalizeNameForComparison($ktpName);
+ 
+        return [
+            'success'       => true,
+            'is_match'      => $isMatch,
+            'account_name'  => $accountName,
+            'error_message' => null,
+        ];
+ 
+    } catch (\Exception $e) {
+        return [
+            'success'       => false,
+            'is_match'      => false,
+            'account_name'  => null,
+            'error_message' => 'Gagal memverifikasi rekening. Pastikan nomor rekening dan bank sudah benar.',
+        ];
+    }
+}
+ 
+/**
+ * Normalisasi nama untuk perbandingan: lowercase, hilangkan spasi ganda,
+ * hilangkan gelar/prefix umum (opsional bisa dikembangkan nanti).
+ */
+private function normalizeNameForComparison(string $name): string
+{
+    $name = strtolower(trim($name));
+    $name = preg_replace('/\s+/', ' ', $name); // spasi ganda jadi satu
+    return $name;
+}
+ 
 
     // ─────────────────────────────────────────────────────────────────────
     // DISBURSEMENT — Transfer ke rekening host

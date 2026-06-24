@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Reviews\Schemas;
 
 use App\Models\Review;
+use App\Models\Review;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
@@ -18,13 +19,7 @@ class ReviewInfolist
                     ->label('Ditulis oleh'),
                 TextEntry::make('experience.judul')
                     ->label('Experience')
-                    ->formatStateUsing(function ($state): string {
-                        if (is_string($state)) {
-                            $state = json_decode($state, true);
-                        }
-
-                        return is_array($state) ? ($state['id'] ?? $state['en'] ?? '-') : '-';
-                    }),
+                    ->getStateUsing(fn (Review $record): string => $record->experience?->getJudul() ?? '-'),
                 TextEntry::make('host.user.name')
                     ->label('Host'),
                 TextEntry::make('rating')

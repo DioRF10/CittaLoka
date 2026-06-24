@@ -29,13 +29,7 @@ class ReviewsTable
 
                 TextColumn::make('experience.judul')
                     ->label('Experience')
-                    ->formatStateUsing(function ($state): string {
-                        if (is_string($state)) {
-                            $state = json_decode($state, true);
-                        }
-
-                        return is_array($state) ? ($state['id'] ?? $state['en'] ?? '-') : '-';
-                    })
+                    ->getStateUsing(fn (Review $record): string => $record->experience?->getJudul() ?? '-')
                     ->limit(30),
 
                 TextColumn::make('rating')

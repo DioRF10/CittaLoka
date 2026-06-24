@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Kategoris\Tables;
 
+use App\Models\Kategori;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -17,13 +18,7 @@ class KategorisTable
             ->columns([
                 TextColumn::make('nama')
                     ->label('Nama')
-                    ->formatStateUsing(function ($state): string {
-                        if (is_string($state)) {
-                            $state = json_decode($state, true);
-                        }
-
-                        return is_array($state) ? ($state['id'] ?? $state['en'] ?? '-') : '-';
-                    })
+                    ->getStateUsing(fn (Kategori $record): string => $record->getNama())
                     ->searchable(),
 
                 TextColumn::make('slug')

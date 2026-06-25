@@ -70,13 +70,21 @@
             </select>
 
             {{-- Create Button --}}
-            <a href="{{ route('host.experiences.create') }}"
-                style="display:flex; align-items:center; gap:0.4rem; padding:0.5rem 1rem; background:#1E3A2F; color:white; border-radius:8px; font-size:0.8rem; font-weight:500; text-decoration:none; transition:all 0.2s;"
-                onmouseover="this.style.background='#2D4A32'"
-                onmouseout="this.style.background='#1E3A2F'">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                Create New Experience
-            </a>
+            @if(Auth::user()->host?->ktp_status === 'verified')
+                <a href="{{ route('host.experiences.create') }}"
+                    style="display:flex; align-items:center; gap:0.4rem; padding:0.5rem 1rem; background:#1E3A2F; color:white; border-radius:8px; font-size:0.8rem; font-weight:500; text-decoration:none; transition:all 0.2s;"
+                    onmouseover="this.style.background='#2D4A32'"
+                    onmouseout="this.style.background='#1E3A2F'">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Create New Experience
+                </a>
+            @else
+                <button disabled title="KTP Anda sedang direview atau belum diverifikasi. Anda belum bisa membuat Experience."
+                    style="display:flex; align-items:center; gap:0.4rem; padding:0.5rem 1rem; background:#9CA3AF; color:white; border-radius:8px; font-size:0.8rem; font-weight:500; border:none; cursor:not-allowed;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Create New Experience (Terkunci)
+                </button>
+            @endif
         </div>
     </div>
 
@@ -92,9 +100,15 @@
         <div style="padding:3rem; text-align:center;">
             <div style="font-size:2rem; margin-bottom:0.75rem;">🌿</div>
             <div style="font-size:0.875rem; color:#9CA3AF; margin-bottom:1rem;">No experiences yet</div>
-            <a href="{{ route('host.experiences.create') }}" style="padding:0.6rem 1.25rem; background:#1E3A2F; color:white; border-radius:8px; font-size:0.82rem; font-weight:500; text-decoration:none;">
-                Create Your First Experience
-            </a>
+            @if(Auth::user()->host?->ktp_status === 'verified')
+                <a href="{{ route('host.experiences.create') }}" style="display:inline-block; padding:0.6rem 1.25rem; background:#1E3A2F; color:white; border-radius:8px; font-size:0.82rem; font-weight:500; text-decoration:none;">
+                    Create Your First Experience
+                </a>
+            @else
+                <div style="display:inline-block; padding:0.6rem 1.25rem; background:#F3F4F6; color:#9CA3AF; border-radius:8px; font-size:0.82rem; font-weight:500; border: 1px solid #E5E7EB;">
+                    KTP Sedang Direview
+                </div>
+            @endif
         </div>
     @else
         @foreach($experiences as $exp)

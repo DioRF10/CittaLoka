@@ -25,6 +25,11 @@ class ExperienceFormController extends Controller
     public function create()
     {
         $host      = $this->getHost();
+
+        if ($host->ktp_status !== 'verified') {
+            return redirect()->route('host.dashboard')->with('error', 'Anda harus menunggu KTP diverifikasi oleh admin sebelum dapat membuat Experience.');
+        }
+
         $kategoris = Kategori::all();
 
         return view('host.experiences.create', compact('host', 'kategoris'));
@@ -35,6 +40,10 @@ class ExperienceFormController extends Controller
     public function store(Request $request)
     {
         $host = $this->getHost();
+
+        if ($host->ktp_status !== 'verified') {
+            return redirect()->route('host.dashboard')->with('error', 'KTP Anda belum diverifikasi.');
+        }
 
         $request->validate([
             'judul_id'        => 'required|string|max:200',

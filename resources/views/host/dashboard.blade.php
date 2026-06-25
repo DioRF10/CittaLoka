@@ -514,6 +514,46 @@
 @endphp
 
 <div class="host-dashboard">
+    @php
+        $ktpStatus = Auth::user()->host?->ktp_status ?? 'unverified';
+    @endphp
+
+    @if($ktpStatus !== 'verified')
+        <div style="background: {{ $ktpStatus === 'rejected' ? '#FEF2F2' : '#FDF6EE' }}; 
+                    border: 1px solid {{ $ktpStatus === 'rejected' ? '#FECACA' : '#F6E0B5' }}; 
+                    border-radius: 12px; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+            <div style="width: 42px; height: 42px; border-radius: 50%; background: {{ $ktpStatus === 'rejected' ? '#FEE2E2' : '#FEF3C7' }}; display: grid; place-items: center; flex-shrink: 0; color: {{ $ktpStatus === 'rejected' ? '#DC2626' : '#D97706' }};">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    @if($ktpStatus === 'rejected')
+                        <circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>
+                    @else
+                        <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    @endif
+                </svg>
+            </div>
+            <div>
+                <h4 style="margin: 0 0 0.25rem; font-size: 0.95rem; font-weight: 700; color: {{ $ktpStatus === 'rejected' ? '#991B1B' : '#92400E' }};">
+                    @if($ktpStatus === 'pending')
+                        Verifikasi KTP Sedang Diproses
+                    @elseif($ktpStatus === 'rejected')
+                        Verifikasi KTP Ditolak
+                    @else
+                        Verifikasi KTP Diperlukan
+                    @endif
+                </h4>
+                <p style="margin: 0; font-size: 0.85rem; color: {{ $ktpStatus === 'rejected' ? '#B91C1C' : '#B45309' }}; line-height: 1.4;">
+                    @if($ktpStatus === 'pending')
+                        Mohon tunggu sebentar, Admin kami sedang meninjau dokumen KTP Anda. Anda baru bisa membuat Experience setelah KTP disetujui.
+                    @elseif($ktpStatus === 'rejected')
+                        Mohon maaf, pengajuan KTP Anda ditolak. Alasan: <strong>{{ Auth::user()->host?->ktp_rejection_note ?? 'Tidak valid' }}</strong>. Silakan hubungi admin.
+                    @else
+                        Silakan selesaikan proses verifikasi KTP terlebih dahulu agar Anda dapat mulai membuat dan menawarkan Experience.
+                    @endif
+                </p>
+            </div>
+        </div>
+    @endif
+
     <section class="dashboard-hero">
         <div class="hero-copy">
             <div class="hero-kicker">

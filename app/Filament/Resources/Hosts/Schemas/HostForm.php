@@ -108,6 +108,25 @@ class HostForm
 
                         TextInput::make('bank_account_number')
                             ->label('No. Rekening'),
+
+                        TextInput::make('bank_account_holder')
+                            ->label('Nama Pemilik (dari Xendit)')
+                            ->disabled()
+                            ->dehydrated(false)
+                            ->helperText('Hasil pengecekan otomatis ke bank, buat dibandingkan sama nama host.'),
+
+                        Select::make('bank_review_status')
+                            ->label('Status Verifikasi')
+                            ->options([
+                                'not_verified' => 'Belum Verifikasi',
+                                'verified' => 'Terverifikasi',
+                                'needs_review' => 'Perlu Direview',
+                            ])
+                            ->native(false),
+
+                        Textarea::make('bank_review_note')
+                            ->label('Catatan Review')
+                            ->columnSpanFull(),
                     ]),
             ]);
     }

@@ -53,6 +53,15 @@ class HostsTable
                     ->label('Aktif')
                     ->boolean(),
 
+                TextColumn::make('bank_review_status')
+                    ->label('Status Rekening')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'verified' => 'success',
+                        'needs_review' => 'warning',
+                        default => 'gray',
+                    }),
+
                 TextColumn::make('rating_avg')
                     ->label('Rating')
                     ->numeric(decimalPlaces: 2)
@@ -85,6 +94,14 @@ class HostsTable
 
                 TernaryFilter::make('is_active')
                     ->label('Status Aktif'),
+
+                SelectFilter::make('bank_review_status')
+                    ->label('Status Rekening')
+                    ->options([
+                        'not_verified' => 'Belum Verifikasi',
+                        'verified' => 'Terverifikasi',
+                        'needs_review' => 'Perlu Direview',
+                    ]),
 
                 TrashedFilter::make(),
             ])
@@ -128,6 +145,52 @@ class HostsTable
 
                         Notification::make()
                             ->title('Pengajuan host ditolak')
+                            ->warning()
+                            ->send();
+                    }),
+
+                Action::make('setujui_rekening')
+                    ->label('Setujui Rekening')
+                    ->icon('heroicon-o-banknotes')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalDescription('Pastikan nama pemilik rekening memang cocok dengan host ini sebelum menyetujui.')
+                    ->visible(fn (Host $record): bool => $record->bank_review_status === 'needs_review')
+                    ->action(function (Host $record): void {
+                        $record->update([
+                            'bank_review_status' => 'verified',
+                            'bank_review_note' => null,
+                            'bank_reviewed_by' => auth()->id(),
+                            'bank_reviewed_at' => now(),
+                        ]);
+
+                        Notification::make()
+                            ->title('Rekening host disetujui')
+                            ->success()
+                            ->send();
+                    }),
+
+                Action::make('tolak_rekening')
+                    ->label('Tolak Rekening')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->visible(fn (Host $record): bool => $record->bank_review_status === 'needs_review')
+                    ->schema([
+                        Textarea::make('bank_review_note')
+                            ->label('Alasan Penolakan')
+                            ->required(),
+                    ])
+                    ->action(function (Host $record, array $data): void {
+                        $record->update([
+                            'bank_review_status' => 'not_verified',
+                            'bank_review_note' => $data['bank_review_note'],
+                            'bank_reviewed_by' => auth()->id(),
+                            'bank_reviewed_at' => now(),
+                        ]);
+
+                        Notification::make()
+                            ->title('Rekening host ditolak, host perlu submit ulang')
                             ->warning()
                             ->send();
                     }),

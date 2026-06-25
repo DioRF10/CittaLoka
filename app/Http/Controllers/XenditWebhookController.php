@@ -59,7 +59,7 @@ class XenditWebhookController extends Controller
 
             case 'EXPIRED':
                 $booking->update([
-                    'status'         => 'payment_expired',
+                    'status'         => 'expired',
                     'payment_status' => 'expired',
                 ]);
 
@@ -73,7 +73,6 @@ class XenditWebhookController extends Controller
 
             case 'FAILED':
                 $booking->update([
-                    'status'         => 'payment_failed',
                     'payment_status' => 'failed',
                 ]);
 

@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\Payments\Tables;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use App\Models\Booking;
+use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -16,70 +16,86 @@ class PaymentsTable
     {
         return $table
             ->columns([
-                TextColumn::make('booking.kode_booking')
+                TextColumn::make('kode_booking')
                     ->label('Kode Booking')
                     ->searchable(),
 
-                TextColumn::make('midtrans_order_id')
-                    ->label('Order ID')
-                    ->searchable()
-                    ->toggleable(),
+                TextColumn::make('user.name')
+                    ->label('Traveler')
+                    ->searchable(),
 
-                TextColumn::make('gross_amount')
-                    ->label('Jumlah')
+                TextColumn::make('experience_title_snapshot')
+                    ->label('Experience')
+                    ->limit(30),
+
+                TextColumn::make('total_harga')
+                    ->label('Total')
                     ->money('IDR')
                     ->sortable(),
 
-                TextColumn::make('payment_type')
+                TextColumn::make('xendit_payment_method')
                     ->label('Metode')
-                    ->searchable(),
+                    ->placeholder('-')
+                    ->toggleable(),
 
-                TextColumn::make('transaction_status')
+                TextColumn::make('payment_status')
                     ->label('Status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'settlement', 'capture' => 'success',
+                        'paid' => 'success',
                         'pending' => 'warning',
-                        'deny', 'cancel', 'expire', 'failure' => 'danger',
-                        'refund', 'partial_refund' => 'gray',
+                        'failed', 'expired' => 'danger',
+                        'refunded' => 'gray',
                         default => 'gray',
                     }),
 
-                TextColumn::make('transaction_time')
-                    ->label('Waktu Transaksi')
+                TextColumn::make('payment_expired_at')
+                    ->label('Invoice Kedaluwarsa')
                     ->dateTime('d M Y H:i')
-                    ->sortable(),
-
-                TextColumn::make('settlement_time')
-                    ->label('Settlement')
-                    ->dateTime('d M Y H:i')
-                    ->sortable()
+                    ->placeholder('-')
                     ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('paid_at')
+                    ->label('Dibayar Pada')
+                    ->dateTime('d M Y H:i')
+                    ->placeholder('-')
+                    ->sortable(),
             ])
             ->filters([
-                SelectFilter::make('transaction_status')
+                SelectFilter::make('payment_status')
                     ->label('Status')
                     ->options([
+                        'unpaid' => 'Belum Bayar',
                         'pending' => 'Pending',
-                        'settlement' => 'Settlement',
-                        'capture' => 'Capture',
-                        'deny' => 'Deny',
-                        'cancel' => 'Cancel',
-                        'expire' => 'Expire',
-                        'failure' => 'Failure',
-                        'refund' => 'Refund',
-                        'partial_refund' => 'Partial Refund',
+                        'paid' => 'Lunas',
+                        'failed' => 'Gagal',
+                        'expired' => 'Kedaluwarsa',
+                        'refunded' => 'Dikembalikan',
                     ]),
             ])
             ->recordActions([
+                Action::make('tandai_lunas_manual')
+                    ->label('Tandai Lunas Manual')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalDescription('Pakai ini hanya kalau pembayaran sudah masuk tapi webhook Xendit gagal/belum diterima.')
+                    ->visible(fn (Booking $record): bool => $record->payment_status !== 'paid')
+                    ->action(function (Booking $record): void {
+                        $record->update([
+                            'payment_status' => 'paid',
+                            'status' => 'confirmed',
+                            'paid_at' => now(),
+                        ]);
+
+                        Notification::make()
+                            ->title('Booking ditandai lunas manual')
+                            ->success()
+                            ->send();
+                    }),
+
                 ViewAction::make(),
-                EditAction::make(),
             ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ])
-            ->defaultSort('transaction_time', 'desc');
+            ->defaultSort('paid_at', 'desc');
     }
 }

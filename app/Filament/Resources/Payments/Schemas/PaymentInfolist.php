@@ -11,48 +11,34 @@ class PaymentInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('booking.kode_booking')
+                TextEntry::make('kode_booking')
                     ->label('Kode Booking'),
-                TextEntry::make('midtrans_order_id'),
-                TextEntry::make('midtrans_transaction_id')
-                    ->placeholder('-'),
-                TextEntry::make('gross_amount')
-                    ->label('Jumlah')
+                TextEntry::make('user.name')
+                    ->label('Traveler'),
+                TextEntry::make('experience_title_snapshot')
+                    ->label('Experience'),
+                TextEntry::make('total_harga')
+                    ->label('Total Harga')
                     ->money('IDR'),
-                TextEntry::make('currency'),
-                TextEntry::make('payment_type')
+                TextEntry::make('xendit_invoice_id')
+                    ->label('Xendit Invoice ID')
                     ->placeholder('-'),
-                TextEntry::make('va_number')
+                TextEntry::make('xendit_invoice_url')
+                    ->label('Link Invoice')
+                    ->placeholder('-')
+                    ->url(fn ($state) => $state, true),
+                TextEntry::make('xendit_payment_method')
+                    ->label('Metode Pembayaran')
                     ->placeholder('-'),
-                TextEntry::make('transaction_status')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'settlement', 'capture' => 'success',
-                        'pending' => 'warning',
-                        'deny', 'cancel', 'expire', 'failure' => 'danger',
-                        default => 'gray',
-                    }),
-                TextEntry::make('fraud_status')
-                    ->placeholder('-'),
-                TextEntry::make('pdf_url')
-                    ->placeholder('-'),
-                TextEntry::make('raw_response')
-                    ->label('Raw Response (Debug)')
-                    ->formatStateUsing(fn ($state) => $state ? json_encode($state, JSON_PRETTY_PRINT) : '-')
-                    ->columnSpanFull(),
-                TextEntry::make('transaction_time')
+                TextEntry::make('payment_status')
+                    ->label('Status')
+                    ->badge(),
+                TextEntry::make('payment_expired_at')
+                    ->label('Invoice Kedaluwarsa Pada')
                     ->dateTime()
                     ->placeholder('-'),
-                TextEntry::make('settlement_time')
-                    ->dateTime()
-                    ->placeholder('-'),
-                TextEntry::make('expired_at')
-                    ->dateTime()
-                    ->placeholder('-'),
-                TextEntry::make('created_at')
-                    ->dateTime()
-                    ->placeholder('-'),
-                TextEntry::make('updated_at')
+                TextEntry::make('paid_at')
+                    ->label('Dibayar Pada')
                     ->dateTime()
                     ->placeholder('-'),
             ]);

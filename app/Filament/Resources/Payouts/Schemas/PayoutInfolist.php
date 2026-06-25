@@ -11,32 +11,30 @@ class PayoutInfolist
     {
         return $schema
             ->components([
+                TextEntry::make('kode_booking')
+                    ->label('Kode Booking'),
                 TextEntry::make('host.user.name')
                     ->label('Host'),
-                TextEntry::make('booking.kode_booking')
-                    ->label('Kode Booking'),
-                TextEntry::make('jumlah_bruto')
-                    ->label('Jumlah Bruto')
+                TextEntry::make('host_earning')
+                    ->label('Jumlah Payout')
                     ->money('IDR'),
-                TextEntry::make('komisi_rate')
-                    ->label('Rate Komisi (%)'),
-                TextEntry::make('komisi_platform')
+                TextEntry::make('platform_fee')
                     ->label('Komisi Platform')
                     ->money('IDR'),
-                TextEntry::make('jumlah_bersih')
-                    ->label('Jumlah Bersih')
-                    ->money('IDR'),
-                TextEntry::make('status')
-                    ->badge(),
-                TextEntry::make('bank_transfer_ref')
-                    ->label('No. Referensi Transfer')
+                TextEntry::make('xendit_disbursement_id')
+                    ->label('Xendit Disbursement ID')
                     ->placeholder('-'),
-                TextEntry::make('paid_at')
-                    ->label('Dibayar Pada')
+                TextEntry::make('disbursement_status')
+                    ->label('Status')
+                    ->badge(),
+                TextEntry::make('disbursement_failure_reason')
+                    ->label('Alasan Gagal')
+                    ->placeholder('-')
+                    ->columnSpanFull(),
+                TextEntry::make('disbursed_at')
+                    ->label('Dikirim Pada')
                     ->dateTime()
                     ->placeholder('-'),
-                TextEntry::make('created_at')
-                    ->dateTime(),
             ]);
     }
 }

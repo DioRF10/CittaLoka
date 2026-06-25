@@ -159,7 +159,7 @@ class HostOnboardingController extends Controller
 
             return response()->json([
                 'success' => true,
-                'redirect' => route('dashboard.index'),
+                'redirect' => route('host.dashboard'),
                 'bank_status' => $host->bank_review_status,
                 'bank_message' => $isMatch
                     ? 'Anda siap menerima pencairan dana dari booking pertama Anda.'

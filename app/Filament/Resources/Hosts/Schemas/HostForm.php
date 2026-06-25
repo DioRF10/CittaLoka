@@ -31,6 +31,19 @@ class HostForm
                             ->disabled()
                             ->dehydrated(false),
 
+                        TextInput::make('phone_number')
+                            ->label('No. Telepon')
+                            ->disabled(),
+
+                        TextInput::make('age')
+                            ->label('Umur')
+                            ->numeric()
+                            ->disabled(),
+
+                        TextInput::make('language_preference')
+                            ->label('Preferensi Bahasa')
+                            ->disabled(),
+
                         TextInput::make('village')
                             ->label('Desa / Kampung'),
 
@@ -39,20 +52,37 @@ class HostForm
                             ->url(),
 
                         Textarea::make('bio')
+                            ->label('Bio Singkat')
+                            ->columnSpanFull(),
+
+                        Textarea::make('story')
+                            ->label('Cerita Host (Story)')
+                            ->columnSpanFull(),
+
+                        \Filament\Forms\Components\TagsInput::make('expertise')
+                            ->label('Keahlian (Expertise)')
+                            ->disabled()
                             ->columnSpanFull(),
                     ]),
 
                 Section::make('Verifikasi KTP')
                     ->columns(2)
                     ->schema([
-                        Action::make('lihat_ktp')
-                            ->label('Lihat Foto KTP')
-                            ->icon('heroicon-o-eye')
-                            ->color('gray')
-                            ->url(fn (?Host $record): ?string => $record?->ktp_path)
-                            ->openUrlInNewTab()
-                            ->visible(fn (?Host $record): bool => filled($record?->ktp_path))
-                            ->columnSpanFull(),
+                        \Filament\Forms\Components\FileUpload::make('ktp_path')
+                            ->label('Foto KTP')
+                            ->image()
+                            ->disk('public')
+                            ->downloadable()
+                            ->openable()
+                            ->disabled(), // Supaya admin tidak bisa menghapus/mengubah dari sini tanpa sengaja
+
+                        \Filament\Forms\Components\FileUpload::make('ktp_selfie_path')
+                            ->label('Selfie dengan KTP')
+                            ->image()
+                            ->disk('public')
+                            ->downloadable()
+                            ->openable()
+                            ->disabled(),
 
                         Select::make('ktp_status')
                             ->label('Status KTP')

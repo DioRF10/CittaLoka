@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Reviews\Schemas;
 
 use App\Models\Review;
-use App\Models\Review;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 

@@ -117,53 +117,26 @@ class HostOnboardingController extends Controller
                 'confirm_bank' => ['required', 'accepted'],
             ]);
 
-            // ── Verifikasi rekening via Xendit ──
-            $xendit = app(XenditService::class);
-            $bankCode = $this->mapBankNameToXenditCode($request->input('bank_name'));
+            // ── Verifikasi Rekening Manual ──
+            // Sistem diubah menjadi verifikasi manual oleh admin (Xendit Inquiry di-bypass)
 
-            $result = $xendit->verifyHostBankAccount(
-                bankCode: $bankCode,
-                accountNumber: $request->input('bank_account_number'),
-                ktpName: $user->name
-            );
-
-            // Simpan data rekening apa pun hasilnya (host tidak diblokir di sini)
             $host->bank_name = $request->input('bank_name');
             $host->bank_account_name = $request->input('bank_account_name');
             $host->bank_account_number = $request->input('bank_account_number');
-
-            if ($result['success']) {
-                $host->bank_account_holder = $result['account_name'];
-                $host->bank_account_last4 = substr($request->input('bank_account_number'), -4);
-
-                if ($result['is_match']) {
-                    $host->bank_review_status = 'verified';
-                    $host->bank_verified_at = now();
-                    $host->bank_review_note = null;
-                } else {
-                    $host->bank_review_status = 'needs_review';
-                    $host->bank_verified_at = null;
-                    $host->bank_review_note = "Nama rekening ('{$result['account_name']}') tidak cocok dengan nama akun ('{$user->name}'). Menunggu review admin sebelum pencairan dana pertama.";
-                }
-            } else {
-                $host->bank_review_status = 'needs_review';
-                $host->bank_verified_at = null;
-                $host->bank_review_note = $result['error_message'] ?? 'Verifikasi otomatis gagal. Perlu pengecekan manual.';
-            }
+            
+            $host->bank_review_status = 'needs_review';
+            $host->bank_verified_at = null;
+            $host->bank_review_note = 'Menunggu verifikasi manual oleh admin.';
 
             $host->save();
 
             $user->fill(['onboarding_completed_at' => now()->toDateTimeString()])->save();
 
-            $isMatch = $result['success'] && $result['is_match'];
-
             return response()->json([
                 'success' => true,
                 'redirect' => route('host.dashboard'),
                 'bank_status' => $host->bank_review_status,
-                'bank_message' => $isMatch
-                    ? 'Anda siap menerima pencairan dana dari booking pertama Anda.'
-                    : 'Tim kami akan meninjau secara singkat sebelum pencairan dana pertama. Anda tidak perlu mengulang langkah ini.',
+                'bank_message' => 'Rekening Anda telah disimpan dan sedang dalam proses verifikasi manual oleh admin.',
             ]);
         }
 

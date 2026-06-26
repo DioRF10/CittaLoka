@@ -516,14 +516,15 @@
 <div class="host-dashboard">
     @php
         $ktpStatus = Auth::user()->host?->ktp_status ?? 'unverified';
+        $bankStatus = Auth::user()->host?->bank_review_status ?? 'not_verified';
     @endphp
 
     @if($ktpStatus !== 'verified')
-        <div style="background: {{ $ktpStatus === 'rejected' ? '#FEF2F2' : '#FDF6EE' }}; 
-                    border: 1px solid {{ $ktpStatus === 'rejected' ? '#FECACA' : '#F6E0B5' }}; 
-                    border-radius: 12px; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
-            <div style="width: 42px; height: 42px; border-radius: 50%; background: {{ $ktpStatus === 'rejected' ? '#FEE2E2' : '#FEF3C7' }}; display: grid; place-items: center; flex-shrink: 0; color: {{ $ktpStatus === 'rejected' ? '#DC2626' : '#D97706' }};">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <div style="background: {{ $ktpStatus === 'rejected' ? '#FEF2F2' : '#FDF6EE' }};
+                    border: 1px solid {{ $ktpStatus === 'rejected' ? '#FECACA' : '#F6E0B5' }};
+                    border-radius: 12px; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: {{ $ktpStatus === 'rejected' ? '#FEE2E2' : '#FEF3C7' }}; display: grid; place-items: center; flex-shrink: 0; color: {{ $ktpStatus === 'rejected' ? '#DC2626' : '#D97706' }};">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     @if($ktpStatus === 'rejected')
                         <circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>
                     @else
@@ -532,24 +533,51 @@
                 </svg>
             </div>
             <div>
-                <h4 style="margin: 0 0 0.25rem; font-size: 0.95rem; font-weight: 700; color: {{ $ktpStatus === 'rejected' ? '#991B1B' : '#92400E' }};">
-                    @if($ktpStatus === 'pending')
-                        Verifikasi KTP Sedang Diproses
-                    @elseif($ktpStatus === 'rejected')
-                        Verifikasi KTP Ditolak
-                    @else
-                        Verifikasi KTP Diperlukan
+                <div style="font-size: 0.9rem; font-weight: 700; color: {{ $ktpStatus === 'rejected' ? '#991B1B' : '#92400E' }}; margin-bottom: 0.2rem;">
+                    @if($ktpStatus === 'pending') Verifikasi KTP Sedang Diproses
+                    @elseif($ktpStatus === 'rejected') Verifikasi KTP Ditolak
+                    @else Verifikasi KTP Diperlukan
                     @endif
-                </h4>
-                <p style="margin: 0; font-size: 0.85rem; color: {{ $ktpStatus === 'rejected' ? '#B91C1C' : '#B45309' }}; line-height: 1.4;">
+                </div>
+                <div style="font-size: 0.82rem; color: {{ $ktpStatus === 'rejected' ? '#B91C1C' : '#B45309' }}; line-height: 1.5;">
                     @if($ktpStatus === 'pending')
-                        Mohon tunggu sebentar, Admin kami sedang meninjau dokumen KTP Anda. Anda baru bisa membuat Experience setelah KTP disetujui.
+                        Mohon tunggu, Admin kami sedang meninjau dokumen KTP Anda. Anda baru bisa membuat Experience setelah KTP disetujui.
                     @elseif($ktpStatus === 'rejected')
-                        Mohon maaf, pengajuan KTP Anda ditolak. Alasan: <strong>{{ Auth::user()->host?->ktp_rejection_note ?? 'Tidak valid' }}</strong>. Silakan hubungi admin.
+                        KTP Anda ditolak. Alasan: <strong>{{ Auth::user()->host?->ktp_rejection_note ?? 'Tidak valid' }}</strong>. Silakan hubungi admin.
                     @else
-                        Silakan selesaikan proses verifikasi KTP terlebih dahulu agar Anda dapat mulai membuat dan menawarkan Experience.
+                        Selesaikan verifikasi KTP agar bisa membuat dan menawarkan Experience.
                     @endif
-                </p>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if($bankStatus !== 'verified')
+        <div style="background: {{ $bankStatus === 'not_verified' ? '#FEF2F2' : '#F0F9FF' }};
+                    border: 1px solid {{ $bankStatus === 'not_verified' ? '#FECACA' : '#BAE6FD' }};
+                    border-radius: 12px; padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: {{ $bankStatus === 'not_verified' ? '#FEE2E2' : '#E0F2FE' }}; display: grid; place-items: center; flex-shrink: 0; color: {{ $bankStatus === 'not_verified' ? '#DC2626' : '#0369A1' }};">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    @if($bankStatus === 'not_verified')
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    @else
+                        <rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line>
+                    @endif
+                </svg>
+            </div>
+            <div>
+                <div style="font-size: 0.9rem; font-weight: 700; color: {{ $bankStatus === 'not_verified' ? '#991B1B' : '#075985' }}; margin-bottom: 0.2rem;">
+                    @if($bankStatus === 'needs_review') Verifikasi Rekening Sedang Diproses
+                    @else Verifikasi Rekening Bermasalah
+                    @endif
+                </div>
+                <div style="font-size: 0.82rem; color: {{ $bankStatus === 'not_verified' ? '#B91C1C' : '#0C4A6E' }}; line-height: 1.5;">
+                    @if($bankStatus === 'needs_review')
+                        Admin kami sedang meninjau data rekening bank Anda. Dana tidak bisa dicairkan hingga rekening disetujui.
+                    @else
+                        Rekening gagal diverifikasi. Alasan: <strong>{{ Auth::user()->host?->bank_review_note ?? 'Data tidak sesuai' }}</strong>. Silakan hubungi admin.
+                    @endif
+                </div>
             </div>
         </div>
     @endif

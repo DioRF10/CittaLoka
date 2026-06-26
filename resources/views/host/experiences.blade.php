@@ -16,7 +16,12 @@
     }
 }">
 
-@php $locale = app()->getLocale(); @endphp
+@php 
+    $locale = app()->getLocale();
+    $ktpStatus = Auth::user()->host?->ktp_status ?? 'unverified';
+    $bankStatus = Auth::user()->host?->bank_review_status ?? 'not_verified';
+    $canCreate = $ktpStatus === 'verified' && $bankStatus === 'verified';
+@endphp
 
 {{-- Success/Error --}}
 @if(session('success'))
@@ -70,7 +75,7 @@
             </select>
 
             {{-- Create Button --}}
-            @if(Auth::user()->host?->ktp_status === 'verified')
+            @if($canCreate)
                 <a href="{{ route('host.experiences.create') }}"
                     style="display:flex; align-items:center; gap:0.4rem; padding:0.5rem 1rem; background:#1E3A2F; color:white; border-radius:8px; font-size:0.8rem; font-weight:500; text-decoration:none; transition:all 0.2s;"
                     onmouseover="this.style.background='#2D4A32'"
@@ -79,14 +84,37 @@
                     Create New Experience
                 </a>
             @else
-                <button disabled title="KTP Anda sedang direview atau belum diverifikasi. Anda belum bisa membuat Experience."
+                <button disabled
                     style="display:flex; align-items:center; gap:0.4rem; padding:0.5rem 1rem; background:#9CA3AF; color:white; border-radius:8px; font-size:0.8rem; font-weight:500; border:none; cursor:not-allowed;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    Create New Experience (Terkunci)
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Buat Experience (Terkunci)
                 </button>
             @endif
         </div>
     </div>
+
+    {{-- Lock Info Banner --}}
+    @if(!$canCreate)
+        @php
+            $lockReasons = [];
+            if($ktpStatus !== 'verified') $lockReasons[] = 'KTP ' . ($ktpStatus === 'pending' ? 'sedang diproses' : 'belum diverifikasi');
+            if($bankStatus !== 'verified') $lockReasons[] = 'Rekening bank ' . ($bankStatus === 'needs_review' ? 'sedang direview admin' : 'belum diverifikasi');
+        @endphp
+        <div style="margin: 0; padding: 1rem 1.5rem; background: #FFFBEB; border-bottom: 1px solid #FDE68A; display: flex; align-items: flex-start; gap: 0.75rem;">
+            <div style="flex-shrink: 0; margin-top: 2px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+            </div>
+            <div>
+                <div style="font-size: 0.82rem; font-weight: 700; color: #92400E; margin-bottom: 0.2rem;">Pembuatan Experience Dikunci</div>
+                <div style="font-size: 0.8rem; color: #B45309; line-height: 1.5;">
+                    Anda belum bisa membuat Experience karena: <strong>{{ implode(' dan ', $lockReasons) }}</strong>. 
+                    Mohon tunggu konfirmasi dari Admin. Anda akan mendapat notifikasi setelah verifikasi selesai.
+                </div>
+            </div>
+        </div>
+    @endif
 
     {{-- Table Header --}}
     <div style="display:grid; grid-template-columns:60px 1fr 120px 80px 80px 120px 100px; gap:0; padding:0.75rem 1.5rem; background:#F7F3ED; border-bottom:1px solid #EDE7DC;">
@@ -100,13 +128,14 @@
         <div style="padding:3rem; text-align:center;">
             <div style="font-size:2rem; margin-bottom:0.75rem;">🌿</div>
             <div style="font-size:0.875rem; color:#9CA3AF; margin-bottom:1rem;">No experiences yet</div>
-            @if(Auth::user()->host?->ktp_status === 'verified')
+            @if($canCreate)
                 <a href="{{ route('host.experiences.create') }}" style="display:inline-block; padding:0.6rem 1.25rem; background:#1E3A2F; color:white; border-radius:8px; font-size:0.82rem; font-weight:500; text-decoration:none;">
                     Create Your First Experience
                 </a>
             @else
-                <div style="display:inline-block; padding:0.6rem 1.25rem; background:#F3F4F6; color:#9CA3AF; border-radius:8px; font-size:0.82rem; font-weight:500; border: 1px solid #E5E7EB;">
-                    KTP Sedang Direview
+                <div style="display:inline-flex; align-items:center; gap:0.4rem; padding:0.6rem 1.25rem; background:#FFFBEB; color:#92400E; border-radius:8px; font-size:0.82rem; font-weight:500; border: 1px solid #FDE68A;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Menunggu verifikasi KTP & Rekening dari Admin
                 </div>
             @endif
         </div>

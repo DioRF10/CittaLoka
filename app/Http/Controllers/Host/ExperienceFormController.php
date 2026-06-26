@@ -27,7 +27,11 @@ class ExperienceFormController extends Controller
         $host      = $this->getHost();
 
         if ($host->ktp_status !== 'verified') {
-            return redirect()->route('host.dashboard')->with('error', 'Anda harus menunggu KTP diverifikasi oleh admin sebelum dapat membuat Experience.');
+            return redirect()->route('host.experiences.index')->with('error', 'Anda harus menunggu KTP diverifikasi oleh admin sebelum dapat membuat Experience.');
+        }
+
+        if ($host->bank_review_status !== 'verified') {
+            return redirect()->route('host.experiences.index')->with('error', 'Rekening bank Anda belum diverifikasi oleh admin. Mohon tunggu konfirmasi sebelum membuat Experience.');
         }
 
         $kategoris = Kategori::all();
@@ -42,7 +46,11 @@ class ExperienceFormController extends Controller
         $host = $this->getHost();
 
         if ($host->ktp_status !== 'verified') {
-            return redirect()->route('host.dashboard')->with('error', 'KTP Anda belum diverifikasi.');
+            return redirect()->route('host.experiences.index')->with('error', 'KTP Anda belum diverifikasi.');
+        }
+
+        if ($host->bank_review_status !== 'verified') {
+            return redirect()->route('host.experiences.index')->with('error', 'Rekening bank Anda belum diverifikasi.');
         }
 
         $request->validate([

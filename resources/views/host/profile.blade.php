@@ -298,12 +298,148 @@
 
     {{-- ══ TAB 3: Account & Bank ══ --}}
     <div x-show="activeTab === 'account'">
+
+        {{-- Success/Error untuk tab ini --}}
+        @if(session('success'))
+            <div style="background:#EBF5EE; border:1px solid #B8DFC8; color:#2D5240; padding:0.75rem 1rem; border-radius:8px; margin-bottom:1rem;">✓ {{ session('success') }}</div>
+        @endif
+        @if($errors->any())
+            <div style="background:#FEF2F2; border:1px solid #FECACA; color:#C0392B; padding:0.75rem 1rem; border-radius:8px; margin-bottom:1rem;">
+                <ul style="margin:0; padding-left:1.2rem;">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul>
+            </div>
+        @endif
+
+        @php
+            $ktpRejected  = $host->ktp_status === 'rejected';
+            $bankRejected = $host->bank_review_status === 'not_verified' && $host->bank_review_note;
+        @endphp
+
+        {{-- ── KTP Re-submit ── --}}
+        @if($ktpRejected)
+            <div class="form-section" style="border-color:#FECACA; margin-bottom:1.25rem;">
+                <div class="form-section-header" style="background:#FEF2F2; border-color:#FEE2E2;">
+                    <div style="display:flex; align-items:center; gap:0.6rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+                        <div>
+                            <div class="form-section-title" style="color:#991B1B;">KTP Ditolak — Ajukan Ulang</div>
+                            <div style="font-size:0.78rem; color:#B91C1C; margin-top:0.1rem;">Alasan: <strong>{{ $host->ktp_rejection_note ?? 'Tidak valid' }}</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-section-body">
+                    <form method="POST" action="{{ route('host.settings.resubmit-ktp') }}" enctype="multipart/form-data">
+                        @csrf
+                        <div class="form-grid-2" style="margin-bottom:1.25rem;">
+
+                            {{-- Foto KTP --}}
+                            <div class="form-group" x-data="{ preview: null, fileName: null }">
+                                <label class="form-label">Foto KTP Baru <span style="color:#DC2626;">*</span></label>
+                                <div style="border:1.5px dashed #FECACA; border-radius:10px; padding:1.25rem; background:#FFF9F9; text-align:center; cursor:pointer; transition:all 0.2s;"
+                                    onclick="$refs.ktpInput.click()"
+                                    @dragover.prevent
+                                    @drop.prevent="let f = $event.dataTransfer.files[0]; if(f){ preview = URL.createObjectURL(f); fileName = f.name; $refs.ktpInput.files = $event.dataTransfer.files; }">
+                                    <template x-if="preview">
+                                        <div>
+                                            <img :src="preview" style="width:100%; max-height:180px; object-fit:contain; border-radius:8px; margin-bottom:0.5rem;">
+                                            <div style="font-size:0.72rem; color:#7A7A6E;" x-text="fileName"></div>
+                                        </div>
+                                    </template>
+                                    <template x-if="!preview">
+                                        <div>
+                                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FECACA" stroke-width="1.5" style="margin:0 auto 0.5rem;"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+                                            <div style="font-size:0.82rem; font-weight:600; color:#DC2626; margin-bottom:0.2rem;">Klik atau drag foto KTP</div>
+                                            <div style="font-size:0.72rem; color:#9CA3AF;">JPG, PNG · Max 5MB</div>
+                                        </div>
+                                    </template>
+                                    <input type="file" name="ktp_photo" accept="image/*" required style="display:none;" x-ref="ktpInput"
+                                        x-on:change="let f = $event.target.files[0]; if(f){ preview = URL.createObjectURL(f); fileName = f.name; }">
+                                </div>
+                            </div>
+
+                            {{-- Selfie KTP --}}
+                            <div class="form-group" x-data="{ preview: null, fileName: null }">
+                                <label class="form-label">Selfie dengan KTP Baru <span style="color:#DC2626;">*</span></label>
+                                <div style="border:1.5px dashed #FECACA; border-radius:10px; padding:1.25rem; background:#FFF9F9; text-align:center; cursor:pointer; transition:all 0.2s;"
+                                    onclick="$refs.selfieInput.click()">
+                                    <template x-if="preview">
+                                        <div>
+                                            <img :src="preview" style="width:100%; max-height:180px; object-fit:contain; border-radius:8px; margin-bottom:0.5rem;">
+                                            <div style="font-size:0.72rem; color:#7A7A6E;" x-text="fileName"></div>
+                                        </div>
+                                    </template>
+                                    <template x-if="!preview">
+                                        <div>
+                                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FECACA" stroke-width="1.5" style="margin:0 auto 0.5rem;"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                                            <div style="font-size:0.82rem; font-weight:600; color:#DC2626; margin-bottom:0.2rem;">Klik atau drag selfie + KTP</div>
+                                            <div style="font-size:0.72rem; color:#9CA3AF;">Pegang KTP di depan wajah · Max 5MB</div>
+                                        </div>
+                                    </template>
+                                    <input type="file" name="ktp_selfie" accept="image/*" required style="display:none;" x-ref="selfieInput"
+                                        x-on:change="let f = $event.target.files[0]; if(f){ preview = URL.createObjectURL(f); fileName = f.name; }">
+                                </div>
+                            </div>
+
+                        </div>
+                        <button type="submit" style="padding:0.75rem 1.5rem; background:#DC2626; color:white; border:none; border-radius:8px; font-size:0.875rem; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif;"
+                            onmouseover="this.style.background='#B91C1C'"
+                            onmouseout="this.style.background='#DC2626'">
+                            Ajukan Ulang KTP
+                        </button>
+                    </form>
+                </div>
+            </div>
+        @endif
+
+        {{-- ── Bank Re-submit ── --}}
+        @if($bankRejected)
+            <div class="form-section" style="border-color:#FECACA; margin-bottom:1.25rem;">
+                <div class="form-section-header" style="background:#FEF2F2; border-color:#FEE2E2;">
+                    <div style="display:flex; align-items:center; gap:0.6rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                        <div>
+                            <div class="form-section-title" style="color:#991B1B;">Rekening Ditolak — Ajukan Ulang</div>
+                            <div style="font-size:0.78rem; color:#B91C1C; margin-top:0.1rem;">Alasan: <strong>{{ $host->bank_review_note }}</strong></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-section-body">
+                    <form method="POST" action="{{ route('host.settings.resubmit-bank') }}">
+                        @csrf
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:1rem; margin-bottom:1.25rem;">
+                            <div class="form-group">
+                                <label class="form-label">Bank <span style="color:#DC2626;">*</span></label>
+                                <select name="bank_name" required class="form-select">
+                                    <option value="">Pilih bank...</option>
+                                    @foreach(['BCA','BNI','BRI','Mandiri','CIMB Niaga','Danamon','Permata','BTN'] as $bank)
+                                        <option value="{{ $bank }}" {{ $host->bank_name === $bank ? 'selected' : '' }}>{{ $bank }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Nama Pemilik Rekening <span style="color:#DC2626;">*</span></label>
+                                <input type="text" name="bank_account_name" value="{{ $host->bank_account_name }}" required class="form-input" placeholder="Sesuai buku tabungan">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Nomor Rekening <span style="color:#DC2626;">*</span></label>
+                                <input type="text" name="bank_account_number" value="{{ $host->bank_account_number }}" required class="form-input" placeholder="e.g. 1234567890">
+                            </div>
+                        </div>
+                        <button type="submit" style="padding:0.75rem 1.5rem; background:#DC2626; color:white; border:none; border-radius:8px; font-size:0.875rem; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif;"
+                            onmouseover="this.style.background='#B91C1C'"
+                            onmouseout="this.style.background='#DC2626'">
+                            Ajukan Ulang Rekening
+                        </button>
+                    </form>
+                </div>
+            </div>
+        @endif
+
+        {{-- ── Info Akun (read-only) ── --}}
         <form method="POST" action="{{ route('host.profile.update') }}">
             @csrf
             @method('PUT')
             <input type="hidden" name="tab" value="account">
 
-            {{-- Account Info --}}
             <div class="form-section">
                 <div class="form-section-header">
                     <div class="form-section-title">Account Information</div>
@@ -312,8 +448,7 @@
                     <div class="form-grid-2">
                         <div class="form-group">
                             <label class="form-label">Email</label>
-                            <input type="email" class="form-input" value="{{ auth()->user()->email }}" disabled
-                                style="background:#F7F3ED; color:#9CA3AF;">
+                            <input type="email" class="form-input" value="{{ auth()->user()->email }}" disabled style="background:#F7F3ED; color:#9CA3AF;">
                             <span style="font-size:0.72rem; color:#9CA3AF;">Email cannot be changed here.</span>
                         </div>
                         <div class="form-group">
@@ -345,35 +480,38 @@
             <div class="form-section">
                 <div class="form-section-header">
                     <div class="form-section-title">Bank Account</div>
-                    <span style="font-size:0.78rem; color:#7A7A6E;">For receiving your earnings payouts</span>
+                    <span style="font-size:0.78rem; color:#7A7A6E;">
+                        Status:
+                        @if($host->bank_review_status === 'verified')
+                            <strong style="color:#2D5240;">✓ Terverifikasi</strong>
+                        @elseif($host->bank_review_status === 'needs_review')
+                            <strong style="color:#C4783A;">⏳ Sedang Direview Admin</strong>
+                        @else
+                            <strong style="color:#DC2626;">✗ Ditolak — gunakan form di atas</strong>
+                        @endif
+                    </span>
                 </div>
                 <div class="form-section-body">
-                    <div class="form-grid-2" style="margin-bottom:1.25rem;">
-                        <div class="form-group">
-                            <label class="form-label">Bank Name</label>
-                            <select name="bank_name" class="form-select">
-                                <option value="">Select bank...</option>
-                                @foreach(['BCA','BNI','BRI','Mandiri','CIMB Niaga','Danamon','Permata','BTN'] as $bank)
-                                    <option value="{{ $bank }}" {{ $host->bank_name === $bank ? 'selected' : '' }}>{{ $bank }}</option>
-                                @endforeach
-                            </select>
+                    @if(in_array($host->bank_review_status, ['verified', 'needs_review']))
+                        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem;">
+                            <div style="padding:0.85rem 1rem; background:#F7F3ED; border-radius:8px;">
+                                <div class="form-label" style="margin-bottom:0.2rem;">Bank</div>
+                                <div style="font-size:0.9rem; color:#1E3A2F; font-weight:500;">{{ $host->bank_name ?? '-' }}</div>
+                            </div>
+                            <div style="padding:0.85rem 1rem; background:#F7F3ED; border-radius:8px;">
+                                <div class="form-label" style="margin-bottom:0.2rem;">Nama Pemilik</div>
+                                <div style="font-size:0.9rem; color:#1E3A2F; font-weight:500;">{{ $host->bank_account_name ?? '-' }}</div>
+                            </div>
+                            <div style="padding:0.85rem 1rem; background:#F7F3ED; border-radius:8px;">
+                                <div class="form-label" style="margin-bottom:0.2rem;">Nomor Rekening</div>
+                                <div style="font-size:0.9rem; color:#1E3A2F; font-weight:500;">{{ $host->bank_account_number ?? '-' }}</div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">Account Holder Name</label>
-                            <input type="text" name="bank_account_name" class="form-input"
-                                value="{{ $host->bank_account_name }}" placeholder="As per bank records">
-                        </div>
-                    </div>
-                    <div class="form-group" style="max-width:300px;">
-                        <label class="form-label">Account Number</label>
-                        <input type="text" name="bank_account_number" class="form-input"
-                            value="{{ $host->bank_account_number }}" placeholder="e.g. 1234567890">
-                    </div>
+                        <p style="font-size:0.75rem; color:#9CA3AF; margin-top:0.75rem;">Data rekening hanya bisa diubah jika status ditolak oleh admin.</p>
+                    @else
+                        <p style="font-size:0.82rem; color:#9CA3AF; text-align:center; padding:1rem 0;">Gunakan form <strong>"Ajukan Ulang Rekening"</strong> di atas untuk memperbarui data rekening Anda.</p>
+                    @endif
                 </div>
-            </div>
-
-            <div style="display:flex; justify-content:flex-end;">
-                <button type="submit" class="btn-primary">Save Account & Bank</button>
             </div>
         </form>
     </div>

@@ -543,7 +543,8 @@
                     @if($ktpStatus === 'pending')
                         Mohon tunggu, Admin kami sedang meninjau dokumen KTP Anda. Anda baru bisa membuat Experience setelah KTP disetujui.
                     @elseif($ktpStatus === 'rejected')
-                        KTP Anda ditolak. Alasan: <strong>{{ Auth::user()->host?->ktp_rejection_note ?? 'Tidak valid' }}</strong>. Silakan hubungi admin.
+                        KTP Anda ditolak. Alasan: <strong>{{ Auth::user()->host?->ktp_rejection_note ?? 'Tidak valid' }}</strong>.
+                        <a href="{{ route('host.profile.index') }}?tab=account" style="color:#991B1B; font-weight:700; text-decoration:underline; margin-left:0.4rem;">→ Ajukan ulang di My Profile</a>
                     @else
                         Selesaikan verifikasi KTP agar bisa membuat dan menawarkan Experience.
                     @endif
@@ -575,7 +576,8 @@
                     @if($bankStatus === 'needs_review')
                         Admin kami sedang meninjau data rekening bank Anda. Dana tidak bisa dicairkan hingga rekening disetujui.
                     @else
-                        Rekening gagal diverifikasi. Alasan: <strong>{{ Auth::user()->host?->bank_review_note ?? 'Data tidak sesuai' }}</strong>. Silakan hubungi admin.
+                        Rekening gagal diverifikasi. Alasan: <strong>{{ Auth::user()->host?->bank_review_note ?? 'Data tidak sesuai' }}</strong>.
+                        <a href="{{ route('host.profile.index') }}?tab=account" style="color:#991B1B; font-weight:700; text-decoration:underline; margin-left:0.4rem;">→ Ajukan ulang di My Profile</a>
                     @endif
                 </div>
             </div>

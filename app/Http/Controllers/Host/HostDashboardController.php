@@ -422,4 +422,80 @@ class HostDashboardController extends Controller
 
         return back()->with('success', 'Profil berhasil diperbarui!');
     }
+
+    // ── Re-submit KTP ─────────────────────────────────────────────────────
+
+    public function resubmitKtp(Request $request)
+    {
+        $host = $this->getHost();
+        if (!$host) return redirect()->route('home');
+
+        // Hanya boleh jika status KTP rejected
+        if ($host->ktp_status !== 'rejected') {
+            return back()->with('error', 'KTP Anda tidak perlu diajukan ulang saat ini.');
+        }
+
+        $request->validate([
+            'ktp_photo'  => ['required', 'image', 'max:5120'],
+            'ktp_selfie' => ['required', 'image', 'max:5120'],
+        ], [
+            'ktp_photo.required'  => 'Foto KTP wajib diupload.',
+            'ktp_selfie.required' => 'Foto selfie dengan KTP wajib diupload.',
+            'ktp_photo.image'     => 'File harus berupa gambar.',
+            'ktp_selfie.image'    => 'File harus berupa gambar.',
+            'ktp_photo.max'       => 'Ukuran foto KTP maksimal 5MB.',
+            'ktp_selfie.max'      => 'Ukuran foto selfie maksimal 5MB.',
+        ]);
+
+        // Hapus file lama
+        if ($host->ktp_path) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($host->ktp_path);
+        }
+        if ($host->ktp_selfie_path) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($host->ktp_selfie_path);
+        }
+
+        // Simpan file baru
+        $host->ktp_path        = $request->file('ktp_photo')->store('ktp', 'public');
+        $host->ktp_selfie_path = $request->file('ktp_selfie')->store('ktp', 'public');
+        $host->ktp_status      = 'pending'; // reset ke pending untuk review ulang
+        $host->ktp_rejection_note = null;
+        $host->save();
+
+        return back()->with('success', 'KTP berhasil diajukan ulang! Admin akan segera meninjau dokumen Anda.');
+    }
+
+    // ── Re-submit Bank ────────────────────────────────────────────────────
+
+    public function resubmitBank(Request $request)
+    {
+        $host = $this->getHost();
+        if (!$host) return redirect()->route('home');
+
+        // Hanya boleh jika status rekening not_verified (ditolak)
+        if ($host->bank_review_status !== 'not_verified') {
+            return back()->with('error', 'Rekening Anda tidak perlu diajukan ulang saat ini.');
+        }
+
+        $request->validate([
+            'bank_name'           => ['required', 'string', 'max:100'],
+            'bank_account_name'   => ['required', 'string', 'max:100'],
+            'bank_account_number' => ['required', 'string', 'max:50'],
+        ], [
+            'bank_name.required'           => 'Nama bank wajib diisi.',
+            'bank_account_name.required'   => 'Nama pemilik rekening wajib diisi.',
+            'bank_account_number.required' => 'Nomor rekening wajib diisi.',
+        ]);
+
+        $host->bank_name           = $request->input('bank_name');
+        $host->bank_account_name   = $request->input('bank_account_name');
+        $host->bank_account_number = $request->input('bank_account_number');
+        $host->bank_review_status  = 'needs_review'; // reset ke antrian review
+        $host->bank_review_note    = 'Diajukan ulang oleh host. Menunggu verifikasi manual admin.';
+        $host->bank_reviewed_by    = null;
+        $host->bank_reviewed_at    = null;
+        $host->save();
+
+        return back()->with('success', 'Data rekening berhasil diajukan ulang! Admin akan segera meninjau.');
+    }
 }

@@ -195,6 +195,8 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('dashboard')->name('host
     // Settings
     Route::get('/settings', [HostDashboardController::class, 'settings'])->name('settings');
     Route::put('/settings', [HostDashboardController::class, 'updateSettings'])->name('settings.update');
+    Route::post('/settings/resubmit-ktp', [HostDashboardController::class, 'resubmitKtp'])->name('settings.resubmit-ktp');
+    Route::post('/settings/resubmit-bank', [HostDashboardController::class, 'resubmitBank'])->name('settings.resubmit-bank');
 
      // Profile
     Route::get('/profile',  [HostProfileController::class, 'index'])->name('profile.index');

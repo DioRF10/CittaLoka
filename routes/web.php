@@ -122,6 +122,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/checkout/success/{kode}', [CheckoutController::class, 'success'])->name('checkout.success');
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::get('/bookings/{kode}', [BookingController::class, 'show'])->name('bookings.show');
+    Route::get('/bookings/{kode}/cancel-confirm', [BookingController::class, 'cancelConfirm'])
+        ->name('bookings.cancel-confirm');
     Route::patch('/bookings/{kode}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
 });
 Route::get('/memory-books', [MemoryBookController::class, 'index'])

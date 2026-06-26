@@ -6,6 +6,7 @@ use App\Models\Booking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Services\RefundCalculator;
 
 class BookingController extends Controller
 {
@@ -19,12 +20,12 @@ class BookingController extends Controller
             ->where('user_id', Auth::id())
             ->orderBy('created_at', 'desc');
 
-        match($filter) {
-            'upcoming'  => $query->whereIn('status', ['confirmed', 'pending_payment'])
-                                 ->where('tanggal_experience', '>=', now()->toDateString()),
+        match ($filter) {
+            'upcoming' => $query->whereIn('status', ['confirmed', 'pending_payment'])
+                ->where('tanggal_experience', '>=', now()->toDateString()),
             'completed' => $query->where('status', 'completed'),
             'cancelled' => $query->whereIn('status', ['cancelled', 'expired', 'refunded']),
-            default     => null,
+            default => null,
         };
 
         $bookings = $query->get();
@@ -62,32 +63,76 @@ class BookingController extends Controller
 
     // ── Cancel Booking ────────────────────────────────────────────────────
 
-    public function cancel(Request $request, string $kode)
+    public function cancelConfirm(string $kode)
     {
-        $booking = Booking::where('kode_booking', $kode)
+        $booking = Booking::with('experience')
+            ->where('kode_booking', $kode)
             ->where('user_id', Auth::id())
-            ->whereIn('status', ['confirmed', 'pending_payment'])
             ->firstOrFail();
 
-        // Cek 24 jam sebelum experience
-        $experienceDateTime = Carbon::parse($booking->tanggal_experience);
-        if (now()->diffInHours($experienceDateTime, false) < 24) {
-            return back()->with('error', 'Tidak bisa cancel kurang dari 24 jam sebelum experience.');
+        if (!in_array($booking->status, ['confirmed'])) {
+            return redirect()
+                ->route('bookings.show', $kode)
+                ->with('error', 'Booking ini tidak bisa dibatalkan.');
         }
 
-        // Update status booking
+        $calculator = app(RefundCalculator::class);
+        $refundPercentage = $calculator->calculatePercentage($booking);
+        $refundAmount = $calculator->calculateAmount($booking, $refundPercentage);
+        $policyDescription = $calculator->getPolicyDescription($booking);
+
+        return view('pages.booking-cancel-confirm', compact(
+            'booking',
+            'refundPercentage',
+            'refundAmount',
+            'policyDescription'
+        ));
+    }
+
+    /**
+     * Eksekusi cancel — dipanggil setelah traveler konfirmasi di halaman cancel-confirm.
+     * Route: PATCH /bookings/{kode}/cancel
+     */
+    public function cancel(Request $request, string $kode)
+    {
+        $booking = Booking::with(['experience', 'availability'])
+            ->where('kode_booking', $kode)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
+        if (!in_array($booking->status, ['confirmed'])) {
+            return redirect()
+                ->route('bookings.show', $kode)
+                ->with('error', 'Booking ini tidak bisa dibatalkan.');
+        }
+
+        $calculator = app(RefundCalculator::class);
+        $refundPercentage = $calculator->calculatePercentage($booking);
+        $refundAmount = $calculator->calculateAmount($booking, $refundPercentage);
+
         $booking->update([
-            'status'       => 'cancelled',
+            'status' => 'cancelled',
             'cancelled_at' => now(),
-            'cancel_reason'=> $request->input('reason', 'Cancelled by user'),
+            'cancelled_by' => 'traveler',
+            'cancel_reason' => $request->input('reason', 'Dibatalkan oleh traveler'),
+            'refund_percentage' => $refundPercentage,
+            'refund_amount' => $refundAmount,
+            'refund_status' => $refundAmount > 0 ? 'pending' : 'not_applicable',
         ]);
 
-        // Kembalikan slot
+        // Kembalikan slot yang sempat ditahan
         if ($booking->availability) {
             $booking->availability->decrement('booked_slot', $booking->jumlah_peserta);
         }
 
-        return redirect()->route('bookings.index')
-            ->with('success', 'Booking berhasil dibatalkan.');
+        // TODO: kirim notifikasi ke host bahwa booking dibatalkan
+
+        $message = $refundAmount > 0
+            ? "Booking dibatalkan. Refund sebesar Rp " . number_format($refundAmount, 0, ',', '.') . " akan diproses oleh tim kami dalam beberapa hari kerja."
+            : "Booking dibatalkan. Sesuai kebijakan, tidak ada refund untuk pembatalan ini.";
+
+        return redirect()
+            ->route('bookings.show', $kode)
+            ->with('success', $message);
     }
 }

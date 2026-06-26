@@ -89,12 +89,12 @@
             {{-- Action Buttons --}}
             <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
                 @if(in_array($booking->status, ['confirmed', 'pending_payment']))
-                    <button onclick="document.getElementById('cancelModal').style.display='flex'"
-                        style="padding:0.6rem 1.25rem; background:white; color:#C0392B; border:1.5px solid #FECACA; border-radius:8px; font-size:0.85rem; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.2s;"
+                    <a href="{{ route('bookings.cancel-confirm', $booking->kode_booking) }}"
+                        style="padding:0.6rem 1.25rem; background:white; color:#C0392B; border:1.5px solid #FECACA; border-radius:8px; font-size:0.85rem; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.2s; text-decoration:none; display:inline-block;"
                         onmouseover="this.style.borderColor='#C0392B'"
                         onmouseout="this.style.borderColor='#FECACA'">
                         Cancel Booking
-                    </button>
+                    </a>
                 @elseif($booking->status === 'completed' && !$booking->review)
                     <a href="#"
                         style="padding:0.6rem 1.25rem; background:#1E3A2F; color:white; border-radius:8px; font-size:0.85rem; font-weight:500; text-decoration:none; font-family:'DM Sans',sans-serif;">
@@ -238,12 +238,28 @@
                         <h3 style="font-size:0.875rem; font-weight:600; color:#C0392B; margin-bottom:0.5rem;">
                             Booking Cancelled
                         </h3>
-                        <p style="font-size:0.82rem; color:#C0392B; line-height:1.5;">
+                        <p style="font-size:0.82rem; color:#C0392B; line-height:1.5; margin-bottom:0.75rem;">
                             Cancelled on {{ \Carbon\Carbon::parse($booking->cancelled_at)->format('d M Y, H:i') }} WITA
                             @if($booking->cancel_reason)
                                 <br>Reason: {{ $booking->cancel_reason }}
                             @endif
                         </p>
+
+                        @if($booking->refund_amount > 0)
+                            <div style="background:white; border-radius:10px; padding:0.85rem 1rem; border:1px solid #FECACA;">
+                                <div style="font-size:0.78rem; color:#7A7A6E; margin-bottom:0.2rem;">Refund ({{ $booking->refund_percentage }}%)</div>
+                                <div style="font-size:0.95rem; font-weight:700; color:#1E3A2F; margin-bottom:0.3rem;">
+                                    Rp {{ number_format($booking->refund_amount, 0, ',', '.') }}
+                                </div>
+                                <span style="font-size:0.72rem; font-weight:600; padding:0.2rem 0.6rem; border-radius:999px;
+                                    background:{{ $booking->refund_status === 'success' ? '#EBF5EE' : '#FDF6EE' }};
+                                    color:{{ $booking->refund_status === 'success' ? '#2D5240' : '#C4783A' }};">
+                                    {{ $booking->refund_status === 'success' ? 'Refund Sent' : 'Refund Pending' }}
+                                </span>
+                            </div>
+                        @else
+                            <p style="font-size:0.78rem; color:#9CA3AF; font-style:italic;">No refund applicable for this cancellation.</p>
+                        @endif
                     </div>
                 @endif
 
@@ -323,9 +339,11 @@
                             <path d="m6 9 6 6 6-6"/>
                         </svg>
                     </button>
-                    <div x-show="open" x-transition style="margin-top:0.75rem; font-size:0.82rem; color:#7A7A6E; line-height:1.6;">
-                        Free cancellation up to 24 hours before the experience starts.
-                        After that, cancellations are non-refundable. Please contact us if you need assistance.
+                    <div x-show="open" x-transition style="margin-top:0.75rem; font-size:0.82rem; color:#7A7A6E; line-height:1.7;">
+                        <strong style="color:#1E3A2F;">100% refund</strong> — cancel more than 7 days before the experience.<br>
+                        <strong style="color:#1E3A2F;">50% refund</strong> — cancel 3–7 days before.<br>
+                        <strong style="color:#1E3A2F;">25% refund</strong> — cancel 1–3 days before.<br>
+                        <strong style="color:#1E3A2F;">No refund</strong> — cancel less than 24 hours before, or no-show.
                     </div>
                 </div>
 
@@ -342,30 +360,6 @@
 
             </div>
         </div>
-    </div>
-</div>
-
-{{-- Cancel Modal --}}
-<div id="cancelModal" style="display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,0.4); backdrop-filter:blur(2px); align-items:center; justify-content:center;">
-    <div style="background:white; border-radius:16px; padding:2rem; max-width:400px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.15);">
-        <h3 style="font-family:'Cormorant Garamond',Georgia,serif; font-size:1.4rem; color:#1E3A2F; margin-bottom:0.5rem;">Cancel Booking?</h3>
-        <p style="font-size:0.875rem; color:#7A7A6E; margin-bottom:1.5rem; line-height:1.6;">
-            Free cancellation is available up to 24 hours before the experience. After that, cancellations are non-refundable.
-        </p>
-        <form method="POST" action="{{ route('bookings.cancel', $booking->kode_booking) }}">
-            @csrf
-            @method('PATCH')
-            <div style="display:flex; gap:0.75rem;">
-                <button type="button" onclick="document.getElementById('cancelModal').style.display='none'"
-                    style="flex:1; padding:0.75rem; background:white; color:#1E3A2F; border:1.5px solid #E2DDD5; border-radius:8px; font-size:0.875rem; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif;">
-                    Keep Booking
-                </button>
-                <button type="submit"
-                    style="flex:1; padding:0.75rem; background:#C0392B; color:white; border:none; border-radius:8px; font-size:0.875rem; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif;">
-                    Yes, Cancel
-                </button>
-            </div>
-        </form>
     </div>
 </div>
 

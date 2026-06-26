@@ -9,4 +9,5 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('bookings:expire')->everyFiveMinutes();
+Schedule::command('bookings:complete')->everyFifteenMinutes();
 Schedule::command('bookings:disburse')->everyFifteenMinutes();

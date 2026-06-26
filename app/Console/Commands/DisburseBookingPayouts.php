@@ -11,13 +11,21 @@ class DisburseBookingPayouts extends Command
 {
     protected $signature = 'bookings:disburse';
 
-    protected $description = 'Kirim disbursement Xendit ke host untuk booking completed yang belum di-payout';
+    protected $description = 'Kirim disbursement Xendit ke host untuk booking completed yang sudah lewat window dispute (48 jam) dan belum di-payout';
+
+    /**
+     * Window dispute — jumlah jam setelah booking completed
+     * sebelum dana boleh dicairkan ke host.
+     */
+    private const DISPUTE_WINDOW_HOURS = 48;
 
     public function handle(): int
     {
         $bookings = Booking::where('status', 'completed')
             ->where('payment_status', 'paid')
             ->where('disbursement_status', 'pending')
+            ->whereNotNull('completed_at')
+            ->where('completed_at', '<=', now()->subHours(self::DISPUTE_WINDOW_HOURS))
             ->whereHas('host', function ($q) {
                 $q->where('bank_review_status', 'verified');
             })
@@ -25,7 +33,7 @@ class DisburseBookingPayouts extends Command
             ->get();
 
         if ($bookings->isEmpty()) {
-            $this->info('Tidak ada booking yang perlu di-disburse.');
+            $this->info('Tidak ada booking yang siap di-disburse saat ini.');
             return self::SUCCESS;
         }
 

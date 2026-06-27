@@ -11,3 +11,5 @@ Artisan::command('inspire', function () {
 Schedule::command('bookings:expire')->everyFiveMinutes();
 Schedule::command('bookings:complete')->everyFifteenMinutes();
 Schedule::command('bookings:disburse')->everyFifteenMinutes();
+Schedule::command('bookings:reminder')->dailyAt('08:00');
+Schedule::command('xendit:monitor-balance')->dailyAt('07:00');

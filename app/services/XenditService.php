@@ -30,7 +30,7 @@ class XenditService
     {
         return [
             'Authorization' => 'Basic ' . base64_encode($this->secretKey . ':'),
-            'Content-Type'  => 'application/json',
+            'Content-Type' => 'application/json',
         ];
     }
 
@@ -59,25 +59,25 @@ class XenditService
     ): array {
         $response = Http::withHeaders($this->authHeader())
             ->post("{$this->baseUrl}/v2/invoices", [
-                'external_id'          => $externalId,
-                'amount'               => $amount,
-                'description'          => $description,
-                'invoice_duration'     => 86400, // 24 jam (dalam detik)
-                'customer'             => [
-                    'given_names'   => $customer['given_names'] ?? 'Traveler',
-                    'email'         => $customer['email'] ?? null,
+                'external_id' => $externalId,
+                'amount' => $amount,
+                'description' => $description,
+                'invoice_duration' => 86400, // 24 jam (dalam detik)
+                'customer' => [
+                    'given_names' => $customer['given_names'] ?? 'Traveler',
+                    'email' => $customer['email'] ?? null,
                     'mobile_number' => $customer['mobile_number'] ?? null,
                 ],
                 'success_redirect_url' => $successRedirectUrl,
                 'failure_redirect_url' => $failureRedirectUrl,
-                'currency'             => 'IDR',
-                'items'                => $customer['items'] ?? [],
+                'currency' => 'IDR',
+                'items' => $customer['items'] ?? [],
             ]);
 
         if ($response->failed()) {
             Log::error('Xendit createInvoice failed', [
                 'external_id' => $externalId,
-                'response'    => $response->body(),
+                'response' => $response->body(),
             ]);
             throw new \Exception('Gagal membuat invoice Xendit: ' . $response->body());
         }
@@ -116,65 +116,65 @@ class XenditService
         $response = Http::withHeaders($this->authHeader())
             ->post("{$this->baseUrl}/bank_account_data_requests", [
                 'bank_account_number' => $accountNumber,
-                'bank_code'           => $bankCode,
+                'bank_code' => $bankCode,
             ]);
 
         if ($response->failed()) {
             Log::error('Xendit bankAccountInquiry failed', [
                 'bank_code' => $bankCode,
-                'response'  => $response->body(),
+                'response' => $response->body(),
             ]);
             throw new \Exception('Gagal verifikasi rekening: ' . $response->body());
         }
-        
+
         return $response->json();
     }
     public function verifyHostBankAccount(string $bankCode, string $accountNumber, string $ktpName): array
     {
         try {
-        $result = $this->bankAccountInquiry($bankCode, $accountNumber);
- 
-        $accountName = $result['account_holder_name'] ?? $result['bank_account']['account_holder_name'] ?? null;
- 
-        if (!$accountName) {
+            $result = $this->bankAccountInquiry($bankCode, $accountNumber);
+
+            $accountName = $result['account_holder_name'] ?? $result['bank_account']['account_holder_name'] ?? null;
+
+            if (!$accountName) {
+                return [
+                    'success' => false,
+                    'is_match' => false,
+                    'account_name' => null,
+                    'error_message' => 'Nama pemilik rekening tidak ditemukan. Periksa kembali nomor rekening.',
+                ];
+            }
+
+            $isMatch = $this->normalizeNameForComparison($accountName) === $this->normalizeNameForComparison($ktpName);
+
             return [
-                'success'       => false,
-                'is_match'      => false,
-                'account_name'  => null,
-                'error_message' => 'Nama pemilik rekening tidak ditemukan. Periksa kembali nomor rekening.',
+                'success' => true,
+                'is_match' => $isMatch,
+                'account_name' => $accountName,
+                'error_message' => null,
+            ];
+
+        } catch (\Exception $e) {
+            return [
+                'success' => false,
+                'is_match' => false,
+                'account_name' => null,
+                'error_message' => 'Gagal memverifikasi rekening. Pastikan nomor rekening dan bank sudah benar.',
             ];
         }
- 
-        $isMatch = $this->normalizeNameForComparison($accountName) === $this->normalizeNameForComparison($ktpName);
- 
-        return [
-            'success'       => true,
-            'is_match'      => $isMatch,
-            'account_name'  => $accountName,
-            'error_message' => null,
-        ];
- 
-    } catch (\Exception $e) {
-        return [
-            'success'       => false,
-            'is_match'      => false,
-            'account_name'  => null,
-            'error_message' => 'Gagal memverifikasi rekening. Pastikan nomor rekening dan bank sudah benar.',
-        ];
     }
-}
- 
-/**
- * Normalisasi nama untuk perbandingan: lowercase, hilangkan spasi ganda,
- * hilangkan gelar/prefix umum (opsional bisa dikembangkan nanti).
- */
-private function normalizeNameForComparison(string $name): string
-{
-    $name = strtolower(trim($name));
-    $name = preg_replace('/\s+/', ' ', $name); // spasi ganda jadi satu
-    return $name;
-}
- 
+
+    /**
+     * Normalisasi nama untuk perbandingan: lowercase, hilangkan spasi ganda,
+     * hilangkan gelar/prefix umum (opsional bisa dikembangkan nanti).
+     */
+    private function normalizeNameForComparison(string $name): string
+    {
+        $name = strtolower(trim($name));
+        $name = preg_replace('/\s+/', ' ', $name); // spasi ganda jadi satu
+        return $name;
+    }
+
 
     // ─────────────────────────────────────────────────────────────────────
     // DISBURSEMENT — Transfer ke rekening host
@@ -201,23 +201,36 @@ private function normalizeNameForComparison(string $name): string
     ): array {
         $response = Http::withHeaders($this->authHeader())
             ->post("{$this->baseUrl}/disbursements", [
-                'external_id'           => $externalId,
-                'bank_code'             => $bankCode,
-                'account_holder_name'   => $accountHolderName,
-                'account_number'        => $accountNumber,
-                'description'           => $description,
-                'amount'                => $amount,
+                'external_id' => $externalId,
+                'bank_code' => $bankCode,
+                'account_holder_name' => $accountHolderName,
+                'account_number' => $accountNumber,
+                'description' => $description,
+                'amount' => $amount,
             ]);
 
         if ($response->failed()) {
             Log::error('Xendit createDisbursement failed', [
                 'external_id' => $externalId,
-                'response'    => $response->body(),
+                'response' => $response->body(),
             ]);
             throw new \Exception('Gagal membuat disbursement Xendit: ' . $response->body());
         }
 
         return $response->json();
+    }
+
+    public function getBalance(): int
+    {
+        $response = Http::withHeaders($this->authHeader())
+            ->get("{$this->baseUrl}/balance");
+
+        if ($response->failed()) {
+            Log::error('Xendit getBalance failed', ['response' => $response->body()]);
+            throw new \Exception('Gagal mengambil saldo Xendit: ' . $response->body());
+        }
+
+        return (int) ($response->json()['balance'] ?? 0);
     }
 
     /**

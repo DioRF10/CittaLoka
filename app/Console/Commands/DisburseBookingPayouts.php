@@ -3,6 +3,9 @@
 namespace App\Console\Commands;
 
 use App\Models\Booking;
+use App\Models\User;
+use App\Notifications\DisbursementFailedAdminNotification;
+use App\Notifications\LowBalanceAdminNotification;
 use App\Services\XenditService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -38,6 +41,34 @@ class DisburseBookingPayouts extends Command
         }
 
         $xendit = app(XenditService::class);
+
+        // ── Cek saldo SEBELUM proses dimulai ──
+        $totalNeeded = $bookings->sum('host_earning');
+
+        try {
+            $balance = $xendit->getBalance();
+        } catch (\Exception $e) {
+            $this->error('Gagal mengecek saldo Xendit: ' . $e->getMessage());
+            Log::error('Gagal cek saldo Xendit sebelum disbursement', ['error' => $e->getMessage()]);
+            // Tetap lanjut proses — kalau saldo memang habis, akan gagal natural di masing-masing percobaan
+            $balance = null;
+        }
+
+        if ($balance !== null && $balance < $totalNeeded) {
+            $this->error("Saldo Xendit (Rp " . number_format($balance, 0, ',', '.') . ") tidak cukup untuk total kebutuhan (Rp " . number_format($totalNeeded, 0, ',', '.') . "). Proses dibatalkan.");
+
+            $admins = User::where('role', 'admin')->get();
+            foreach ($admins as $admin) {
+                $admin->notify(new LowBalanceAdminNotification($balance, $totalNeeded));
+            }
+
+            Log::warning('Disbursement dibatalkan karena saldo tidak cukup', [
+                'balance' => $balance,
+                'needed'  => $totalNeeded,
+            ]);
+
+            return self::FAILURE;
+        }
 
         foreach ($bookings as $booking) {
             $host = $booking->host;
@@ -76,6 +107,12 @@ class DisburseBookingPayouts extends Command
                     'kode_booking' => $booking->kode_booking,
                     'error' => $e->getMessage(),
                 ]);
+
+                // ── Notifikasi ke semua admin ──
+                $admins = User::where('role', 'admin')->get();
+                foreach ($admins as $admin) {
+                    $admin->notify(new DisbursementFailedAdminNotification($booking, $e->getMessage()));
+                }
             }
         }
 

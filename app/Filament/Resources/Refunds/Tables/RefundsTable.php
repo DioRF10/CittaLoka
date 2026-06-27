@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Refunds\Tables;
 
 use App\Models\Booking;
+use App\Notifications\RefundProcessedNotification;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
@@ -95,6 +96,8 @@ class RefundsTable
                             'refunded_at'   => now(),
                             'refund_note'   => 'Refund manual. Ref: ' . $data['transfer_ref'],
                         ]);
+
+                        $record->user?->notify(new RefundProcessedNotification($record));
 
                         Notification::make()
                             ->title('Refund berhasil ditandai selesai')

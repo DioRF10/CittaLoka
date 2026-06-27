@@ -60,14 +60,66 @@ $user = computed(fn() => auth()->user());
             @endguest
 
             @auth
-                {{-- Notifikasi Bell --}}
-                <a href="/notifications" class="relative p-2 rounded-lg hover:bg-[#F0EDE6] transition-colors">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="1.5"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-                        <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-                    </svg>
-                </a>
+                {{-- Notifikasi Bell — dropdown fungsional --}}
+                <div class="relative" x-data="{ notifOpen: false }">
+                    <button @click="notifOpen = !notifOpen" class="relative p-2 rounded-lg hover:bg-[#F0EDE6] transition-colors" aria-label="Notifikasi">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="1.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+                            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+                        </svg>
+                        @php $unreadCount = auth()->user()->unreadNotifications->count(); @endphp
+                        @if($unreadCount > 0)
+                            <span class="absolute top-0.5 right-0.5 flex items-center justify-center text-[10px] font-bold text-white rounded-full"
+                                style="background:#C4783A; min-width:16px; height:16px; padding:0 3px;">
+                                {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                            </span>
+                        @endif
+                    </button>
+
+                    <div x-show="notifOpen" @click.outside="notifOpen = false"
+                        x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="opacity-0 scale-95"
+                        x-transition:enter-end="opacity-100 scale-100"
+                        style="display:none; background-color:#FFFFFF;"
+                        class="absolute right-0 mt-2 w-80 rounded-xl border border-[#E8E4DC] bg-white shadow-lg z-50 max-h-96 overflow-y-auto">
+
+                        <div class="px-4 py-3 border-b flex items-center justify-between" style="border-color:#E8E4DC;">
+                            <span class="text-sm font-semibold" style="color:#1a2e1c;">Notifikasi</span>
+                            @if($unreadCount > 0)
+                                <form method="POST" action="{{ route('notifications.read-all') }}">
+                                    @csrf
+                                    <button type="submit" class="text-xs hover:underline" style="color:#C4783A;">Tandai semua dibaca</button>
+                                </form>
+                            @endif
+                        </div>
+
+                        @php $recentNotifs = auth()->user()->notifications()->latest()->take(8)->get(); @endphp
+
+                        @forelse($recentNotifs as $notif)
+                            <a href="{{ route('notifications.click', $notif->id) }}"
+                                class="block px-4 py-3 border-b hover:bg-[#F5F2EC] transition-colors"
+                                style="border-color:#F0EDE6; {{ $notif->read_at ? '' : 'background:#FBF8F3;' }}">
+                                <div class="flex items-start gap-2">
+                                    @if(!$notif->read_at)
+                                        <span class="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style="background:#C4783A;"></span>
+                                    @else
+                                        <span class="mt-1.5 w-1.5 h-1.5 flex-shrink-0"></span>
+                                    @endif
+                                    <div class="flex-1">
+                                        <p class="text-sm font-medium" style="color:#1a2e1c;">{{ $notif->data['title'] ?? 'Notifikasi' }}</p>
+                                        <p class="text-xs mt-0.5" style="color:#6B7280;">{{ $notif->data['message'] ?? '' }}</p>
+                                        <p class="text-[11px] mt-1" style="color:#9CA3AF;">{{ $notif->created_at->diffForHumans() }}</p>
+                                    </div>
+                                </div>
+                            </a>
+                        @empty
+                            <div class="px-4 py-8 text-center">
+                                <p class="text-sm" style="color:#9CA3AF;">Belum ada notifikasi.</p>
+                            </div>
+                        @endforelse
+                    </div>
+                </div>
 
                 @if(auth()->user()->role === 'host')
                     {{-- Kondisi 3: Host --}}

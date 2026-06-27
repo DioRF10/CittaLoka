@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Onboarding;
 
 use App\Http\Controllers\Controller;
 use App\Models\Host;
+use App\Notifications\BankNeedsReviewNotification;
 use App\Services\XenditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -108,7 +109,7 @@ class HostOnboardingController extends Controller
             $host->save();
         }
 
-        // Step 5 — Data bank + verifikasi Xendit + complete onboarding
+        // Step 5 — Data bank + verifikasi manual admin + complete onboarding
         if ($step == 5) {
             $request->validate([
                 'bank_name' => ['required', 'string', 'max:100'],
@@ -123,7 +124,7 @@ class HostOnboardingController extends Controller
             $host->bank_name = $request->input('bank_name');
             $host->bank_account_name = $request->input('bank_account_name');
             $host->bank_account_number = $request->input('bank_account_number');
-            
+
             $host->bank_review_status = 'needs_review';
             $host->bank_verified_at = null;
             $host->bank_review_note = 'Menunggu verifikasi manual oleh admin.';
@@ -131,6 +132,9 @@ class HostOnboardingController extends Controller
             $host->save();
 
             $user->fill(['onboarding_completed_at' => now()->toDateTimeString()])->save();
+
+            // ── Notifikasi ke host ──
+            $user->notify(new BankNeedsReviewNotification($host));
 
             return response()->json([
                 'success' => true,
@@ -145,6 +149,8 @@ class HostOnboardingController extends Controller
 
     /**
      * Mapping nama bank dari dropdown (format manusiawi) ke kode bank Xendit.
+     * Catatan: tidak lagi dipakai untuk verifikasi otomatis, tapi disimpan
+     * untuk referensi kalau nanti ingin diaktifkan kembali.
      */
     private function mapBankNameToXenditCode(string $bankName): string
     {

@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Notifications\BookingConfirmedNotification;
+use App\Notifications\DisbursementSentNotification;
+use App\Notifications\NewBookingReceivedNotification;
 use App\Services\XenditService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -17,7 +20,6 @@ class XenditWebhookController extends Controller
     {
         $xendit = app(XenditService::class);
 
-        // ── Verifikasi token webhook ──
         $token = $request->header('x-callback-token');
         if (!$xendit->verifyWebhookToken($token)) {
             Log::warning('Xendit webhook: invalid token', ['ip' => $request->ip()]);
@@ -28,13 +30,15 @@ class XenditWebhookController extends Controller
         Log::info('Xendit invoice webhook received', ['payload' => $payload]);
 
         $externalId = $payload['external_id'] ?? null;
-        $status     = $payload['status'] ?? null; // PAID, EXPIRED, FAILED
+        $status     = $payload['status'] ?? null;
 
         if (!$externalId) {
             return response()->json(['message' => 'Missing external_id'], 400);
         }
 
-        $booking = Booking::where('kode_booking', $externalId)->first();
+        $booking = Booking::with(['user', 'host.user'])
+            ->where('kode_booking', $externalId)
+            ->first();
 
         if (!$booking) {
             Log::warning('Xendit webhook: booking not found', ['external_id' => $externalId]);
@@ -51,8 +55,9 @@ class XenditWebhookController extends Controller
                     'paid_at'                => now(),
                 ]);
 
-                // TODO: kirim notifikasi email/in-app ke traveler & host
-                // Mail::to($booking->user->email)->send(new BookingConfirmed($booking));
+                // ── Notifikasi ke traveler & host ──
+                $booking->user?->notify(new BookingConfirmedNotification($booking));
+                $booking->host?->user?->notify(new NewBookingReceivedNotification($booking));
 
                 Log::info('Booking confirmed via Xendit', ['kode_booking' => $booking->kode_booking]);
                 break;
@@ -63,7 +68,6 @@ class XenditWebhookController extends Controller
                     'payment_status' => 'expired',
                 ]);
 
-                // Kembalikan slot yang sempat ditahan
                 if ($booking->availability) {
                     $booking->availability->decrement('booked_slot', $booking->jumlah_peserta);
                 }
@@ -107,15 +111,15 @@ class XenditWebhookController extends Controller
         $payload = $request->all();
         Log::info('Xendit disbursement webhook received', ['payload' => $payload]);
 
-        $externalId = $payload['external_id'] ?? null; // format: "disb-{booking_id}"
-        $status     = $payload['status'] ?? null;       // COMPLETED, FAILED
+        $externalId = $payload['external_id'] ?? null;
+        $status     = $payload['status'] ?? null;
 
         if (!$externalId || !str_starts_with($externalId, 'disb-')) {
             return response()->json(['message' => 'Invalid external_id'], 400);
         }
 
         $bookingId = (int) str_replace('disb-', '', $externalId);
-        $booking   = Booking::find($bookingId);
+        $booking   = Booking::with('host.user')->find($bookingId);
 
         if (!$booking) {
             Log::warning('Xendit disbursement webhook: booking not found', ['booking_id' => $bookingId]);
@@ -129,7 +133,7 @@ class XenditWebhookController extends Controller
                     'disbursed_at'         => now(),
                 ]);
 
-                // TODO: kirim notifikasi ke host "Dana sudah cair"
+                $booking->host?->user?->notify(new DisbursementSentNotification($booking));
 
                 Log::info('Disbursement completed', ['booking_id' => $bookingId]);
                 break;
@@ -140,7 +144,7 @@ class XenditWebhookController extends Controller
                     'disbursement_failure_reason'  => $payload['failure_code'] ?? 'Unknown error',
                 ]);
 
-                // TODO: alert ke admin untuk handle manual
+                // TODO: alert ke admin (bisa via Filament notification atau email khusus admin)
 
                 Log::warning('Disbursement failed', [
                     'booking_id' => $bookingId,

@@ -18,7 +18,7 @@ use App\Http\Controllers\MemoryBookController;
 use App\Http\Controllers\Host\MemoryBookFillController;
 use App\Http\Controllers\XenditWebhookController;
 use App\Http\Controllers\HostBankController;
-
+use App\Http\Controllers\NotificationController;
 
 
 Route::get('/', function () {
@@ -125,6 +125,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/bookings/{kode}/cancel-confirm', [BookingController::class, 'cancelConfirm'])
         ->name('bookings.cancel-confirm');
     Route::patch('/bookings/{kode}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
+
+    // Notifikasi
+    Route::get('/notifications/{id}/click', [NotificationController::class, 'click'])
+        ->name('notifications.click');
+    Route::post('/notifications/read-all', [NotificationController::class, 'readAll'])
+        ->name('notifications.read-all');
 });
 Route::get('/memory-books', [MemoryBookController::class, 'index'])
     ->name('memory-books.index');
@@ -146,7 +152,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('onboarding.host.save');
     Route::post('/host/bank-account/verify', [HostBankController::class, 'verify'])
         ->name('host.bank-account.verify');
- 
+
 });
 
 Route::middleware(['auth', 'verified', 'host'])->prefix('dashboard')->name('host.')->group(function () {

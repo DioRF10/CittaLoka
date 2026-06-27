@@ -18,6 +18,8 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use App\Notifications\BankApprovedNotification;
+use App\Notifications\BankNeedsReviewNotification;
 
 class HostsTable
 {
@@ -163,6 +165,9 @@ class HostsTable
                             'bank_reviewed_by' => auth()->id(),
                             'bank_reviewed_at' => now(),
                         ]);
+
+                        // ── Notifikasi ke host ──
+                        $record->user?->notify(new BankApprovedNotification($record));
 
                         Notification::make()
                             ->title('Rekening host disetujui')

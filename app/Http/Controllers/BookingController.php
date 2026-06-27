@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Notifications\BookingCancelledNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -95,7 +96,7 @@ class BookingController extends Controller
      */
     public function cancel(Request $request, string $kode)
     {
-        $booking = Booking::with(['experience', 'availability'])
+        $booking = Booking::with(['experience', 'availability', 'host.user'])
             ->where('kode_booking', $kode)
             ->where('user_id', Auth::id())
             ->firstOrFail();
@@ -125,7 +126,8 @@ class BookingController extends Controller
             $booking->availability->decrement('booked_slot', $booking->jumlah_peserta);
         }
 
-        // TODO: kirim notifikasi ke host bahwa booking dibatalkan
+        // ── Notifikasi ke host ──
+        $booking->host?->user?->notify(new BookingCancelledNotification($booking));
 
         $message = $refundAmount > 0
             ? "Booking dibatalkan. Refund sebesar Rp " . number_format($refundAmount, 0, ',', '.') . " akan diproses oleh tim kami dalam beberapa hari kerja."

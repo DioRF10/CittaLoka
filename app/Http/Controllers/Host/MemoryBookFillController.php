@@ -108,8 +108,8 @@ class MemoryBookFillController extends Controller
         ]);
 
         if ($action === 'send') {
-            // TODO: kirim email ke traveler (bisa tambahkan Mailable di sini)
-            // Mail::to($memoryBook->booking->user->email)->send(new MemoryBookSent($memoryBook));
+            // ── Notifikasi ke traveler ──
+            $memoryBook->booking->user?->notify(new \App\Notifications\MemoryBookSentNotification($memoryBook));
 
             return redirect()
                 ->route('host.memory-books.index')

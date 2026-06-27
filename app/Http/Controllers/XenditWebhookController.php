@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\User;
 use App\Notifications\BookingConfirmedNotification;
+use App\Notifications\DisbursementFailedAdminNotification;
 use App\Notifications\DisbursementSentNotification;
 use App\Notifications\NewBookingReceivedNotification;
 use App\Services\XenditService;
@@ -55,7 +57,6 @@ class XenditWebhookController extends Controller
                     'paid_at'                => now(),
                 ]);
 
-                // ── Notifikasi ke traveler & host ──
                 $booking->user?->notify(new BookingConfirmedNotification($booking));
                 $booking->host?->user?->notify(new NewBookingReceivedNotification($booking));
 
@@ -139,16 +140,22 @@ class XenditWebhookController extends Controller
                 break;
 
             case 'FAILED':
+                $failureReason = $payload['failure_code'] ?? 'Unknown error';
+
                 $booking->update([
                     'disbursement_status'          => 'failed',
-                    'disbursement_failure_reason'  => $payload['failure_code'] ?? 'Unknown error',
+                    'disbursement_failure_reason'  => $failureReason,
                 ]);
 
-                // TODO: alert ke admin (bisa via Filament notification atau email khusus admin)
+                // ── Notifikasi ke semua admin ──
+                $admins = User::where('role', 'admin')->get();
+                foreach ($admins as $admin) {
+                    $admin->notify(new DisbursementFailedAdminNotification($booking, $failureReason));
+                }
 
                 Log::warning('Disbursement failed', [
                     'booking_id' => $bookingId,
-                    'reason'     => $payload['failure_code'] ?? null,
+                    'reason'     => $failureReason,
                 ]);
                 break;
 

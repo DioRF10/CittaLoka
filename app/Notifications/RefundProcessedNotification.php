@@ -39,7 +39,7 @@ class RefundProcessedNotification extends Notification
             'kode_booking'   => $this->booking->kode_booking,
             'title'          => 'Refund Diproses',
             'message'        => 'Refund Rp ' . number_format($this->booking->refund_amount, 0, ',', '.') . ' sudah dikirim.',
-            'url'            => route('bookings.show', $this->booking->kode_booking),
+            'url'            => route('bookings.show', $this->booking->kode_booking, false),
         ];
     }
 }

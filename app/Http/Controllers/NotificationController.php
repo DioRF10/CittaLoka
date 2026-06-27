@@ -25,7 +25,12 @@ class NotificationController extends Controller
 
         $url = $notification->data['url'] ?? url('/');
 
-        return redirect($url);
+        if (filter_var($url, FILTER_VALIDATE_URL)) {
+            $parsedUrl = parse_url($url);
+            $url = ($parsedUrl['path'] ?? '') . (isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : '');
+        }
+
+        return redirect($url ?: '/');
     }
 
     /**

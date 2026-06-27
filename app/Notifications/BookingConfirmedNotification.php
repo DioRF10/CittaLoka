@@ -40,7 +40,7 @@ class BookingConfirmedNotification extends Notification
             'kode_booking'   => $this->booking->kode_booking,
             'title'          => 'Booking Dikonfirmasi',
             'message'        => 'Pembayaran untuk "' . $this->booking->experience_title_snapshot . '" berhasil dikonfirmasi.',
-            'url'            => route('bookings.show', $this->booking->kode_booking),
+            'url'            => route('bookings.show', $this->booking->kode_booking, false),
         ];
     }
 }

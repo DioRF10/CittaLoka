@@ -29,7 +29,7 @@ class BookingCancelledNotification extends Notification
             ->line('**' . $this->booking->experience_title_snapshot . '**')
             ->line('Tanggal: ' . \Carbon\Carbon::parse($this->booking->tanggal_experience)->locale('id')->isoFormat('D MMMM YYYY'))
             ->when($this->booking->cancel_reason, fn ($mail) => $mail->line('Alasan: ' . $this->booking->cancel_reason))
-            ->action('Lihat Detail', route('host.bookings.detail', $this->booking->id));
+            ->action('Lihat Detail', route('host.bookings.index'));
     }
 
     public function toArray(object $notifiable): array
@@ -39,7 +39,7 @@ class BookingCancelledNotification extends Notification
             'kode_booking'   => $this->booking->kode_booking,
             'title'          => 'Booking Dibatalkan',
             'message'        => 'Booking "' . $this->booking->experience_title_snapshot . '" telah dibatalkan.',
-            'url'            => route('host.bookings.detail', $this->booking->id),
+            'url'            => route('host.bookings.index'),
         ];
     }
 }

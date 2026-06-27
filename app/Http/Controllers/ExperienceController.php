@@ -97,10 +97,29 @@ class ExperienceController extends Controller
           ->where('status', 'active')
           ->firstOrFail();
 
-        $reviews    = [];
+        $reviews = $experience->approvedReviews()
+            ->with(['user', 'photos', 'reply'])
+            ->take(6)
+            ->get();
+
+        $ratingBreakdown = [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0];
+        $approvedCount = $experience->approvedReviews()->count();
+
+        if ($approvedCount > 0) {
+            $counts = $experience->approvedReviews()
+                ->reorder()
+                ->selectRaw('rating, COUNT(*) as total')
+                ->groupBy('rating')
+                ->pluck('total', 'rating');
+
+            foreach ($counts as $rating => $total) {
+                $ratingBreakdown[(int) $rating] = round(($total / $approvedCount) * 100);
+            }
+        }
+
         $serviceFee = 25000;
 
-        return view('pages.experience-detail', compact('experience', 'reviews', 'serviceFee'));
+        return view('pages.experience-detail', compact('experience', 'reviews', 'ratingBreakdown', 'approvedCount', 'serviceFee'));
     }
 
     // ── API: Get available times by date ─────────────────────────────────

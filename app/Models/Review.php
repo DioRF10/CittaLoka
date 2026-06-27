@@ -47,4 +47,14 @@ class Review extends Model
     {
         return $this->belongsTo(Host::class);
     }
+
+    public function photos()
+    {
+        return $this->hasMany(ReviewPhoto::class)->orderBy('sort_order');
+    }
+
+    public function reply()
+    {
+        return $this->hasOne(ReviewReply::class);
+    }
 }

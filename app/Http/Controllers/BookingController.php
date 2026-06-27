@@ -17,7 +17,7 @@ class BookingController extends Controller
     {
         $filter = $request->input('filter', 'all');
 
-        $query = Booking::with(['experience.photos', 'experience.kategori'])
+        $query = Booking::with(['experience.photos', 'experience.kategori', 'review'])
             ->where('user_id', Auth::id())
             ->orderBy('created_at', 'desc');
 

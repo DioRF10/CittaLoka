@@ -11,7 +11,7 @@
     </div>
 @endif
 
-<div x-data="{ openReply: null }">
+<div x-data="{ openReply: null, zoomedPhoto: null }">
 
     @if($reviews->isEmpty())
         <div style="background:white; border-radius:12px; border:1.5px solid #EDE7DC; padding:3rem; text-align:center; color:#9CA3AF; font-size:0.875rem;">
@@ -44,7 +44,7 @@
                     @if($review->photos->isNotEmpty())
                         <div style="display:flex; gap:0.5rem; margin-bottom:0.75rem; flex-wrap:wrap;">
                             @foreach($review->photos as $photo)
-                                <img src="{{ $photo->url }}" alt="" style="width:56px; height:56px; border-radius:8px; object-fit:cover;">
+                                <img src="{{ $photo->url }}" alt="" @click="zoomedPhoto = '{{ $photo->url }}'" style="width:56px; height:56px; border-radius:8px; object-fit:cover; cursor:zoom-in;">
                             @endforeach
                         </div>
                     @endif
@@ -85,6 +85,14 @@
             {{ $reviews->links() }}
         </div>
     @endif
+    
+    <!-- Modal Zoom -->
+    <div x-show="zoomedPhoto" x-transition.opacity x-cloak
+        style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:99999; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px);"
+        @click="zoomedPhoto = null">
+        <button style="position:absolute; top:1.5rem; right:1.5rem; background:white; color:#1E3A2F; border:none; border-radius:50%; width:40px; height:40px; font-size:1.5rem; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.2);" @click.stop="zoomedPhoto = null">&times;</button>
+        <img :src="zoomedPhoto" @click.stop="" style="max-width:90vw; max-height:90vh; border-radius:12px; object-fit:contain; box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+    </div>
 </div>
 
 @endsection

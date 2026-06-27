@@ -132,6 +132,11 @@ class Booking extends Model
         return $this->hasOne(MemoryBook::class);
     }
 
+    public function review()
+    {
+        return $this->hasOne(Review::class);
+    }
+
     // public function coupon()
     // {
     //     return $this->belongsTo(Coupon::class);

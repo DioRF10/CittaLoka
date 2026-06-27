@@ -63,4 +63,9 @@ class Host extends Model
     {
         return $this->hasMany(HeritageTree::class, 'host_id');
     }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }

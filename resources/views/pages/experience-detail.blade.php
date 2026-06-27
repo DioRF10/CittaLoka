@@ -276,7 +276,7 @@
                 {{-- Reviews --}}
                 <div id="reviews" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem;">
                     <h2 style="font-family:'Cormorant Garamond',Georgia,serif; font-size:1.5rem; font-weight:500; color:#1E3A2F;">Guest Reviews</h2>
-                    <a href="#" style="font-size:0.8rem; color:#1E3A2F; text-decoration:underline; font-weight:500;">See all {{ $experience->total_reviews }} reviews</a>
+                    <a href="#reviews" style="font-size:0.8rem; color:#1E3A2F; text-decoration:underline; font-weight:500;">See all {{ $experience->total_reviews }} reviews</a>
                 </div>
                 <div style="display:flex; align-items:center; gap:2rem; margin-bottom:1.5rem;">
                     <div style="text-align:center;">
@@ -289,34 +289,49 @@
                             <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.3rem;">
                                 <span style="font-size:0.75rem; color:#7A7A6E; width:8px;">{{ $star }}</span>
                                 <div style="flex:1; height:6px; background:#EDE7DC; border-radius:999px; overflow:hidden;">
-                                    <div style="height:100%; background:#1E3A2F; border-radius:999px; width:{{ $star===5?'80%':($star===4?'12%':($star===3?'5%':'2%')) }};"></div>
+                                    <div style="height:100%; background:#1E3A2F; border-radius:999px; width:{{ $ratingBreakdown[$star] }}%;"></div>
                                 </div>
                             </div>
                         @endforeach
                     </div>
                 </div>
-                @php
-                    $dummyReviews = [
-                        ['name'=>'Rizky Pratama','date'=>'May 2024','avatar'=>'R','text'=>'Amazing experience! The host was super friendly and patient.'],
-                        ['name'=>'Nadia Ayu',    'date'=>'April 2024','avatar'=>'N','text'=>'Cocok untuk pemula. Penjelasannya sangat detail dan sabar.'],
-                        ['name'=>'Dimas Putra',  'date'=>'April 2024','avatar'=>'D','text'=>'Salah satu experience terbaik di Bali. Highly recommended!'],
-                    ];
-                @endphp
-                <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem;">
-                    @foreach($dummyReviews as $review)
-                        <div style="background:#F7F3ED; border-radius:12px; padding:1rem; border:1.5px solid #EDE7DC;">
-                            <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.75rem;">
-                                <div style="width:36px; height:36px; border-radius:50%; background:#1E3A2F; color:white; display:flex; align-items:center; justify-content:center; font-size:0.875rem; font-weight:500; flex-shrink:0;">{{ $review['avatar'] }}</div>
-                                <div>
-                                    <div style="font-size:0.85rem; font-weight:500; color:#2C2C2C;">{{ $review['name'] }}</div>
-                                    <div style="font-size:0.72rem; color:#7A7A6E;">{{ $review['date'] }}</div>
+
+                @if($reviews->isEmpty())
+                    <p style="font-size:0.85rem; color:#7A7A6E; padding:1rem 0;">Belum ada review untuk experience ini.</p>
+                @else
+                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem;">
+                        @foreach($reviews as $review)
+                            <div style="background:#F7F3ED; border-radius:12px; padding:1rem; border:1.5px solid #EDE7DC;">
+                                <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.75rem;">
+                                    <div style="width:36px; height:36px; border-radius:50%; background:#1E3A2F; color:white; display:flex; align-items:center; justify-content:center; font-size:0.875rem; font-weight:500; flex-shrink:0;">{{ strtoupper(substr($review->user->name ?? '?', 0, 1)) }}</div>
+                                    <div>
+                                        <div style="font-size:0.85rem; font-weight:500; color:#2C2C2C;">{{ $review->user->name ?? 'Traveler' }}</div>
+                                        <div style="font-size:0.72rem; color:#7A7A6E;">{{ $review->published_at?->translatedFormat('F Y') ?? $review->created_at->translatedFormat('F Y') }}</div>
+                                    </div>
                                 </div>
+                                <div style="color:#C4783A; font-size:0.75rem; margin-bottom:0.5rem;">
+                                    @for($i = 0; $i < $review->rating; $i++)★@endfor@for($i = $review->rating; $i < 5; $i++)☆@endfor
+                                </div>
+                                @if($review->text)
+                                    <div style="font-size:0.8rem; color:#4A4A4A; line-height:1.6;">{{ $review->text }}</div>
+                                @endif
+                                @if($review->photos->isNotEmpty())
+                                    <div style="display:flex; gap:0.4rem; margin-top:0.6rem; flex-wrap:wrap;">
+                                        @foreach($review->photos as $photo)
+                                            <img src="{{ $photo->url }}" alt="" @click="zoomedPhoto = '{{ $photo->url }}'" style="width:48px; height:48px; border-radius:6px; object-fit:cover; cursor:zoom-in;">
+                                        @endforeach
+                                    </div>
+                                @endif
+                                @if($review->reply)
+                                    <div style="margin-top:0.75rem; padding-top:0.6rem; border-top:1px solid #EDE7DC;">
+                                        <div style="font-size:0.7rem; font-weight:600; color:#1E3A2F; margin-bottom:0.2rem;">Balasan Host</div>
+                                        <div style="font-size:0.78rem; color:#4A4A4A; line-height:1.5;">{{ $review->reply->reply }}</div>
+                                    </div>
+                                @endif
                             </div>
-                            <div style="color:#C4783A; font-size:0.75rem; margin-bottom:0.5rem;">★★★★★</div>
-                            <div style="font-size:0.8rem; color:#4A4A4A; line-height:1.6;">{{ $review['text'] }}</div>
-                        </div>
-                    @endforeach
-                </div>
+                        @endforeach
+                    </div>
+                @endif
 
             </div>{{-- end kiri --}}
 
@@ -542,6 +557,13 @@
         </div>{{-- end grid --}}
     </div>{{-- end container --}}
 
+    <!-- Modal Zoom -->
+    <div x-show="zoomedPhoto" x-transition.opacity x-cloak
+        style="position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:99999; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px);"
+        @click="zoomedPhoto = null">
+        <button style="position:absolute; top:1.5rem; right:1.5rem; background:white; color:#1E3A2F; border:none; border-radius:50%; width:40px; height:40px; font-size:1.5rem; font-weight:bold; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,0.2);" @click.stop="zoomedPhoto = null">&times;</button>
+        <img :src="zoomedPhoto" @click.stop="" style="max-width:90vw; max-height:90vh; border-radius:12px; object-fit:contain; box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+    </div>
 </div>{{-- end x-data --}}
 
 @endsection
@@ -550,6 +572,7 @@
 <script>
 function bookingWidget() {
     return {
+        zoomedPhoto: null,
         showCalendar: false,
         selectedDate: null,
         selectedTime: null,

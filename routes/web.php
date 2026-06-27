@@ -125,6 +125,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/bookings/{kode}/cancel-confirm', [BookingController::class, 'cancelConfirm'])
         ->name('bookings.cancel-confirm');
     Route::patch('/bookings/{kode}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
+    Route::get('/bookings/{kode}/review', [App\Http\Controllers\ReviewController::class, 'create'])->name('reviews.create');
+    Route::post('/bookings/{kode}/review', [App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
 
     // Notifikasi
     Route::get('/notifications/{id}/click', [NotificationController::class, 'click'])
@@ -191,6 +193,10 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('dashboard')->name('host
     // Bookings
     Route::get('/bookings', [HostDashboardController::class, 'bookings'])->name('bookings.index');
     Route::get('/bookings/{id}/detail', [HostDashboardController::class, 'bookingDetail'])->name('bookings.detail');
+
+    // Reviews
+    Route::get('/reviews', [App\Http\Controllers\Host\HostReviewController::class, 'index'])->name('reviews.index');
+    Route::post('/reviews/{review}/reply', [App\Http\Controllers\Host\HostReviewController::class, 'reply'])->name('reviews.reply');
 
     // Availability
     Route::get('/availability', [HostDashboardController::class, 'availability'])->name('availability.index');

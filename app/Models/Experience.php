@@ -143,6 +143,16 @@ class Experience extends Model
         return $this->hasMany(ExperiencePhoto::class)->orderBy('sort_order');
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function approvedReviews()
+    {
+        return $this->reviews()->where('status', 'approved')->latest('published_at');
+    }
+
     public function availabilities()
     {
         return $this->hasMany(ExperienceAvailability::class)->orderBy('date');

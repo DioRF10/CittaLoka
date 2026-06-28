@@ -111,6 +111,14 @@ Route::get('/experiences/{slug}', [ExperienceController::class, 'show'])
 Route::get('/experiences/{slug}/times', [ExperienceController::class, 'getTimes'])->name('experiences.times');
 Route::get('/hosts/{id}', [HostPublicController::class, 'show'])->name('hosts.show');
 
+// =============================================================================
+// Soul Match
+// =============================================================================
+Route::get('/soul-match', [App\Http\Controllers\SoulMatchController::class, 'intro'])->name('soul-match.intro');
+Route::get('/soul-match/quiz', [App\Http\Controllers\SoulMatchController::class, 'show'])->name('soul-match.quiz');
+Route::post('/soul-match/quiz', [App\Http\Controllers\SoulMatchController::class, 'submit'])->name('soul-match.submit');
+Route::get('/soul-match/results', [App\Http\Controllers\SoulMatchController::class, 'results'])->name('soul-match.results');
+
 
 
 // =============================================================================

@@ -212,6 +212,8 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('dashboard')->name('host
     Route::delete('/availability/{id}', [HostDashboardController::class, 'deleteAvailability'])->name('availability.delete');
 
     // Earnings
+    Route::get('/earnings/export', [HostDashboardController::class, 'exportPayouts'])
+    ->name('earnings.export');
     Route::get('/earnings', [HostDashboardController::class, 'earnings'])->name('earnings');
 
     // Settings

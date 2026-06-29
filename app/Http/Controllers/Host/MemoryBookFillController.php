@@ -109,7 +109,11 @@ class MemoryBookFillController extends Controller
 
         if ($action === 'send') {
             // ── Notifikasi ke traveler ──
-            $memoryBook->booking->user?->notify(new \App\Notifications\MemoryBookSentNotification($memoryBook));
+            try {
+                $memoryBook->booking->user?->notify(new \App\Notifications\MemoryBookSentNotification($memoryBook));
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('MemoryBookSentNotification error', ['error' => $e->getMessage()]);
+            }
 
             return redirect()
                 ->route('host.memory-books.index')

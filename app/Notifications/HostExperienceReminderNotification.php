@@ -30,7 +30,7 @@ class HostExperienceReminderNotification extends Notification
             ->line('Tanggal: ' . \Carbon\Carbon::parse($this->booking->tanggal_experience)->locale('id')->isoFormat('D MMMM YYYY'))
             ->line('Jam: ' . \Carbon\Carbon::parse($this->booking->jam_experience)->format('H:i') . ' WITA')
             ->line('Wisatawan: ' . $this->booking->user->name . ' (' . $this->booking->jumlah_peserta . ' peserta)')
-            ->action('Lihat Detail Booking', route('host.bookings.detail', $this->booking->id))
+            ->action('Lihat Detail Booking', route('host.bookings.index'))
             ->line('Siapkan yang terbaik untuk wisatawanmu!');
     }
 
@@ -41,7 +41,7 @@ class HostExperienceReminderNotification extends Notification
             'kode_booking' => $this->booking->kode_booking,
             'title'        => 'Besok Ada Sesi!',
             'message'      => '"' . $this->booking->experience_title_snapshot . '" besok dengan ' . $this->booking->jumlah_peserta . ' peserta.',
-            'url'          => route('host.bookings.detail', $this->booking->id),
+            'url'          => route('host.bookings.index'),
         ];
     }
 }

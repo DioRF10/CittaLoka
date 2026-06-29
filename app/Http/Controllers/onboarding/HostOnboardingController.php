@@ -134,7 +134,11 @@ class HostOnboardingController extends Controller
             $user->fill(['onboarding_completed_at' => now()->toDateTimeString()])->save();
 
             // ── Notifikasi ke host ──
-            $user->notify(new BankNeedsReviewNotification($host));
+            try {
+                $user->notify(new BankNeedsReviewNotification($host));
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('BankNeedsReviewNotification error', ['error' => $e->getMessage()]);
+            }
 
             return response()->json([
                 'success' => true,

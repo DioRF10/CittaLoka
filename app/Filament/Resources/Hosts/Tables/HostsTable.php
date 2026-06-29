@@ -167,7 +167,11 @@ class HostsTable
                         ]);
 
                         // ── Notifikasi ke host ──
-                        $record->user?->notify(new BankApprovedNotification($record));
+                        try {
+                            $record->user?->notify(new BankApprovedNotification($record));
+                        } catch (\Exception $e) {
+                            \Illuminate\Support\Facades\Log::error('BankApprovedNotification error', ['error' => $e->getMessage()]);
+                        }
 
                         Notification::make()
                             ->title('Rekening host disetujui')

@@ -127,7 +127,11 @@ class BookingController extends Controller
         }
 
         // ── Notifikasi ke host ──
-        $booking->host?->user?->notify(new BookingCancelledNotification($booking));
+        try {
+            $booking->host?->user?->notify(new BookingCancelledNotification($booking));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Gagal kirim notif BookingCancelled', ['error' => $e->getMessage()]);
+        }
 
         $message = $refundAmount > 0
             ? "Booking dibatalkan. Refund sebesar Rp " . number_format($refundAmount, 0, ',', '.') . " akan diproses oleh tim kami dalam beberapa hari kerja."

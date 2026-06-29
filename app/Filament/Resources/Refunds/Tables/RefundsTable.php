@@ -97,7 +97,11 @@ class RefundsTable
                             'refund_note'   => 'Refund manual. Ref: ' . $data['transfer_ref'],
                         ]);
 
-                        $record->user?->notify(new RefundProcessedNotification($record));
+                        try {
+                            $record->user?->notify(new RefundProcessedNotification($record));
+                        } catch (\Exception $e) {
+                            \Illuminate\Support\Facades\Log::error('RefundProcessedNotification error', ['error' => $e->getMessage()]);
+                        }
 
                         Notification::make()
                             ->title('Refund berhasil ditandai selesai')

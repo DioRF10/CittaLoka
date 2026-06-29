@@ -57,8 +57,17 @@ class XenditWebhookController extends Controller
                     'paid_at'                => now(),
                 ]);
 
-                $booking->user?->notify(new BookingConfirmedNotification($booking));
-                $booking->host?->user?->notify(new NewBookingReceivedNotification($booking));
+                try {
+                    $booking->user?->notify(new BookingConfirmedNotification($booking));
+                } catch (\Exception $e) {
+                    Log::error('Gagal kirim notif BookingConfirmed ke user', ['error' => $e->getMessage()]);
+                }
+                
+                try {
+                    $booking->host?->user?->notify(new NewBookingReceivedNotification($booking));
+                } catch (\Exception $e) {
+                    Log::error('Gagal kirim notif NewBookingReceived ke host', ['error' => $e->getMessage()]);
+                }
 
                 Log::info('Booking confirmed via Xendit', ['kode_booking' => $booking->kode_booking]);
                 break;
@@ -134,7 +143,11 @@ class XenditWebhookController extends Controller
                     'disbursed_at'         => now(),
                 ]);
 
-                $booking->host?->user?->notify(new DisbursementSentNotification($booking));
+                try {
+                    $booking->host?->user?->notify(new DisbursementSentNotification($booking));
+                } catch (\Exception $e) {
+                    Log::error('DisbursementSentNotification error', ['error' => $e->getMessage()]);
+                }
 
                 Log::info('Disbursement completed', ['booking_id' => $bookingId]);
                 break;
@@ -150,7 +163,11 @@ class XenditWebhookController extends Controller
                 // ── Notifikasi ke semua admin ──
                 $admins = User::where('role', 'admin')->get();
                 foreach ($admins as $admin) {
-                    $admin->notify(new DisbursementFailedAdminNotification($booking, $failureReason));
+                    try {
+                        $admin->notify(new DisbursementFailedAdminNotification($booking, $failureReason));
+                    } catch (\Exception $e) {
+                        Log::error('DisbursementFailedAdminNotification error', ['error' => $e->getMessage()]);
+                    }
                 }
 
                 Log::warning('Disbursement failed', [

@@ -31,12 +31,19 @@ class SendExperienceReminders extends Command
         foreach ($bookings as $booking) {
             try {
                 $booking->user?->notify(new ExperienceReminderNotification($booking));
-                sleep(1);
-                $booking->host?->user?->notify(new HostExperienceReminderNotification($booking));
-                sleep(1);
             } catch (\Exception $e) {
-                Log::error("Email error untuk booking {$booking->kode_booking}: " . $e->getMessage());
+                Log::error("Email error (Traveler) untuk booking {$booking->kode_booking}: " . $e->getMessage());
             }
+
+            sleep(1);
+
+            try {
+                $booking->host?->user?->notify(new HostExperienceReminderNotification($booking));
+            } catch (\Exception $e) {
+                Log::error("Email error (Host) untuk booking {$booking->kode_booking}: " . $e->getMessage());
+            }
+            
+            sleep(1);
 
             $this->info("Reminder dikirim untuk booking {$booking->kode_booking}.");
             Log::info('Reminder H-1 dikirim', ['kode_booking' => $booking->kode_booking]);

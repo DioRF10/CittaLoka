@@ -5,22 +5,18 @@
 @section('content')
 
     {{-- ===================== HEADER ===================== --}}
-    <section class="relative overflow-hidden py-16 text-center" style="background: #F0EDE6; min-height: 220px;">
+    <section class="relative overflow-hidden py-20 text-center" 
+        style="background: url('/images/bali-hero-bg.png') center/cover no-repeat; min-height: 280px; display: flex; align-items: center;">
+        
+        {{-- Overlay gelap agar teks terbaca --}}
+        <div class="absolute inset-0 bg-black/40"></div>
 
-        {{-- Dekorasi kiri (daun) --}}
-        <div class="absolute left-0 top-0 h-full w-48 pointer-events-none select-none opacity-40"
-            style="background: url('/images/hero-leaf-left.png') left center / contain no-repeat;"></div>
-
-        {{-- Dekorasi kanan (pura) --}}
-        <div class="absolute right-0 bottom-0 h-full w-64 pointer-events-none select-none"
-            style="background: url('/images/hero-temple-right.png') right bottom / contain no-repeat;"></div>
-
-        <div class="relative z-10 max-w-2xl mx-auto px-6">
-            <p class="text-xs font-semibold uppercase tracking-widest mb-3" style="color: #C4783A; letter-spacing: 0.2em;">
+        <div class="relative z-10 max-w-2xl mx-auto px-6 w-full mt-4">
+            <p class="text-xs font-semibold uppercase tracking-widest mb-3" style="color: #F3D9B8; letter-spacing: 0.2em; text-shadow: 0 1px 4px rgba(0,0,0,0.5);">
                 Explore Experiences
             </p>
-            <h1 class="font-normal mb-8"
-                style="font-family: 'Playfair Display', serif; font-size: clamp(32px, 5vw, 56px); color: #1a2e1c; line-height: 1.15;">
+            <h1 class="font-normal mb-8 text-white"
+                style="font-family: 'Playfair Display', serif; font-size: clamp(32px, 5vw, 56px); line-height: 1.15; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">
                 Find Your Perfect Bali Experience
             </h1>
 
@@ -398,8 +394,8 @@
                     @endphp
 
                     <a href="{{ route('experiences.show', $exp->slug) }}"
-                        class="group block rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-                        style="text-decoration:none; color:inherit; box-shadow: 0 1px 6px rgba(0,0,0,0.07);"
+                        class="group relative block rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+                        style="background-color: #141414; height: 420px; text-decoration:none; color:inherit;"
                         x-data="{ wishlisted: {{ auth()->check() && auth()->user()->hasWishlisted($exp->id) ? 'true' : 'false' }} }"
                         data-auth="{{ auth()->check() ? '1' : '0' }}"
                         data-login-url="{{ route('login') }}"
@@ -407,33 +403,31 @@
                         data-experience-id="{{ $exp->id }}"
                         data-csrf="{{ csrf_token() }}">
 
-                        {{-- Foto --}}
-                        <div class="relative overflow-hidden" style="height: 220px;">
+                        {{-- Background Image --}}
+                        <div class="absolute inset-0">
                             @if($cover)
                                 <img src="{{ $cover->url }}" alt="{{ $judul }}"
                                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                     loading="lazy">
                             @else
-                                <div class="w-full h-full flex items-center justify-center"
-                                    style="background:linear-gradient(135deg,#2D5240,#C4A882);">
-                                    <span class="text-5xl">🌿</span>
+                                <div class="w-full h-full flex items-center justify-center bg-stone-800">
+                                    <span class="text-5xl opacity-40">🌿</span>
                                 </div>
                             @endif
+                        </div>
 
-                            {{-- Gradient overlay --}}
-                            <div class="absolute inset-0" style="background: linear-gradient(to top, rgba(0,0,0,0.45) 0%, transparent 50%);"></div>
+                        {{-- Heavy Dark Gradient Overlay --}}
+                        <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(20,20,20,0) 0%, rgba(20,20,20,0.1) 30%, rgba(20,20,20,0.85) 65%, rgba(20,20,20,1) 100%);"></div>
 
-                            {{-- Badge (bottom-left, di atas gradient) --}}
-                            <div class="absolute bottom-3 left-3">
-                                @if($exp->is_seasonal)
-                                    <span class="text-xs font-semibold px-2.5 py-1 rounded-lg uppercase tracking-wide"
-                                        style="background:#C4783A; color:white; letter-spacing:0.08em;">SEASONAL</span>
-                                @else
-                                    <span class="text-xs font-semibold px-2.5 py-1 rounded-lg uppercase tracking-wide"
-                                        style="background:rgba(255,255,255,0.15); backdrop-filter:blur(8px); color:white; border:1px solid rgba(255,255,255,0.3); letter-spacing:0.08em;">
-                                        {{ strtoupper($kategori) }}
-                                    </span>
-                                @endif
+                        {{-- Top Elements: Category Badge & Wishlist --}}
+                        <div class="absolute top-4 left-4 right-4 flex justify-between items-start z-10">
+                            {{-- Category Badge --}}
+                            <div class="px-2.5 py-1.5 rounded flex items-center gap-1.5"
+                                style="background: rgba(40,30,20,0.6); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.15);">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+                                </svg>
+                                <span class="text-[9px] font-semibold text-white uppercase tracking-wider">{{ $kategori }}</span>
                             </div>
 
                             {{-- Wishlist --}}
@@ -456,46 +450,42 @@
                                         if (!data.success) wishlisted = !wishlisted;
                                     }).catch(() => { wishlisted = !wishlisted; });
                                 "
-                                class="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
-                                style="background:rgba(255,255,255,0.95); box-shadow:0 2px 8px rgba(0,0,0,0.15);">
-                                <svg width="15" height="15" viewBox="0 0 24 24"
-                                    :fill="wishlisted ? '#EF4444' : 'none'"
-                                    :stroke="wishlisted ? '#EF4444' : '#1a2e1c'" stroke-width="2"
+                                class="w-8 h-8 flex items-center justify-center rounded-full transition-all hover:scale-110">
+                                <svg width="22" height="22" viewBox="0 0 24 24"
+                                    :fill="wishlisted ? 'white' : 'rgba(0,0,0,0.3)'"
+                                    :stroke="wishlisted ? 'white' : 'white'" stroke-width="1.5"
                                     stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                                 </svg>
                             </button>
                         </div>
 
-                        {{-- Info --}}
-                        <div class="p-4">
-                            {{-- Lokasi + Rating --}}
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs flex items-center gap-1" style="color:#9CA3AF;">
+                        {{-- Bottom Content --}}
+                        <div class="absolute bottom-0 left-0 right-0 p-5 z-10 flex flex-col justify-end">
+                            
+                            {{-- Rating --}}
+                            <div class="flex items-center gap-1.5 mb-2">
+                                <span class="text-white text-[10px]">★</span>
+                                <span class="text-white text-xs font-semibold">{{ number_format($exp->rating_avg, 1) }}</span>
+                                <span class="text-gray-400 text-xs">({{ $exp->total_reviews }})</span>
+                            </div>
+
+                            {{-- Title --}}
+                            <h3 class="text-[1.1rem] text-white font-medium mb-3 leading-snug"
+                                style="font-family: 'Playfair Display', serif; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+                                {{ $judul }}
+                            </h3>
+
+                            {{-- Location & Duration --}}
+                            <div class="flex items-center text-gray-300 text-[11px] gap-2 mb-4">
+                                <span class="flex items-center gap-1">
                                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
                                     </svg>
                                     {{ $exp->kabupaten ?? $exp->lokasi_nama }}
                                 </span>
-                                <span class="text-xs flex items-center gap-1">
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1">
-                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                                    </svg>
-                                    <span class="font-semibold text-xs" style="color:#1a2e1c;">{{ number_format($exp->rating_avg, 1) }}</span>
-                                    <span class="text-xs" style="color:#9CA3AF;">({{ $exp->total_reviews }})</span>
-                                </span>
-                            </div>
-
-                            {{-- Judul --}}
-                            <h3 class="text-sm font-semibold mb-1 leading-snug group-hover:text-[#C4783A] transition-colors"
-                                style="color:#1a2e1c;">
-                                {{ $judul }}
-                            </h3>
-
-                            {{-- Host + Durasi --}}
-                            <div class="flex items-center justify-between mt-1 mb-3">
-                                <p class="text-xs" style="color:#9CA3AF;">by {{ $exp->host->user->name ?? 'Host' }}</p>
-                                <span class="text-xs flex items-center gap-1" style="color:#9CA3AF;">
+                                <span class="w-1 h-1 rounded-full bg-gray-500"></span>
+                                <span class="flex items-center gap-1">
                                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                                     </svg>
@@ -503,11 +493,30 @@
                                 </span>
                             </div>
 
-                            {{-- Harga --}}
-                            <div class="pt-3 border-t" style="border-color:#F0EDE6;">
-                                <span class="text-xs" style="color:#9CA3AF;">From </span>
-                                <span class="text-base font-bold" style="color:#1a2e1c;">{{ $exp->getHargaFormatted() }}</span>
-                                <span class="text-xs" style="color:#9CA3AF;"> / person</span>
+                            {{-- Divider --}}
+                            <div class="w-full h-px bg-white/10 mb-3"></div>
+
+                            {{-- Host & Price Footer --}}
+                            <div class="flex items-center justify-between">
+                                {{-- Host --}}
+                                <div class="flex items-center gap-2.5">
+                                    <img src="{{ $exp->host->user->avatarUrl() }}" alt="Host" class="w-8 h-8 rounded-full object-cover border border-white/20">
+                                    <div class="flex flex-col">
+                                        <span class="text-[9px] text-gray-400 mb-0.5">Hosted by</span>
+                                        <span class="text-xs text-white font-medium">{{ $exp->host->user->name ?? 'Host' }}</span>
+                                        <span class="text-[9px] text-gray-400 flex items-center gap-1 mt-0.5">
+                                            Local Host
+                                            <svg width="10" height="10" viewBox="0 0 24 24" fill="#10B981" stroke="#10B981"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4" stroke="white" stroke-width="2"/></svg>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {{-- Price --}}
+                                <div class="flex flex-col items-end">
+                                    <span class="text-[9px] text-gray-400 mb-0.5">From</span>
+                                    <span class="text-sm text-white font-semibold">{{ $exp->getHargaFormatted() }}</span>
+                                    <span class="text-[9px] text-gray-400 mt-0.5">/ person</span>
+                                </div>
                             </div>
                         </div>
 

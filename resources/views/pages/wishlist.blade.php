@@ -121,64 +121,103 @@
                 @endphp
 
                 <a href="{{ route('experiences.show', $exp->slug) }}"
-                    class="group block rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-                    style="text-decoration:none; color:inherit; box-shadow: 0 1px 6px rgba(0,0,0,0.07);">
+                    class="group relative block rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl"
+                    style="background-color: #141414; height: 420px; text-decoration:none; color:inherit;">
 
-                    <div class="relative overflow-hidden" style="height: 220px;">
+                    {{-- Background Image --}}
+                    <div class="absolute inset-0">
                         @if($cover)
                             <img src="{{ $cover->url }}" alt="{{ $judul }}"
                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                 loading="lazy">
                         @else
-                            <div class="w-full h-full flex items-center justify-center" style="background:linear-gradient(135deg,#2D5240,#C4A882);">
-                                <span class="text-5xl">🌿</span>
+                            <div class="w-full h-full flex items-center justify-center bg-stone-800">
+                                <span class="text-5xl opacity-40">🌿</span>
                             </div>
                         @endif
+                    </div>
 
-                        <div class="absolute top-3 left-3">
-                            <span class="text-xs font-semibold px-2.5 py-1 rounded-lg uppercase tracking-wide"
-                                style="background:rgba(0,0,0,0.55); backdrop-filter:blur(8px); color:white; letter-spacing:0.08em;">
-                                {{ strtoupper($kategori) }}
-                            </span>
+                    {{-- Heavy Dark Gradient Overlay --}}
+                    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(20,20,20,0) 0%, rgba(20,20,20,0.1) 30%, rgba(20,20,20,0.85) 65%, rgba(20,20,20,1) 100%);"></div>
+
+                    {{-- Top Elements: Category Badge & Wishlist --}}
+                    <div class="absolute top-4 left-4 right-4 flex justify-between items-start z-10">
+                        {{-- Category Badge --}}
+                        <div class="px-2.5 py-1.5 rounded flex items-center gap-1.5"
+                            style="background: rgba(40,30,20,0.6); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.15);">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
+                            </svg>
+                            <span class="text-[9px] font-semibold text-white uppercase tracking-wider">{{ $kategori }}</span>
                         </div>
 
                         {{-- Heart — selalu filled karena di wishlist --}}
                         <button type="button"
                             onclick="event.preventDefault(); event.stopPropagation(); removeFromWishlist({{ $exp->id }}, this)"
-                            class="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
-                            style="background:rgba(255,255,255,0.95); box-shadow:0 2px 8px rgba(0,0,0,0.15);">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="#EF4444" stroke="#EF4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            class="w-8 h-8 flex items-center justify-center rounded-full transition-all hover:scale-110">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                             </svg>
                         </button>
                     </div>
 
-                    <div class="p-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs flex items-center gap-1" style="color:#9CA3AF;">
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    {{-- Bottom Content --}}
+                    <div class="absolute bottom-0 left-0 right-0 p-5 z-10 flex flex-col justify-end">
+                        
+                        {{-- Rating --}}
+                        <div class="flex items-center gap-1.5 mb-2">
+                            <span class="text-white text-[10px]">★</span>
+                            <span class="text-white text-xs font-semibold">{{ number_format($exp->rating_avg ?? 0, 1) }}</span>
+                            <span class="text-gray-400 text-xs">({{ $exp->total_reviews ?? 0 }})</span>
+                        </div>
+
+                        {{-- Title --}}
+                        <h3 class="text-[1.1rem] text-white font-medium mb-3 leading-snug"
+                            style="font-family: 'Playfair Display', serif; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+                            {{ $judul }}
+                        </h3>
+
+                        {{-- Location & Duration --}}
+                        <div class="flex items-center text-gray-300 text-[11px] gap-2 mb-4">
+                            <span class="flex items-center gap-1">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
+                                </svg>
                                 {{ $exp->kabupaten ?? $exp->lokasi_nama }}
                             </span>
-                            <span class="text-xs flex items-center gap-1">
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="#F59E0B" stroke="#F59E0B" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                                <strong>{{ number_format($exp->rating_avg ?? 0, 1) }}</strong> ({{ $exp->total_reviews ?? 0 }})
+                            <span class="w-1 h-1 rounded-full bg-gray-500"></span>
+                            <span class="flex items-center gap-1">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                                {{ $exp->durasi_menit ? round($exp->durasi_menit / 60) . ' Hours' : '-' }}
                             </span>
                         </div>
 
-                        <h3 style="font-family:'Cormorant Garamond',Georgia,serif; font-size:1.05rem; font-weight:600; color:#1a2e1c; line-height:1.3; margin-bottom:0.3rem;">
-                            {{ $judul }}
-                        </h3>
-                        <p style="font-size:0.78rem; color:#6B7280; margin-bottom:0.75rem;">by {{ $exp->host?->user?->name ?? '-' }}</p>
+                        {{-- Divider --}}
+                        <div class="w-full h-px bg-white/10 mb-3"></div>
 
-                        <div style="border-top:1px solid #F0EDE6; padding-top:0.75rem; display:flex; align-items:center; justify-content:space-between;">
-                            <div>
-                                <span style="font-size:0.72rem; color:#9CA3AF;">From</span><br>
-                                <strong style="font-size:0.92rem; color:#1a2e1c;">Rp {{ number_format($exp->harga, 0, ',', '.') }}</strong><span style="font-size:0.75rem; color:#9CA3AF;">/person</span>
+                        {{-- Host & Price Footer --}}
+                        <div class="flex items-center justify-between">
+                            {{-- Host --}}
+                            <div class="flex items-center gap-2.5">
+                                <img src="{{ $exp->host?->user?->avatarUrl() ?? 'https://ui-avatars.com/api/?name=Host' }}" alt="Host" class="w-8 h-8 rounded-full object-cover border border-white/20">
+                                <div class="flex flex-col">
+                                    <span class="text-[9px] text-gray-400 mb-0.5">Hosted by</span>
+                                    <span class="text-xs text-white font-medium">{{ $exp->host?->user?->name ?? 'Host' }}</span>
+                                    <span class="text-[9px] text-gray-400 flex items-center gap-1 mt-0.5">
+                                        Local Host
+                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="#10B981" stroke="#10B981"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4" stroke="white" stroke-width="2"/></svg>
+                                    </span>
+                                </div>
                             </div>
-                            <span class="text-xs flex items-center gap-1" style="color:#6B7280;">
-                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                {{ $exp->durasi_menit ? round($exp->durasi_menit / 60) . ' jam' : '-' }}
-                            </span>
+
+                            {{-- Price --}}
+                            <div class="flex flex-col items-end">
+                                <span class="text-[9px] text-gray-400 mb-0.5">From</span>
+                                <span class="text-sm text-white font-semibold">Rp {{ number_format($exp->harga, 0, ',', '.') }}</span>
+                                <span class="text-[9px] text-gray-400 mt-0.5">/ person</span>
+                            </div>
                         </div>
                     </div>
                 </a>

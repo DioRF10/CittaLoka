@@ -157,4 +157,9 @@ class Experience extends Model
     {
         return $this->hasMany(ExperienceAvailability::class)->orderBy('date');
     }
+    public function wishlistedBy()
+    {
+        return $this->belongsToMany(User::class, 'wishlists', 'experience_id', 'user_id');
+    }
+
 }

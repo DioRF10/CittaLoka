@@ -45,8 +45,8 @@ class Host extends Model
         'is_active' => 'boolean',
         'is_verified' => 'boolean',
         'bank_verified_at' => 'datetime',
-        'bank_reviewed_at'  => 'datetime',
-        'expertise'        => 'array', 
+        'bank_reviewed_at' => 'datetime',
+        'expertise' => 'array',
     ];
 
     public function user()
@@ -68,4 +68,14 @@ class Host extends Model
     {
         return $this->hasMany(Review::class);
     }
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'host_follows', 'host_id', 'user_id');
+    }
+
+    public function followersCount(): int
+    {
+        return $this->followers()->count();
+    }
+
 }

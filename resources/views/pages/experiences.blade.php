@@ -400,7 +400,12 @@
                     <a href="{{ route('experiences.show', $exp->slug) }}"
                         class="group block rounded-2xl overflow-hidden bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
                         style="text-decoration:none; color:inherit; box-shadow: 0 1px 6px rgba(0,0,0,0.07);"
-                        x-data="{ wishlisted: false }">
+                        x-data="{ wishlisted: {{ auth()->check() && auth()->user()->hasWishlisted($exp->id) ? 'true' : 'false' }} }"
+                        data-auth="{{ auth()->check() ? '1' : '0' }}"
+                        data-login-url="{{ route('login') }}"
+                        data-toggle-url="{{ route('wishlist.toggle') }}"
+                        data-experience-id="{{ $exp->id }}"
+                        data-csrf="{{ csrf_token() }}">
 
                         {{-- Foto --}}
                         <div class="relative overflow-hidden" style="height: 220px;">
@@ -432,7 +437,25 @@
                             </div>
 
                             {{-- Wishlist --}}
-                            <button @click.prevent="wishlisted = !wishlisted"
+                            <button @click.prevent="
+                                    const card = $el.closest('[data-experience-id]');
+                                    if (card.dataset.auth === '0') {
+                                        window.location.href = card.dataset.loginUrl;
+                                        return;
+                                    }
+                                    wishlisted = !wishlisted;
+                                    fetch(card.dataset.toggleUrl, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': card.dataset.csrf,
+                                            'Accept': 'application/json',
+                                        },
+                                        body: JSON.stringify({ experience_id: parseInt(card.dataset.experienceId) }),
+                                    }).then(r => r.json()).then(data => {
+                                        if (!data.success) wishlisted = !wishlisted;
+                                    }).catch(() => { wishlisted = !wishlisted; });
+                                "
                                 class="absolute top-3 right-3 w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110"
                                 style="background:rgba(255,255,255,0.95); box-shadow:0 2px 8px rgba(0,0,0,0.15);">
                                 <svg width="15" height="15" viewBox="0 0 24 24"

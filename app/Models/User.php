@@ -45,11 +45,11 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     protected function casts(): array
     {
         return [
-            'email_verified_at'       => 'datetime',
-            'terms_accepted_at'       => 'datetime',
-            'last_login_at'           => 'datetime',
+            'email_verified_at' => 'datetime',
+            'terms_accepted_at' => 'datetime',
+            'last_login_at' => 'datetime',
             'onboarding_completed_at' => 'datetime',
-            'password'                => 'hashed',
+            'password' => 'hashed',
         ];
     }
 
@@ -102,4 +102,29 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     {
         return $this->belongsTo(SoulType::class, 'soul_type_id');
     }
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    public function wishlistedExperiences()
+    {
+        return $this->belongsToMany(Experience::class, 'wishlists', 'user_id', 'experience_id');
+    }
+
+    public function followedHosts()
+    {
+        return $this->belongsToMany(Host::class, 'host_follows', 'user_id', 'host_id');
+    }
+
+    public function hasWishlisted(int $experienceId): bool
+    {
+        return $this->wishlists()->where('experience_id', $experienceId)->exists();
+    }
+
+    public function isFollowing(int $hostId): bool
+    {
+        return $this->followedHosts()->where('host.id', $hostId)->exists();
+    }
+
 }

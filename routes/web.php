@@ -19,6 +19,8 @@ use App\Http\Controllers\Host\MemoryBookFillController;
 use App\Http\Controllers\XenditWebhookController;
 use App\Http\Controllers\HostBankController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\FollowController;
 
 
 Route::get('/', function () {
@@ -143,6 +145,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('notifications.read-all');
     Route::delete('/notifications/delete-all', [NotificationController::class, 'destroyAll'])
         ->name('notifications.delete-all');
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+    Route::post('/hosts/follow-toggle', [FollowController::class, 'toggle'])->name('hosts.follow-toggle');
+
 });
 Route::get('/memory-books', [MemoryBookController::class, 'index'])
     ->name('memory-books.index');
@@ -215,7 +221,7 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('dashboard')->name('host
 
     // Earnings
     Route::get('/earnings/export', [HostDashboardController::class, 'exportPayouts'])
-    ->name('earnings.export');
+        ->name('earnings.export');
     Route::get('/earnings', [HostDashboardController::class, 'earnings'])->name('earnings');
 
     // Settings
@@ -224,9 +230,9 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('dashboard')->name('host
     Route::post('/settings/resubmit-ktp', [HostDashboardController::class, 'resubmitKtp'])->name('settings.resubmit-ktp');
     Route::post('/settings/resubmit-bank', [HostDashboardController::class, 'resubmitBank'])->name('settings.resubmit-bank');
 
-     // Profile
-    Route::get('/profile',  [HostProfileController::class, 'index'])->name('profile.index');
-    Route::put('/profile',  [HostProfileController::class, 'update'])->name('profile.update');
+    // Profile
+    Route::get('/profile', [HostProfileController::class, 'index'])->name('profile.index');
+    Route::put('/profile', [HostProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/heritage', [HostProfileController::class, 'storeHeritage'])->name('profile.heritage.store');
     Route::delete('/profile/heritage/{id}', [HostProfileController::class, 'deleteHeritage'])->name('profile.heritage.delete');
 

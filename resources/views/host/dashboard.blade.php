@@ -622,6 +622,22 @@
         @endforeach
     </section>
 
+    <section style="background:white; border:1px solid rgba(30, 58, 47, 0.12); border-radius:18px; padding:1.5rem;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem;">
+            <div>
+                <div style="font-size:0.95rem; font-weight:700; color:#1E3A2F;">Pendapatan 6 Bulan Terakhir</div>
+                <div style="font-size:0.78rem; color:#9CA3AF; margin-top:0.15rem;">Cuplikan singkat — lihat analisis lengkap di Earnings</div>
+            </div>
+            <a href="{{ route('host.earnings') }}" style="font-size:0.8rem; font-weight:600; color:#1E3A2F; text-decoration:none; display:flex; align-items:center; gap:0.3rem; flex-shrink:0;">
+                Lihat Detail
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+        </div>
+        <div style="position:relative; height:160px;">
+            <canvas id="miniEarningsChart"></canvas>
+        </div>
+    </section>
+
     <section class="dashboard-grid">
         <div class="dashboard-panel">
             <div class="panel-header">
@@ -742,5 +758,71 @@
         </aside>
     </section>
 </div>
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const miniCtx = document.getElementById('miniEarningsChart');
+    if (miniCtx) {
+        new Chart(miniCtx, {
+            type: 'line',
+            data: {
+                labels: {!! json_encode(array_column($miniChartData, 'label')) !!},
+                datasets: [{
+                    data: {!! json_encode(array_column($miniChartData, 'earnings')) !!},
+                    borderColor: '#1E3A2F',
+                    backgroundColor: 'rgba(30, 58, 47, 0.08)',
+                    borderWidth: 2.5,
+                    tension: 0.35,
+                    fill: true,
+                    pointBackgroundColor: '#C4783A',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1E3A2F',
+                        padding: 10,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: function(context) {
+                                return 'Rp ' + context.parsed.y.toLocaleString('id-ID');
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: '#F0EDE6' },
+                        ticks: {
+                            callback: function(value) {
+                                if (value >= 1000000) return (value / 1000000).toFixed(1) + 'jt';
+                                if (value >= 1000) return (value / 1000) + 'rb';
+                                return value;
+                            },
+                            color: '#9CA3AF',
+                            font: { size: 10 }
+                        }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#9CA3AF', font: { size: 10 } }
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+@endpush
 
 @endsection

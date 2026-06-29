@@ -66,6 +66,20 @@ class HostDashboardController extends Controller
             ->take(3)
             ->get();
 
+        // ── Mini Chart: Pendapatan 6 Bulan Terakhir ──
+        $miniChartData = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $month = now()->subMonths($i);
+            $miniChartData[] = [
+                'label' => $month->locale('id')->isoFormat('MMM'),
+                'earnings' => (int) Booking::where('host_id', $host->id)
+                    ->where('status', 'completed')
+                    ->whereMonth('completed_at', $month->month)
+                    ->whereYear('completed_at', $month->year)
+                    ->sum('host_earning'),
+            ];
+        }
+
         return view('host.dashboard', compact(
             'host',
             'locale',
@@ -79,9 +93,11 @@ class HostDashboardController extends Controller
             'earningsThisMonth',
             'totalEarnings',
             'recentBookings',
-            'upcomingBookings'
+            'upcomingBookings',
+            'miniChartData'
         ));
     }
+
 
     // ── My Experiences ────────────────────────────────────────────────────
 

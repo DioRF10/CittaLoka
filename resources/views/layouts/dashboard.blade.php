@@ -392,14 +392,24 @@
                         style="display:none; position:absolute; right:0; top:calc(100% + 8px); width:320px; max-height:24rem; overflow-y:auto; background:white; border:1px solid #E8E4DC; border-radius:12px; box-shadow:0 12px 32px rgba(0,0,0,0.12); z-index:60;">
 
                         <div style="padding:0.85rem 1rem; border-bottom:1px solid #E8E4DC; display:flex; align-items:center; justify-content:space-between;">
-                            <span style="font-size:0.85rem; font-weight:700; color:#1E3A2F;">Notifikasi</span>
-                            @if($unreadCount > 0)
-                                <form method="POST" action="{{ route('notifications.read-all') }}">
-                                    @csrf
-                                    <button type="submit" style="font-size:0.72rem; color:#C4783A; background:none; border:none; cursor:pointer; text-decoration:underline;">Tandai semua dibaca</button>
-                                </form>
-                            @endif
-                        </div>
+                             <span style="font-size:0.85rem; font-weight:700; color:#1E3A2F;">Notifikasi</span>
+                             <div style="display:flex; align-items:center; gap:0.6rem;">
+                                @if($unreadCount > 0)
+                                    <form method="POST" action="{{ route('notifications.read-all') }}">
+                                        @csrf
+                                        <button type="submit" style="font-size:0.72rem; color:#C4783A; background:none; border:none; cursor:pointer; text-decoration:underline;">Tandai dibaca</button>
+                                    </form>
+                                @endif
+                                @php $totalNotifs = auth()->user()->notifications()->count(); @endphp
+                                @if($totalNotifs > 0)
+                                    <form method="POST" action="{{ route('notifications.delete-all') }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" style="font-size:0.72rem; color:#9CA3AF; background:none; border:none; cursor:pointer; text-decoration:underline;" onclick="return confirm('Hapus semua notifikasi?')">Hapus semua</button>
+                                    </form>
+                                @endif
+                             </div>
+                         </div>
 
                         @php $recentNotifs = auth()->user()->notifications()->latest()->take(8)->get(); @endphp
 

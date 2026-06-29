@@ -86,12 +86,22 @@ $user = computed(fn() => auth()->user());
 
                         <div class="px-4 py-3 border-b flex items-center justify-between" style="border-color:#E8E4DC;">
                             <span class="text-sm font-semibold" style="color:#1a2e1c;">Notifikasi</span>
-                            @if($unreadCount > 0)
-                                <form method="POST" action="{{ route('notifications.read-all') }}">
-                                    @csrf
-                                    <button type="submit" class="text-xs hover:underline" style="color:#C4783A;">Tandai semua dibaca</button>
-                                </form>
-                            @endif
+                            <div style="display:flex; align-items:center; gap:0.6rem;">
+                                @if($unreadCount > 0)
+                                    <form method="POST" action="{{ route('notifications.read-all') }}">
+                                        @csrf
+                                        <button type="submit" class="text-xs hover:underline" style="color:#C4783A;">Tandai dibaca</button>
+                                    </form>
+                                @endif
+                                @php $totalNotifs = auth()->user()->notifications()->count(); @endphp
+                                @if($totalNotifs > 0)
+                                    <form method="POST" action="{{ route('notifications.delete-all') }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="text-xs hover:underline" style="color:#9CA3AF;" onclick="return confirm('Hapus semua notifikasi?')">Hapus semua</button>
+                                    </form>
+                                @endif
+                            </div>
                         </div>
 
                         @php $recentNotifs = auth()->user()->notifications()->latest()->take(8)->get(); @endphp

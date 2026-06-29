@@ -43,4 +43,15 @@ class NotificationController extends Controller
 
         return back();
     }
+
+    /**
+     * Hapus semua notifikasi.
+     * Route: DELETE /notifications/delete-all
+     */
+    public function destroyAll(Request $request)
+    {
+        Auth::user()->notifications()->delete();
+
+        return back();
+    }
 }

@@ -141,6 +141,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('notifications.click');
     Route::post('/notifications/read-all', [NotificationController::class, 'readAll'])
         ->name('notifications.read-all');
+    Route::delete('/notifications/delete-all', [NotificationController::class, 'destroyAll'])
+        ->name('notifications.delete-all');
 });
 Route::get('/memory-books', [MemoryBookController::class, 'index'])
     ->name('memory-books.index');

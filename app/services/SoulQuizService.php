@@ -133,40 +133,60 @@ class SoulQuizService
     {
         $slugs = self::KATEGORI_MAP[$soulTypeKode] ?? [];
 
-        if (empty($slugs)) {
-            return collect();
-        }
-
-        $hosts = Host::query()
+        // ── Prioritas 1: host yang sudah declare soul type ini sendiri ──────
+        $declaredHosts = Host::query()
             ->where('is_active', true)
-            ->whereHas('experiences', function ($q) use ($slugs) {
-                $q->where('status', 'active')
-                    ->whereHas('kategori', fn ($k) => $k->whereIn('slug', $slugs));
-            })
+            ->whereJsonContains('soul_type_affinities', $soulTypeKode)
             ->with(['user'])
-            ->withCount(['experiences as matching_experiences_count' => function ($q) use ($slugs) {
-                $q->where('status', 'active')
-                    ->whereHas('kategori', fn ($k) => $k->whereIn('slug', $slugs));
-            }])
             ->orderByDesc('rating_avg')
-            ->orderByDesc('matching_experiences_count')
             ->take($limit)
             ->get();
 
-        return $hosts->map(function (Host $host) use ($slugs) {
+        $hosts = $declaredHosts;
+
+        // ── Prioritas 2: lengkapi sisa slot via kategori experience ─────────
+        if ($hosts->count() < $limit && ! empty($slugs)) {
+            $excludeIds = $hosts->pluck('id')->all();
+
+            $categoryHosts = Host::query()
+                ->where('is_active', true)
+                ->whereNotIn('id', $excludeIds)
+                ->whereHas('experiences', function ($q) use ($slugs) {
+                    $q->where('status', 'active')
+                        ->whereHas('kategori', fn ($k) => $k->whereIn('slug', $slugs));
+                })
+                ->with(['user'])
+                ->withCount(['experiences as matching_experiences_count' => function ($q) use ($slugs) {
+                    $q->where('status', 'active')
+                        ->whereHas('kategori', fn ($k) => $k->whereIn('slug', $slugs));
+                }])
+                ->orderByDesc('rating_avg')
+                ->orderByDesc('matching_experiences_count')
+                ->take($limit - $hosts->count())
+                ->get();
+
+            $hosts = $hosts->merge($categoryHosts);
+        }
+
+        return $hosts->map(function (Host $host) use ($slugs, $soulTypeKode) {
+            $isDeclared = in_array($soulTypeKode, $host->soul_type_affinities ?? []);
+
             $bestExperience = $host->experiences()
                 ->where('status', 'active')
-                ->whereHas('kategori', fn ($k) => $k->whereIn('slug', $slugs))
+                ->when(! empty($slugs), fn ($q) => $q->whereHas('kategori', fn ($k) => $k->whereIn('slug', $slugs)))
                 ->with(['photos', 'kategori'])
                 ->orderByDesc('rating_avg')
                 ->first();
 
+            $matchingCount = $host->matching_experiences_count ?? ($bestExperience ? 1 : 0);
             $ratingComponent = ((float) $host->rating_avg / 5) * 20;
-            $countComponent = min($host->matching_experiences_count, 3) * 3;
-            $matchScore = (int) min(99, round(70 + $ratingComponent + $countComponent));
+            $countComponent = min($matchingCount, 3) * 3;
+            $declaredBonus = $isDeclared ? 6 : 0;
+            $matchScore = (int) min(99, round(70 + $ratingComponent + $countComponent + $declaredBonus));
 
             $host->setAttribute('match_score', $matchScore);
             $host->setAttribute('best_experience', $bestExperience);
+            $host->setAttribute('is_declared_match', $isDeclared);
 
             return $host;
         });

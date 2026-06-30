@@ -90,7 +90,13 @@
                                 </p>
                             @endif
 
-                            @if($host->best_experience)
+                            @if($host->is_declared_match)
+                                <div class="rounded-lg p-3 mb-4" style="background:#F0F7F2;">
+                                    <p class="text-[10px] font-semibold tracking-wide" style="color:#3D7A52;">
+                                        ✓ HOST INI MENANDAI DIRINYA {{ strtoupper($soulType->getNama()) }}
+                                    </p>
+                                </div>
+                            @elseif($host->best_experience)
                                 <div class="rounded-lg p-3 mb-4" style="background:#F7F3ED;">
                                     <p class="text-[10px] font-semibold tracking-wide mb-1" style="color:#C4783A;">COCOK LEWAT EXPERIENCE INI</p>
                                     <p class="text-sm font-medium" style="color:#1a2e1c;">{{ $host->best_experience->getJudul() }}</p>

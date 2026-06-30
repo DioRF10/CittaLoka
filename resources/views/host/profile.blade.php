@@ -161,6 +161,34 @@
                             placeholder="Tell guests about yourself, your craft, and your heritage...">{{ $host->bio }}</textarea>
                         <span style="font-size:0.72rem; color:#9CA3AF;">Max 500 characters. This appears on your public profile.</span>
                     </div>
+                    <div class="form-group" style="margin-bottom:1.25rem;"
+                        x-data="{ selected: {{ json_encode($host->soul_type_affinities ?? []) }} }">
+                        <label class="form-label">Soul Type Kamu (pilih maks. 2)</label>
+                        <span style="font-size:0.72rem; color:#9CA3AF; display:block; margin-bottom:0.6rem;">
+                            Ini bantu traveler yang ikut Soul Match Quiz nemuin kamu lebih akurat.
+                        </span>
+                        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:0.5rem;">
+                            @php
+                                $soulOptions = [
+                                    'the_creator' => 'The Creator — Sang Pencipta',
+                                    'the_seeker' => 'The Seeker — Sang Pencari',
+                                    'the_connector' => 'The Connector — Sang Penghubung',
+                                    'the_guardian' => 'The Guardian — Sang Penjaga',
+                                    'the_wanderer' => 'The Wanderer — Sang Penjelajah',
+                                    'the_dreamer' => 'The Dreamer — Sang Pemimpi',
+                                ];
+                            @endphp
+                            @foreach($soulOptions as $kode => $label)
+                                <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.8rem; padding:0.5rem 0.75rem; border:1.5px solid #E2DDD5; border-radius:8px; cursor:pointer;"
+                                    :style="selected.includes('{{ $kode }}') ? 'border-color:#1a2e1c; background:#F7F3ED;' : ''">
+                                    <input type="checkbox" name="soul_type_affinities[]" value="{{ $kode }}"
+                                        x-model="selected"
+                                        :disabled="!selected.includes('{{ $kode }}') && selected.length >= 2">
+                                    {{ $label }}
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label class="form-label">Video URL (60 seconds)</label>
                         <input type="url" name="video_url" class="form-input"

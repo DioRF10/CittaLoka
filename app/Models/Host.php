@@ -38,6 +38,7 @@ class Host extends Model
         'story',
         'language_preference',
         'ktp_selfie_path',
+        'soul_type_affinities',
 
     ];
 
@@ -47,6 +48,7 @@ class Host extends Model
         'bank_verified_at' => 'datetime',
         'bank_reviewed_at' => 'datetime',
         'expertise' => 'array',
+        'soul_type_affinities' => 'array',
     ];
 
     public function user()

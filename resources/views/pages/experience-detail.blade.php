@@ -103,6 +103,34 @@
 </div>
 @endif
 
+<style>
+    .btn-follow-host {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.55rem 1.1rem;
+        border-radius: 999px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        font-family: 'DM Sans', sans-serif;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: transparent;
+        color: #1E3A2F;
+        border: 1.5px solid #1E3A2F;
+        white-space: nowrap;
+    }
+    .btn-follow-host:hover {
+        background: #1E3A2F;
+        color: white;
+        box-shadow: 0 4px 12px rgba(30,58,47,0.15);
+    }
+    .btn-follow-host.is-following {
+        background: #1E3A2F;
+        color: white;
+    }
+</style>
+
 <div x-data="bookingWidget()" x-init="init()">
 
     {{-- ── Breadcrumb ── --}}
@@ -243,11 +271,16 @@
                                 }).then(r => r.json()).then(d => { if (!d.success) following = !following; })
                                   .catch(() => { following = !following; });
                             "
-                            :style="following
-                                ? 'background:#1E3A2F; color:white; border:1.5px solid #1E3A2F;'
-                                : 'background:white; color:#1E3A2F; border:1.5px solid #1E3A2F;'"
-                            style="padding:0.6rem 1.1rem; border-radius:8px; font-size:0.8rem; font-weight:500; white-space:nowrap; font-family:'DM Sans',sans-serif; cursor:pointer;">
-                            <span x-text="following ? '✓ Following' : '+ Follow'"></span>
+                            class="btn-follow-host"
+                            :class="following ? 'is-following' : ''">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="8.5" cy="7" r="4"></circle>
+                                <line x1="20" y1="8" x2="20" y2="14" x-show="!following"></line>
+                                <line x1="23" y1="11" x2="17" y2="11" x-show="!following"></line>
+                                <polyline points="17 11 19 13 23 9" x-show="following" style="display:none;"></polyline>
+                            </svg>
+                            <span x-text="following ? 'Following' : 'Follow'"></span>
                         </button>
                         <a href="/hosts/{{ $host->id }}"
                             style="border:1.5px solid #1E3A2F; color:#1E3A2F; padding:0.6rem 1.25rem; border-radius:8px; font-size:0.8rem; font-weight:500; text-decoration:none; white-space:nowrap; font-family:'DM Sans',sans-serif;">

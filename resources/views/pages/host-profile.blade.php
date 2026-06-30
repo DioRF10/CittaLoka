@@ -112,11 +112,11 @@
     .btn-cta-primary:hover { background: #2D4A32; color: white; }
     .btn-cta-secondary {
         padding: 0.75rem 1.75rem;
-        background: white;
+        background: transparent;
         color: #1E3A2F;
-        border: 1.5px solid #D4CCC0;
-        border-radius: 8px;
-        font-size: 0.9rem;
+        border: 1.5px solid #1E3A2F;
+        border-radius: 999px; /* Pill shape */
+        font-size: 0.95rem;
         font-weight: 600;
         cursor: pointer;
         font-family: 'DM Sans', sans-serif;
@@ -124,9 +124,19 @@
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        transition: all 0.2s;
+        transition: all 0.3s ease;
     }
-    .btn-cta-secondary:hover { background: #F4F1ED; border-color: #1E3A2F; }
+    .btn-cta-secondary:hover { 
+        background: #1E3A2F; 
+        color: white; 
+        box-shadow: 0 4px 12px rgba(30,58,47,0.15);
+    }
+    .btn-cta-secondary svg {
+        transition: stroke 0.3s ease;
+    }
+    .btn-cta-secondary:hover svg {
+        stroke: white;
+    }
 
     /* ── Page body ── */
     .host-page-body {
@@ -489,15 +499,43 @@
                 </a>
                 @auth
                     @if(auth()->user()->role !== 'host')
-                        <button class="btn-cta-secondary">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                            Save Host
-                        </button>
+                        <div x-data="{ following: {{ auth()->user()->isFollowing($host->id) ? 'true' : 'false' }} }"
+                             data-auth="1"
+                             data-follow-url="{{ route('hosts.follow-toggle') }}"
+                             data-host-id="{{ $host->id }}"
+                             data-csrf="{{ csrf_token() }}"
+                             style="display: inline-block;">
+                            <button @click="
+                                    following = !following;
+                                    fetch($el.closest('[data-host-id]').dataset.followUrl, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': $el.closest('[data-host-id]').dataset.csrf, 'Accept': 'application/json' },
+                                        body: JSON.stringify({ host_id: parseInt($el.closest('[data-host-id]').dataset.hostId) }),
+                                    }).then(r => r.json()).then(d => { if (!d.success) following = !following; })
+                                      .catch(() => { following = !following; });
+                                "
+                                class="btn-cta-secondary"
+                                :style="following ? 'background:#1E3A2F; color:white;' : ''">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="8.5" cy="7" r="4"></circle>
+                                    <line x1="20" y1="8" x2="20" y2="14" x-show="!following"></line>
+                                    <line x1="23" y1="11" x2="17" y2="11" x-show="!following"></line>
+                                    <polyline points="17 11 19 13 23 9" x-show="following" style="display:none;"></polyline>
+                                </svg>
+                                <span x-text="following ? 'Following' : 'Follow Host'"></span>
+                            </button>
+                        </div>
                     @endif
                 @else
                     <a href="{{ route('login') }}" class="btn-cta-secondary">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                        Save Host
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                        Follow Host
                     </a>
                 @endauth
             </div>

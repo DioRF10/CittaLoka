@@ -1,427 +1,567 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Welcome to CittaLoka</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <style>
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         :root {
+            --green-dark: #1A2E1C;
+            --green-mid: #1E3A2F;
+            --terracotta: #C4783A;
             --cream: #F7F3ED;
-            --cream-dark: #EDE7DC;
-            --forest: #1E3A2F;
-            --forest-mid: #2D5240;
-            --forest-light: #4A7C5F;
-            --sand: #C4A882;
-            --sand-light: #E8D5B7;
-            --text: #2C2C2C;
-            --muted: #7A7A6E;
-            --white: #FFFFFF;
-            --fd: 'Cormorant Garamond', Georgia, serif;
-            --fb: 'DM Sans', sans-serif;
+            --cream-light: #FAFAF8;
+            --gray-text: #6B7280;
+            --gray-border: #E8E4DC;
+            --success-bg: #EBF5EE;
+            --success-text: #2D5240;
+            --success-border: #B8DFC8;
         }
 
-        html,
+        * {
+            box-sizing: border-box;
+        }
+
         body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream-light);
+            color: #1C1C1C;
+            margin: 0;
+        }
+
+        [x-cloak] {
+            display: none !important;
+        }
+
+        /* ── Shell Layout (sama seperti onboarding host) ── */
+        .onboarding-shell {
+            display: grid;
+            grid-template-columns: 380px 1fr;
             min-height: 100vh;
+        }
+
+        @media (max-width: 900px) {
+            .onboarding-shell {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── Left Panel ── */
+        .left-panel {
             background: var(--cream);
-            font-family: var(--fb);
-            color: var(--text);
-            -webkit-font-smoothing: antialiased;
+            padding: 2.5rem 2.25rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
         }
 
-        .wrap {
-            min-height: 100vh;
+        @media (max-width: 900px) {
+            .left-panel {
+                position: relative;
+                height: auto;
+                padding: 1.75rem 1.5rem;
+            }
+        }
+
+        .left-logo {
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
+            gap: 0.6rem;
+            margin-bottom: 2.5rem;
         }
 
-        /* Card */
-        .card {
-            background: var(--white);
-            border-radius: 24px;
-            box-shadow: 0 4px 32px rgba(30, 58, 47, 0.10);
-            width: 100%;
-            max-width: 100%;
-            min-height: 100vh;
-            border-radius: 0;
-            overflow: hidden;
-        }
-
-        /* Dots */
-        .dots {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            padding: 1.5rem 2rem 0;
-        }
-
-        .dot {
-            width: 8px;
-            height: 8px;
+        .left-logo-mark {
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
-            background: var(--cream-dark);
-            transition: all 0.3s ease;
-        }
-
-        .dot.active {
-            width: 24px;
-            border-radius: 4px;
-            background: var(--forest);
-        }
-
-        .dot.done {
-            background: var(--forest-light);
-        }
-
-        /* Body */
-        .body {
-            padding: 1.75rem 2rem 1.5rem;
-        }
-
-        .title {
-            font-family: var(--fd);
-            font-size: 1.9rem;
-            font-weight: 500;
-            color: var(--forest);
-            line-height: 1.2;
-            margin-bottom: 0.5rem;
-        }
-
-        .subtitle {
-            font-size: 0.875rem;
-            color: var(--muted);
-            line-height: 1.6;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Nav */
-        .nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 2rem 1.75rem;
-        }
-
-        .btn-back {
-            font-size: 0.875rem;
-            color: var(--muted);
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-family: var(--fb);
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
-        .btn-back:hover {
-            color: var(--text);
-        }
-
-        .btn-next {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.75rem 1.5rem;
-            background: var(--forest);
-            color: var(--white);
-            border: none;
-            border-radius: 8px;
-            font-family: var(--fb);
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 16px rgba(30, 58, 47, 0.25);
-        }
-
-        .btn-next:hover {
-            background: var(--forest-mid);
-            transform: translateY(-1px);
-        }
-
-        .btn-next:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Step 1 — Hero */
-        .hero {
-            height: 180px;
-            background: linear-gradient(135deg, #1E3A2F 0%, #4A7C5F 50%, #C4A882 100%);
+            background: var(--green-dark);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3.5rem;
-        }
-
-        .feature {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
-            font-size: 0.875rem;
-        }
-
-        .feat-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--cream);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
+            color: var(--cream);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
             flex-shrink: 0;
         }
 
-        /* Step 2 — Language */
-        .lang-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
+        .left-logo-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--green-dark);
+            line-height: 1.1;
         }
 
-        .lang-card {
-            border: 2px solid var(--cream-dark);
-            border-radius: 12px;
-            padding: 1.25rem 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
+        .left-logo-tagline {
+            font-size: 0.68rem;
+            color: var(--gray-text);
+            letter-spacing: 0.03em;
         }
 
-        .lang-card:hover {
-            border-color: var(--forest-light);
-            background: #F0F5F2;
+        .left-eyebrow {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--terracotta);
+            margin-bottom: 0.6rem;
         }
 
-        .lang-card.selected {
-            border-color: var(--forest);
-            background: #EBF1ED;
-        }
-
-        .check {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: var(--forest);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transform: scale(0.5);
-            transition: all 0.2s;
-        }
-
-        .lang-card.selected .check {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .flag {
-            font-size: 2.25rem;
-            display: block;
-            margin-bottom: 0.4rem;
-        }
-
-        .lname {
-            font-family: var(--fd);
-            font-size: 1rem;
+        .left-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.9rem;
             font-weight: 500;
-            color: var(--forest);
-            display: block;
+            color: var(--green-dark);
+            line-height: 1.2;
+            margin-bottom: 0.9rem;
         }
 
-        .ldesc {
-            font-size: 0.72rem;
-            color: var(--muted);
+        .left-desc {
+            font-size: 0.88rem;
+            color: var(--gray-text);
+            line-height: 1.65;
+            margin-bottom: 1.75rem;
         }
 
-        /* Step 3 — Avatar */
-        .avatar-wrap {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .left-image {
+            border-radius: 14px;
+            aspect-ratio: 3/4;
+            background: linear-gradient(160deg, #1E3A2F 0%, #2D4A32 55%, #C4783A 130%);
             margin-bottom: 1.5rem;
+            flex-grow: 1;
+            min-height: 180px;
+            display: flex;
+            align-items: flex-end;
+            padding: 1.25rem;
+            position: relative;
+            overflow: hidden;
         }
 
-        .avatar-circle {
-            width: 96px;
-            height: 96px;
-            border-radius: 50%;
-            border: 2px dashed var(--sand);
+        .left-image::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.08), transparent 60%);
+        }
+
+        .left-image-caption {
+            color: rgba(255, 255, 255, 0.85);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.95rem;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+
+        .left-info-box {
+            background: #fff;
+            border: 1px solid var(--gray-border);
+            border-radius: 12px;
+            padding: 1rem 1.1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+
+        .left-info-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
             background: var(--cream);
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.95rem;
+        }
+
+        .left-info-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--green-dark);
+            margin-bottom: 0.2rem;
+        }
+
+        .left-info-text {
+            font-size: 0.78rem;
+            color: var(--gray-text);
+            line-height: 1.5;
+        }
+
+        /* ── Right Panel ── */
+        .right-panel {
+            padding: 2rem 3rem 4rem;
+            max-width: 980px;
+        }
+
+        @media (max-width: 900px) {
+            .right-panel {
+                padding: 1.5rem 1.25rem 3rem;
+            }
+        }
+
+        /* ── Step Indicator ── */
+        .step-indicator {
+            display: flex;
+            margin-bottom: 2.25rem;
+        }
+
+        .step-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1.5px solid var(--gray-border);
+            background: #fff;
+            color: var(--gray-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.82rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .step-circle.done {
+            background: var(--green-dark);
+            border-color: var(--green-dark);
+            color: #fff;
+        }
+
+        .step-circle.active {
+            border-color: var(--green-dark);
+            color: var(--green-dark);
+        }
+
+        .step-label {
+            font-size: 0.7rem;
+            color: var(--gray-text);
+            white-space: nowrap;
+        }
+
+        .step-label.active-label {
+            color: var(--green-dark);
+            font-weight: 700;
+        }
+
+        .step-line {
+            flex: 1;
+            height: 1.5px;
+            background: var(--gray-border);
+            margin: 0 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .step-line.done {
+            background: var(--green-dark);
+        }
+
+        /* ── Form Card ── */
+        .form-card {
+            background: #fff;
+            border: 1px solid var(--gray-border);
+            border-radius: 18px;
+            padding: 2.25rem 2.5rem;
+        }
+
+        @media (max-width: 640px) {
+            .form-card {
+                padding: 1.5rem 1.25rem;
+            }
+        }
+
+        .form-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--green-dark);
+            margin: 0 0 0.3rem;
+        }
+
+        .form-subtitle {
+            font-size: 0.85rem;
+            color: var(--gray-text);
+            line-height: 1.5;
+            margin: 0 0 1.75rem;
+        }
+
+        .field-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .field-label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .field-hint {
+            font-size: 0.75rem;
+            color: var(--gray-text);
+            margin-top: 0.35rem;
+        }
+
+        /* ── Radio Cards (Bahasa) ── */
+        .radio-card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        @media (max-width: 640px) {
+            .radio-card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .radio-card {
+            border: 1.5px solid var(--gray-border);
+            border-radius: 12px;
+            padding: 1.1rem;
             cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+        }
+
+        .radio-card:hover {
+            border-color: #C4BEB1;
+        }
+
+        .radio-card.selected {
+            border-color: var(--green-dark);
+            background: var(--cream-light);
+        }
+
+        .radio-card-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid var(--gray-border);
+            margin-bottom: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .radio-card.selected .radio-card-dot {
+            border-color: var(--green-dark);
+        }
+
+        .radio-card-dot-inner {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--green-dark);
+        }
+
+        .radio-card-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--green-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .radio-card-desc {
+            font-size: 0.78rem;
+            color: var(--gray-text);
+            line-height: 1.45;
+        }
+
+        .badge-recommended {
+            display: inline-block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--terracotta);
+            background: #FDF6EE;
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+            margin-top: 0.5rem;
+        }
+
+        /* ── Avatar Upload ── */
+        .avatar-upload-row {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .avatar-preview {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            background: var(--cream);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             overflow: hidden;
-            transition: all 0.2s;
+            flex-shrink: 0;
+            border: 1.5px solid var(--gray-border);
+            cursor: pointer;
         }
 
-        .avatar-circle:hover {
-            border-color: var(--forest-light);
-        }
-
-        .avatar-circle img {
+        .avatar-preview img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .avatar-hint {
-            font-size: 0.75rem;
-            color: var(--muted);
-            margin-top: 0.5rem;
+        .btn-upload-photo {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--green-dark);
+            background: #fff;
+            border: 1.5px solid var(--gray-border);
+            padding: 0.55rem 1.1rem;
+            border-radius: 9px;
+            cursor: pointer;
         }
 
-        /* Step 4 — Completion */
-        .completion {
-            padding: 2.5rem 2rem;
-            text-align: center;
-        }
-
-        .completion-icon {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--forest), var(--forest-light));
+        /* ── Tip Box ── */
+        .tip-box {
+            background: var(--cream);
+            border-radius: 12px;
+            padding: 1rem 1.1rem;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            margin: 0 auto 1.25rem;
-            box-shadow: 0 8px 24px rgba(30, 58, 47, 0.25);
-            animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-
-        .title-lg {
-            font-family: var(--fd);
-            font-size: 3rem;
-            line-height: 1;
-            color: var(--forest);
-            margin-bottom: .5rem;
-        }
-
-        .tagline {
-            font-size: 1.3rem;
-            color: var(--forest-mid);
+            gap: 0.75rem;
+            align-items: flex-start;
             margin-bottom: 1.5rem;
         }
 
-        .intro {
-            line-height: 1.9;
-            color: var(--muted);
-            margin-bottom: 2rem;
+        .tip-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
         }
 
-        .benefit {
+        .tip-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--green-dark);
+            margin-bottom: 0.2rem;
+        }
+
+        .tip-text {
+            font-size: 0.79rem;
+            color: var(--gray-text);
+            line-height: 1.5;
+        }
+
+        /* ── Welcome benefit list ── */
+        .welcome-benefit-list {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
+            flex-direction: column;
+            gap: 1.1rem;
+            margin-bottom: 1.5rem;
         }
 
-        .benefit span {
-            min-width: 32px;
-            font-family: var(--fd);
-            font-size: 1.3rem;
-            color: var(--sand);
+        .welcome-benefit-item {
+            display: flex;
+            gap: 0.85rem;
+            align-items: flex-start;
         }
 
-        @keyframes popIn {
-            from {
-                transform: scale(0);
-                opacity: 0;
-            }
-
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        .btn-full {
+        .welcome-benefit-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: var(--cream);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.5rem;
-            width: 100%;
-            padding: 0.875rem;
-            background: var(--forest);
-            color: var(--white);
-            border: none;
-            border-radius: 8px;
-            font-family: var(--fb);
-            font-size: 0.9rem;
-            font-weight: 500;
+            font-size: 1.05rem;
+            flex-shrink: 0;
+        }
+
+        .welcome-benefit-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--green-dark);
+            margin-bottom: 0.15rem;
+        }
+
+        .welcome-benefit-desc {
+            font-size: 0.78rem;
+            color: var(--gray-text);
+            line-height: 1.45;
+        }
+
+        /* ── Footer Actions ── */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        .btn-back {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.7rem 1.4rem;
+            border-radius: 10px;
+            border: 1.5px solid var(--gray-border);
+            background: #fff;
+            color: #374151;
+            font-size: 0.85rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 16px rgba(30, 58, 47, 0.25);
         }
 
-        .btn-full:hover {
-            background: var(--forest-mid);
-            transform: translateY(-1px);
+        .btn-next {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.75rem;
+            border-radius: 10px;
+            border: none;
+            background: var(--green-dark);
+            color: #fff;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s;
         }
 
-        .btn-full:disabled {
+        .btn-next:hover {
+            background: var(--green-mid);
+        }
+
+        .btn-next:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
         }
 
-        /* Animations */
-        [x-cloak] {
-            display: none !important;
-        }
-
-        .step-in {
-            animation: slideIn 0.3s ease forwards;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(16px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        /* Spinner */
         .spinner {
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
+            display: inline-block;
+            width: 13px;
+            height: 13px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-top-color: #fff;
             border-radius: 50%;
-            animation: spin 0.6s linear infinite;
+            animation: spin 0.7s linear infinite;
         }
 
         @keyframes spin {
@@ -429,174 +569,373 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* ── Completion ── */
+        .completion-wrap {
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        .completion-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .completion-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            color: var(--green-dark);
+            margin-bottom: 0.6rem;
+        }
+
+        .completion-sub {
+            font-size: 0.9rem;
+            color: var(--gray-text);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        /* ── Floating WhatsApp Help ── */
+        .floating-help {
+            position: fixed;
+            bottom: 1.75rem;
+            right: 1.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #fff;
+            border: 1.5px solid var(--gray-border);
+            border-radius: 999px;
+            padding: 0.65rem 1.1rem 0.65rem 0.65rem;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            text-decoration: none;
+            color: var(--green-dark);
+            font-size: 0.82rem;
+            font-weight: 600;
+            z-index: 40;
+            transition: transform 0.15s;
+        }
+
+        .floating-help:hover {
+            transform: translateY(-2px);
+        }
+
+        .floating-help-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #25D366;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 640px) {
+            .floating-help span:last-child {
+                display: none;
+            }
+
+            .floating-help {
+                padding: 0.65rem;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <div class="wrap">
-        <div class="card" x-data="onboardingTraveler()" x-init="init()">
 
-            {{-- Dots --}}
-            <div class="dots" x-show="step <= 3">
-                <template x-for="i in 3" :key="i">
-                    <div class="dot" :class="{ active: step === i, done: step > i }"></div>
+    <div class="onboarding-shell" x-data="onboardingTraveler()" x-cloak>
+
+        {{-- ═══════════════════════════════════════════════
+        LEFT PANEL — context per step
+        ═══════════════════════════════════════════════ --}}
+        <div class="left-panel">
+
+            <div class="left-logo">
+                <div class="left-logo-mark">C</div>
+                <div>
+                    <div class="left-logo-text">CittaLoka</div>
+                    <div class="left-logo-tagline">Experience Bali from Inside</div>
+                </div>
+            </div>
+
+            {{-- Step 1 content --}}
+            <template x-if="step === 1">
+                <div style="display:flex; flex-direction:column; flex:1;">
+                    <p class="left-eyebrow">Living Culture Platform</p>
+                    <h1 class="left-title">Jelajahi Bali<br>dari dalam</h1>
+                    <p class="left-desc">Temukan pengalaman budaya otentik bersama komunitas lokal Bali. Terhubung
+                        dengan orang-orang nyata, pelajari tradisi yang bermakna, dan ciptakan kenangan yang
+                        bertahan lama setelah perjalananmu berakhir.</p>
+
+                    <div class="welcome-benefit-list">
+                        <div class="welcome-benefit-item">
+                            <div class="welcome-benefit-icon">🌿</div>
+                            <div>
+                                <div class="welcome-benefit-title">Pengalaman Otentik</div>
+                                <div class="welcome-benefit-desc">Jelajahi Bali di luar tempat wisata biasa.</div>
+                            </div>
+                        </div>
+                        <div class="welcome-benefit-item">
+                            <div class="welcome-benefit-icon">🤝</div>
+                            <div>
+                                <div class="welcome-benefit-title">Koneksi Lokal</div>
+                                <div class="welcome-benefit-desc">Bertemu orang-orang yang menjalani budaya itu
+                                    setiap hari.</div>
+                            </div>
+                        </div>
+                        <div class="welcome-benefit-item">
+                            <div class="welcome-benefit-icon">✨</div>
+                            <div>
+                                <div class="welcome-benefit-title">Kenangan Bermakna</div>
+                                <div class="welcome-benefit-desc">Ciptakan cerita yang layak untuk dikenang.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            {{-- Step 2 content --}}
+            <template x-if="step === 2">
+                <div style="display:flex; flex-direction:column; flex:1;">
+                    <p class="left-eyebrow">Langkah 2 dari 3</p>
+                    <h1 class="left-title">Bahasa pilihanmu</h1>
+                    <p class="left-desc">Kami akan menampilkan experience dan konten dalam bahasa yang paling
+                        nyaman buat kamu.</p>
+
+                    <div class="left-info-box">
+                        <div class="left-info-icon">💡</div>
+                        <div>
+                            <div class="left-info-title">Bisa diganti kapan saja</div>
+                            <div class="left-info-text">Kamu selalu bisa mengubah preferensi bahasa ini nanti dari
+                                halaman pengaturan akun.</div>
+                        </div>
+                    </div>
+
+                    <div class="left-image" style="flex-grow:1;">
+                        <span class="left-image-caption">Setiap bahasa membuka cerita yang berbeda.</span>
+                    </div>
+                </div>
+            </template>
+
+            {{-- Step 3 content --}}
+            <template x-if="step === 3">
+                <div style="display:flex; flex-direction:column; flex:1;">
+                    <p class="left-eyebrow">Langkah 3 dari 3</p>
+                    <h1 class="left-title">Tunjukkan dirimu</h1>
+                    <p class="left-desc">Foto profil membantu host mengenalimu saat kalian bertemu langsung untuk
+                        sebuah experience.</p>
+
+                    <div class="left-info-box">
+                        <div class="left-info-icon">📷</div>
+                        <div>
+                            <div class="left-info-title">Opsional, tapi disarankan</div>
+                            <div class="left-info-text">Kamu bisa melewati langkah ini dan menambahkan foto kapan
+                                saja dari profil kamu nanti.</div>
+                        </div>
+                    </div>
+
+                    <div class="left-image" style="flex-grow:1;">
+                        <span class="left-image-caption">Wajah di balik setiap perjalanan.</span>
+                    </div>
+                </div>
+            </template>
+
+            {{-- Completion --}}
+            <template x-if="step === 4">
+                <div style="display:flex; flex-direction:column; flex:1;">
+                    <p class="left-eyebrow">Selesai</p>
+                    <h1 class="left-title">Perjalananmu dimulai di sini</h1>
+                    <p class="left-desc">Selamat datang di komunitas CittaLoka. Bali yang otentik menantimu.</p>
+                    <div class="left-image" style="flex-grow:1;">
+                        <span class="left-image-caption">Pengalaman pertamamu, menunggu untuk ditemukan.</span>
+                    </div>
+                </div>
+            </template>
+
+        </div>
+
+        {{-- ═══════════════════════════════════════════════
+        RIGHT PANEL — form per step
+        ═══════════════════════════════════════════════ --}}
+        <div class="right-panel">
+
+            {{-- Step Indicator --}}
+            <div class="step-indicator" x-show="step <= 3">
+                <template x-for="(label, index) in stepLabels" :key="index">
+                    <div style="display:flex; align-items:center; flex:1;">
+                        <div x-show="index > 0" class="step-line" :class="{ done: step > index }"></div>
+                        <div class="step-node">
+                            <div class="step-circle" :class="{ done: step > index + 1, active: step === index + 1 }">
+                                <span x-show="step > index + 1">✓</span>
+                                <span x-show="step <= index + 1" x-text="index + 1"></span>
+                            </div>
+                            <div class="step-label" :class="{ 'active-label': step === index + 1 }" x-text="label"></div>
+                        </div>
+                    </div>
                 </template>
             </div>
 
-            {{-- ── Step 1: Welcome ─────────────────────────────────────── --}}
-            <div x-show="step === 1" x-cloak class="step-in">
-                <div class="body">
-                    <span class="eyebrow">
-                        Living Culture Platform
-                    </span>
+            {{-- ═══════════════════ STEP 1: WELCOME ═══════════════════ --}}
+            <div x-show="step === 1" class="form-card">
+                <h2 class="form-title">Selamat datang di CittaLoka! 🌿</h2>
+                <p class="form-subtitle">Sebelum mulai menjelajah, mari atur beberapa preferensi kecil supaya
+                    pengalamanmu lebih personal.</p>
 
-                    <h1 class="title-lg">
-                        Welcome to
-                        CittaLoka
-                    </h1>
-
-                    <h2 class="tagline">
-                        Experience Bali from the inside.
-                    </h2>
-
-                    <p class="intro">
-                        Discover authentic cultural experiences hosted by local Balinese communities.
-                        Connect with real people, learn meaningful traditions, and create memories
-                        that stay with you long after your journey ends.
-                    </p>
-
-                    <div class="benefits">
-
-                        <div class="benefit">
-                            <span>01</span>
-                            <div>
-                                <strong>Authentic Experiences</strong>
-                                <p>Explore Bali beyond tourist attractions.</p>
-                            </div>
-                        </div>
-
-                        <div class="benefit">
-                            <span>02</span>
-                            <div>
-                                <strong>Local Connections</strong>
-                                <p>Meet people who live the culture every day.</p>
-                            </div>
-                        </div>
-
-                        <div class="benefit">
-                            <span>03</span>
-                            <div>
-                                <strong>Meaningful Memories</strong>
-                                <p>Create stories worth remembering.</p>
-                            </div>
-                        </div>
-
+                <div class="tip-box">
+                    <span class="tip-icon">🌏</span>
+                    <div>
+                        <div class="tip-title">Kami percaya perjalanan terbaik dimulai dari koneksi</div>
+                        <div class="tip-text">Dari kelas memasak tradisional, ritual spiritual, hingga kerajinan
+                            tangan — setiap experience di CittaLoka dipandu langsung oleh host lokal.</div>
                     </div>
                 </div>
-                <div class="nav" style="justify-content: flex-end;">
-                    <button class="btn-next" @click="step = 2">Get Started →</button>
-                </div>
-            </div>
 
-            {{-- ── Step 2: Language ────────────────────────────────────── --}}
-            <div x-show="step === 2" x-cloak class="step-in">
-                <div class="body">
-                    <h1 class="title">Choose Your Language</h1>
-                    <p class="subtitle">We'll show experiences and content in your preferred language.</p>
-
-                    <div class="lang-grid">
-                        <div class="lang-card" :class="{ selected: locale === 'id' }" @click="locale = 'id'">
-                            <div class="check">
-                                <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                                    <path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
-                            </div>
-                            <span class="flag">🇮🇩</span>
-                            <span class="lname">Bahasa Indonesia</span>
-                            <span class="ldesc">Standard Indonesian</span>
-                        </div>
-                        <div class="lang-card" :class="{ selected: locale === 'en' }" @click="locale = 'en'">
-                            <div class="check">
-                                <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                                    <path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="1.5" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
-                            </div>
-                            <span class="flag">🇬🇧</span>
-                            <span class="lname">English</span>
-                            <span class="ldesc">Global Standard</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="nav">
-                    <button class="btn-back" @click="step = 1">← Back</button>
-                    <button class="btn-next" :disabled="!locale || saving" @click="saveStep(2)">
-                        <span x-show="saving" class="spinner"></span>
-                        <span x-show="!saving">Continue →</span>
+                <div class="form-actions">
+                    <div></div>
+                    <button class="btn-next" type="button" @click="step = 2">
+                        Mulai
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                            <polyline points="12 5 19 12 12 19" />
+                        </svg>
                     </button>
                 </div>
             </div>
 
-            {{-- ── Step 3: Foto Profil ─────────────────────────────────── --}}
-            <div x-show="step === 3" x-cloak class="step-in">
-                <div class="body">
-                    <h1 class="title">Add a Profile Photo</h1>
-                    <p class="subtitle">Optional — helps hosts recognise you. You can always add one later from your
-                        profile.</p>
+            {{-- ═══════════════════ STEP 2: BAHASA ═══════════════════ --}}
+            <div x-show="step === 2" class="form-card">
+                <h2 class="form-title">Pilih Bahasamu</h2>
+                <p class="form-subtitle">Kami akan menampilkan experience dan konten dalam bahasa pilihanmu.</p>
 
-                    <div class="avatar-wrap">
-                        <div class="avatar-circle" @click="$refs.avatarInput.click()">
-                            <template x-if="preview">
-                                <img :src="preview" alt="Preview">
-                            </template>
-                            <template x-if="!preview">
-                                <span style="font-size: 2rem; color: var(--sand);">📷</span>
-                            </template>
+                <div class="field-group">
+                    <div class="radio-card-grid">
+                        <div class="radio-card" :class="{ selected: locale === 'id' }" @click="locale = 'id'">
+                            <div class="radio-card-dot">
+                                <div class="radio-card-dot-inner" x-show="locale === 'id'"></div>
+                            </div>
+                            <div class="radio-card-title">🇮🇩 Bahasa Indonesia</div>
+                            <div class="radio-card-desc">Tampilkan semua konten dalam Bahasa Indonesia.</div>
+                            <span class="badge-recommended">Disarankan</span>
                         </div>
-                        <span class="avatar-hint">Tap to upload (max 2MB)</span>
-                        <input type="file" x-ref="avatarInput" accept="image/*" style="display:none"
-                            @change="handleAvatar($event)">
+                        <div class="radio-card" :class="{ selected: locale === 'en' }" @click="locale = 'en'">
+                            <div class="radio-card-dot">
+                                <div class="radio-card-dot-inner" x-show="locale === 'en'"></div>
+                            </div>
+                            <div class="radio-card-title">🇬🇧 English</div>
+                            <div class="radio-card-desc">Show all content in English.</div>
+                        </div>
                     </div>
                 </div>
-                <div class="nav">
-                    <button class="btn-back" @click="step = 2">← Back</button>
-                    <button class="btn-next" :disabled="saving" @click="saveStep(3)">
+
+                <div class="form-actions">
+                    <button class="btn-back" type="button" @click="step = 1">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12" />
+                            <polyline points="12 19 5 12 12 5" />
+                        </svg>
+                        Kembali
+                    </button>
+                    <button class="btn-next" type="button" :disabled="!locale || saving" @click="saveStep(2)">
                         <span x-show="saving" class="spinner"></span>
-                        <span x-show="!saving" x-text="preview ? 'Save & Continue →' : 'Skip →'"></span>
+                        <span x-show="!saving">Lanjutkan</span>
+                        <svg x-show="!saving" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                            <polyline points="12 5 19 12 12 19" />
+                        </svg>
                     </button>
                 </div>
             </div>
 
-            {{-- ── Step 4: Completion ──────────────────────────────────── --}}
-            <div x-show="step === 4" x-cloak>
-                <div class="completion">
-                    <div class="completion-icon">🌿</div>
-                    <h1 class="title">Your journey begins here</h1>
-                    <p class="subtitle" style="margin-bottom: 1.5rem;">
-                        Welcome to CittaLoka. Authentic Bali awaits you.
-                    </p>
-                    <button class="btn-full" :disabled="saving" @click="complete()">
+            {{-- ═══════════════════ STEP 3: FOTO PROFIL ═══════════════════ --}}
+            <div x-show="step === 3" class="form-card">
+                <h2 class="form-title">Tambahkan Foto Profil</h2>
+                <p class="form-subtitle">Opsional — membantu host mengenalimu. Kamu selalu bisa menambahkannya
+                    nanti dari profil.</p>
+
+                <div class="field-group">
+                    <div class="avatar-upload-row">
+                        <div class="avatar-preview" @click="$refs.avatarInput.click()">
+                            <img x-show="preview" :src="preview" alt="Preview">
+                            <span x-show="!preview" style="font-size:1.8rem;">📷</span>
+                        </div>
+                        <div>
+                            <button type="button" class="btn-upload-photo" @click="$refs.avatarInput.click()">
+                                Pilih Foto
+                            </button>
+                            <p class="field-hint" style="margin-top:0.4rem;">JPG/PNG, maks 2MB</p>
+                            <input type="file" x-ref="avatarInput" accept="image/jpeg,image/png" style="display:none;"
+                                @change="handleAvatar($event)">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn-back" type="button" @click="step = 2">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12" />
+                            <polyline points="12 19 5 12 12 5" />
+                        </svg>
+                        Kembali
+                    </button>
+                    <button class="btn-next" type="button" :disabled="saving" @click="saveStep(3)">
                         <span x-show="saving" class="spinner"></span>
-                        <span x-show="!saving">Explore Experiences →</span>
+                        <span x-show="!saving" x-text="preview ? 'Simpan & Lanjutkan' : 'Lewati'"></span>
+                        <svg x-show="!saving" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                            <polyline points="12 5 19 12 12 19" />
+                        </svg>
                     </button>
                 </div>
+            </div>
+
+            {{-- ═══════════════════ STEP 4: COMPLETION ═══════════════════ --}}
+            <div x-show="step === 4" class="form-card completion-wrap">
+                <div class="completion-icon">🌿</div>
+                <h2 class="completion-title">Perjalananmu dimulai di sini</h2>
+                <p class="completion-sub">Selamat datang di CittaLoka. Bali yang otentik menantimu.</p>
+
+                <button class="btn-next" type="button" style="margin:0 auto;" :disabled="saving" @click="complete()">
+                    <span x-show="saving" class="spinner"></span>
+                    <span x-show="!saving">Jelajahi Experience</span>
+                    <svg x-show="!saving" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                </button>
             </div>
 
         </div>
     </div>
 
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    {{-- Floating WhatsApp Help --}}
+    <a href="https://wa.me/6281234567890" target="_blank" class="floating-help">
+        <span class="floating-help-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
+                <path
+                    d="M17.6 6.32A8.86 8.86 0 0 0 12 4a8.94 8.94 0 0 0-7.92 13.08L3 21l3.92-1.04A8.94 8.94 0 0 0 12 21a8.94 8.94 0 0 0 8.94-9 8.86 8.86 0 0 0-3.34-5.68zM12 19.4a7.4 7.4 0 0 1-3.78-1.04l-.27-.16-2.32.62.62-2.26-.18-.28A7.43 7.43 0 1 1 19.4 12 7.43 7.43 0 0 1 12 19.4z" />
+            </svg>
+        </span>
+        <span>Butuh bantuan?</span>
+    </a>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script>
         function onboardingTraveler() {
             return {
                 step: 1,
+                stepLabels: ['Welcome', 'Bahasa', 'Foto Profil'],
                 saving: false,
                 locale: '{{ auth()->user()->locale ?? "" }}',
                 preview: null,
                 file: null,
-
-                init() { },
 
                 handleAvatar(e) {
                     const f = e.target.files[0];

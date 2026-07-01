@@ -39,12 +39,12 @@ class GoogleController extends Controller
             $role = session('register_role', 'user');
 
             $user = User::create([
-                'name'              => $googleUser->getName(),
-                'email'             => $googleUser->getEmail(),
-                'google_id'         => $googleUser->getId(),
-                'avatar'            => $googleUser->getAvatar(),
-                'password'          => null,
-                'role'              => $role,
+                'name' => $googleUser->getName(),
+                'email' => $googleUser->getEmail(),
+                'google_id' => $googleUser->getId(),
+                'avatar' => $googleUser->getAvatar(),
+                'password' => null,
+                'role' => $role,
                 'email_verified_at' => now(), // Google sudah verifikasi email
             ]);
 
@@ -54,7 +54,26 @@ class GoogleController extends Controller
         // Login user
         Auth::login($user, remember: true);
 
-        // Redirect langsung ke homepage
-        return redirect('/');
+        // Redirect berdasarkan onboarding status dan role
+        return redirect()->intended($this->redirectAfterLogin($user));
+    }
+
+    // Tentukan redirect setelah login berdasarkan role dan onboarding
+    private function redirectAfterLogin($user): string
+    {
+        // Belum onboarding → ke onboarding dulu
+        if (!$user->onboarding_completed_at) {
+            return match ($user->role) {
+                'host' => route('onboarding.host'),
+                default => route('onboarding.traveler'),
+            };
+        }
+
+        // Sudah onboarding → ke halaman utama sesuai role
+        return match ($user->role) {
+            'host' => route('host.dashboard'),
+            'admin' => '/admin',
+            default => route('experiences.index'),
+        };
     }
 }

@@ -21,6 +21,7 @@ use App\Http\Controllers\HostBankController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\FollowController;
+use App\Http\Controllers\SeasonalCalendarController;
 
 
 Route::get('/', function () {
@@ -112,6 +113,11 @@ Route::get('/experiences/{slug}', [ExperienceController::class, 'show'])
     ->name('experiences.show');
 Route::get('/experiences/{slug}/times', [ExperienceController::class, 'getTimes'])->name('experiences.times');
 Route::get('/hosts/{id}', [HostPublicController::class, 'show'])->name('hosts.show');
+Route::get('/seasonal-calendar', [SeasonalCalendarController::class, 'index'])
+    ->name('seasonal-calendar.index');
+Route::get('/seasonal-calendar/{id}', [SeasonalCalendarController::class, 'show'])
+    ->name('seasonal-calendar.show');
+
 
 // =============================================================================
 // Soul Match

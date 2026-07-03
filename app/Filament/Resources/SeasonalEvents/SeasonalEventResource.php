@@ -8,9 +8,11 @@ use App\Filament\Resources\SeasonalEvents\Pages\ListSeasonalEvents;
 use App\Models\SeasonalEvent;
 use BackedEnum;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
+use App\Services\CloudinaryService;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -38,20 +40,14 @@ class SeasonalEventResource extends Resource
                 ->columns(2)
                 ->components([
                     TextInput::make('nama.id')
-                        ->label('Nama (Indonesia)')
-                        ->required(),
-                    TextInput::make('nama.en')
-                        ->label('Nama (English)')
-                        ->required(),
+                        ->label('Nama Event')
+                        ->required()
+                        ->columnSpanFull(),
 
                     Textarea::make('deskripsi.id')
-                        ->label('Deskripsi (Indonesia)')
+                        ->label('Deskripsi')
                         ->rows(5)
-                        ->columnSpan(1),
-                    Textarea::make('deskripsi.en')
-                        ->label('Deskripsi (English)')
-                        ->rows(5)
-                        ->columnSpan(1),
+                        ->columnSpanFull(),
 
                     DatePicker::make('start_date')
                         ->label('Tanggal Mulai')
@@ -72,11 +68,16 @@ class SeasonalEventResource extends Resource
                         ->helperText('Contoh: Bali Selatan, Ubud, Seluruh Bali')
                         ->columnSpanFull(),
 
-                    TextInput::make('thumbnail_url')
-                        ->label('URL Foto Cover')
-                        ->url()
-                        ->helperText('Paste URL gambar dari Cloudinary atau sumber lain')
-                        ->columnSpanFull(),
+                    FileUpload::make('thumbnail_url')
+                        ->label('Foto Cover')
+                        ->image()
+                        ->helperText('Upload foto cover event (disarankan rasio 16:9)')
+                        ->columnSpanFull()
+                        ->saveUploadedFileUsing(function ($file) {
+                            $cloudinary = app(CloudinaryService::class);
+                            $result = $cloudinary->upload($file, 'cittaloka/seasonal-events');
+                            return $result['url'];
+                        }),
 
                     Toggle::make('is_recurring')
                         ->label('Event Tahunan (berulang tiap tahun)')

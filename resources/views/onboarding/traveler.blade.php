@@ -179,15 +179,24 @@
         }
 
         .left-info-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            background: var(--cream);
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #F3F0EA 0%, #F9F7F2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            font-size: 0.95rem;
+            position: relative;
+        }
+
+        .left-info-icon::before {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--terracotta);
+            box-shadow: 0 0 0 6px rgba(196, 120, 58, 0.08);
         }
 
         .left-info-title {
@@ -218,19 +227,32 @@
         /* ── Step Indicator ── */
         .step-indicator {
             display: flex;
-            margin-bottom: 2.25rem;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .step-node-wrapper {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            min-width: 0;
+            gap: 0.75rem;
         }
 
         .step-node {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.35rem;
+            min-width: 64px;
         }
 
         .step-circle {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             border: 1.5px solid var(--gray-border);
             background: #fff;
@@ -238,9 +260,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.82rem;
+            font-size: 0.88rem;
             font-weight: 700;
             flex-shrink: 0;
+            transition: all 0.2s ease;
         }
 
         .step-circle.done {
@@ -250,13 +273,16 @@
         }
 
         .step-circle.active {
+            background: #fff;
             border-color: var(--green-dark);
             color: var(--green-dark);
+            box-shadow: 0 0 0 4px rgba(30, 58, 47, 0.08);
         }
 
         .step-label {
-            font-size: 0.7rem;
+            font-size: 0.72rem;
             color: var(--gray-text);
+            text-align: center;
             white-space: nowrap;
         }
 
@@ -267,10 +293,8 @@
 
         .step-line {
             flex: 1;
-            height: 1.5px;
+            height: 1px;
             background: var(--gray-border);
-            margin: 0 0.5rem;
-            margin-bottom: 1.5rem;
         }
 
         .step-line.done {
@@ -451,9 +475,24 @@
         }
 
         .tip-icon {
-            font-size: 1rem;
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
+            background: var(--cream-light);
             flex-shrink: 0;
-            margin-top: 0.1rem;
+            position: relative;
+        }
+
+        .tip-icon::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green-dark);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
 
         .tip-title {
@@ -486,13 +525,22 @@
         .welcome-benefit-icon {
             width: 38px;
             height: 38px;
-            border-radius: 10px;
-            background: var(--cream);
+            border-radius: 12px;
+            background: linear-gradient(135deg, #F7F5F0 0%, #F3F6F1 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.05rem;
+            position: relative;
             flex-shrink: 0;
+        }
+
+        .welcome-benefit-icon::before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--green-dark);
+            opacity: 0.22;
         }
 
         .welcome-benefit-title {
@@ -554,6 +602,37 @@
             cursor: not-allowed;
         }
 
+        .avatar-placeholder {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(30, 58, 47, 0.12), rgba(196, 120, 58, 0.18));
+            box-shadow: inset 0 0 0 1px rgba(30, 58, 47, 0.08);
+        }
+
+        .avatar-preview:hover {
+            border-color: var(--green-mid);
+        }
+
+        .completion-icon {
+            width: 88px;
+            height: 88px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            border: 2px dashed rgba(30, 58, 47, 0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .completion-icon::before {
+            content: '✓';
+            font-size: 2rem;
+            color: var(--green-dark);
+            font-weight: 700;
+        }
+
         .spinner {
             display: inline-block;
             width: 13px;
@@ -577,8 +656,22 @@
         }
 
         .completion-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+            width: 88px;
+            height: 88px;
+            margin: 0 auto 1rem;
+            border-radius: 50%;
+            border: 2px dashed rgba(30, 58, 47, 0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .completion-icon::before {
+            content: '✓';
+            font-size: 2rem;
+            color: var(--green-dark);
+            font-weight: 700;
         }
 
         .completion-title {
@@ -671,14 +764,14 @@
 
                     <div class="welcome-benefit-list">
                         <div class="welcome-benefit-item">
-                            <div class="welcome-benefit-icon">🌿</div>
+                            <div class="welcome-benefit-icon"></div>
                             <div>
                                 <div class="welcome-benefit-title">Pengalaman Otentik</div>
                                 <div class="welcome-benefit-desc">Jelajahi Bali di luar tempat wisata biasa.</div>
                             </div>
                         </div>
                         <div class="welcome-benefit-item">
-                            <div class="welcome-benefit-icon">🤝</div>
+                            <div class="welcome-benefit-icon"></div>
                             <div>
                                 <div class="welcome-benefit-title">Koneksi Lokal</div>
                                 <div class="welcome-benefit-desc">Bertemu orang-orang yang menjalani budaya itu
@@ -686,7 +779,7 @@
                             </div>
                         </div>
                         <div class="welcome-benefit-item">
-                            <div class="welcome-benefit-icon">✨</div>
+                            <div class="welcome-benefit-icon"></div>
                             <div>
                                 <div class="welcome-benefit-title">Kenangan Bermakna</div>
                                 <div class="welcome-benefit-desc">Ciptakan cerita yang layak untuk dikenang.</div>
@@ -705,7 +798,7 @@
                         nyaman buat kamu.</p>
 
                     <div class="left-info-box">
-                        <div class="left-info-icon">💡</div>
+                        <div class="left-info-icon"></div>
                         <div>
                             <div class="left-info-title">Bisa diganti kapan saja</div>
                             <div class="left-info-text">Kamu selalu bisa mengubah preferensi bahasa ini nanti dari
@@ -722,13 +815,13 @@
             {{-- Step 3 content --}}
             <template x-if="step === 3">
                 <div style="display:flex; flex-direction:column; flex:1;">
-                    <p class="left-eyebrow">Langkah 3 dari 3</p>
+                    <p class="left-eyebrow">Langkah 3 dari 4</p>
                     <h1 class="left-title">Tunjukkan dirimu</h1>
                     <p class="left-desc">Foto profil membantu host mengenalimu saat kalian bertemu langsung untuk
                         sebuah experience.</p>
 
                     <div class="left-info-box">
-                        <div class="left-info-icon">📷</div>
+                        <div class="left-info-icon"></div>
                         <div>
                             <div class="left-info-title">Opsional, tapi disarankan</div>
                             <div class="left-info-text">Kamu bisa melewati langkah ini dan menambahkan foto kapan
@@ -742,8 +835,31 @@
                 </div>
             </template>
 
-            {{-- Completion --}}
+            {{-- Step 4 content — Soul Match tease --}}
             <template x-if="step === 4">
+                <div style="display:flex; flex-direction:column; flex:1;">
+                    <p class="left-eyebrow">Langkah 4 dari 4</p>
+                    <h1 class="left-title">Temukan Jiwa<br>Perjalananmu</h1>
+                    <p class="left-desc">Setiap traveler berbeda. Ada yang mencari petualangan, ada yang mencari
+                        ketenangan, ada yang mencari percakapan bermakna.</p>
+
+                    <div class="left-info-box">
+                        <div class="left-info-icon"></div>
+                        <div>
+                            <div class="left-info-title">2 menit saja</div>
+                            <div class="left-info-text">Soul Match akan merekomendasikan host Bali yang paling
+                                cocok dengan caramu menjelajah.</div>
+                        </div>
+                    </div>
+
+                    <div class="left-image" style="flex-grow:1;">
+                        <span class="left-image-caption">Kenali dirimu, temukan hostmu.</span>
+                    </div>
+                </div>
+            </template>
+
+            {{-- Completion --}}
+            <template x-if="step === 5">
                 <div style="display:flex; flex-direction:column; flex:1;">
                     <p class="left-eyebrow">Selesai</p>
                     <h1 class="left-title">Perjalananmu dimulai di sini</h1>
@@ -762,16 +878,17 @@
         <div class="right-panel">
 
             {{-- Step Indicator --}}
-            <div class="step-indicator" x-show="step <= 3">
+            <div class="step-indicator" x-show="step <= 4">
                 <template x-for="(label, index) in stepLabels" :key="index">
-                    <div style="display:flex; align-items:center; flex:1;">
+                    <div class="step-node-wrapper">
                         <div x-show="index > 0" class="step-line" :class="{ done: step > index }"></div>
                         <div class="step-node">
                             <div class="step-circle" :class="{ done: step > index + 1, active: step === index + 1 }">
                                 <span x-show="step > index + 1">✓</span>
                                 <span x-show="step <= index + 1" x-text="index + 1"></span>
                             </div>
-                            <div class="step-label" :class="{ 'active-label': step === index + 1 }" x-text="label"></div>
+                            <div class="step-label" :class="{ 'active-label': step === index + 1 }" x-text="label">
+                            </div>
                         </div>
                     </div>
                 </template>
@@ -784,7 +901,7 @@
                     pengalamanmu lebih personal.</p>
 
                 <div class="tip-box">
-                    <span class="tip-icon">🌏</span>
+                    <span class="tip-icon"></span>
                     <div>
                         <div class="tip-title">Kami percaya perjalanan terbaik dimulai dari koneksi</div>
                         <div class="tip-text">Dari kelas memasak tradisional, ritual spiritual, hingga kerajinan
@@ -816,7 +933,7 @@
                             <div class="radio-card-dot">
                                 <div class="radio-card-dot-inner" x-show="locale === 'id'"></div>
                             </div>
-                            <div class="radio-card-title">🇮🇩 Bahasa Indonesia</div>
+                            <div class="radio-card-title">Bahasa Indonesia</div>
                             <div class="radio-card-desc">Tampilkan semua konten dalam Bahasa Indonesia.</div>
                             <span class="badge-recommended">Disarankan</span>
                         </div>
@@ -824,7 +941,7 @@
                             <div class="radio-card-dot">
                                 <div class="radio-card-dot-inner" x-show="locale === 'en'"></div>
                             </div>
-                            <div class="radio-card-title">🇬🇧 English</div>
+                            <div class="radio-card-title">English</div>
                             <div class="radio-card-desc">Show all content in English.</div>
                         </div>
                     </div>
@@ -861,7 +978,7 @@
                     <div class="avatar-upload-row">
                         <div class="avatar-preview" @click="$refs.avatarInput.click()">
                             <img x-show="preview" :src="preview" alt="Preview">
-                            <span x-show="!preview" style="font-size:1.8rem;">📷</span>
+                            <span x-show="!preview" class="avatar-placeholder"></span>
                         </div>
                         <div>
                             <button type="button" class="btn-upload-photo" @click="$refs.avatarInput.click()">
@@ -895,17 +1012,51 @@
                 </div>
             </div>
 
-            {{-- ═══════════════════ STEP 4: COMPLETION ═══════════════════ --}}
-            <div x-show="step === 4" class="form-card completion-wrap">
-                <div class="completion-icon">🌿</div>
+            {{-- ═══════════════════ STEP 4: SOUL MATCH TEASE ═══════════════════ --}}
+            <div x-show="step === 4" class="form-card">
+                <h2 class="form-title">Temukan Soul Type-mu</h2>
+                <p class="form-subtitle">Ambil 2 menit buat kenalan sama dirimu sendiri — kami rekomendasikan host
+                    Bali yang paling nyambung sama caramu menjelajah.</p>
+
+                <div class="tip-box">
+                    <span class="tip-icon"></span>
+                    <div>
+                        <div class="tip-title">Ada yang cari petualangan, ada yang cari ketenangan</div>
+                        <div class="tip-text">Soul Match membaca preferensimu lewat 18 pertanyaan singkat, lalu
+                            mencocokkanmu dengan host yang paling relevan.</div>
+                    </div>
+                </div>
+
+                <div class="form-actions" style="flex-direction:column; gap:0.75rem; align-items:stretch;">
+                    <button class="btn-next" type="button" style="justify-content:center; width:100%;"
+                        :disabled="saving" @click="startSoulMatch()">
+                        <span x-show="saving" class="spinner"></span>
+                        <span x-show="!saving">Mulai Soul Match</span>
+                        <svg x-show="!saving" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                            <polyline points="12 5 19 12 12 19" />
+                        </svg>
+                    </button>
+                    <button type="button" style="background:none; border:none; color:var(--gray-text);
+                        font-size:0.85rem; text-decoration:underline; cursor:pointer; padding:0.4rem;"
+                        :disabled="saving" @click="step = 5">
+                        Lewati dulu
+                    </button>
+                </div>
+            </div>
+
+            {{-- ═══════════════════ STEP 5: COMPLETION ═══════════════════ --}}
+            <div x-show="step === 5" class="form-card completion-wrap">
+                <div class="completion-icon"></div>
                 <h2 class="completion-title">Perjalananmu dimulai di sini</h2>
                 <p class="completion-sub">Selamat datang di CittaLoka. Bali yang otentik menantimu.</p>
 
                 <button class="btn-next" type="button" style="margin:0 auto;" :disabled="saving" @click="complete()">
                     <span x-show="saving" class="spinner"></span>
                     <span x-show="!saving">Jelajahi Experience</span>
-                    <svg x-show="!saving" width="15" height="15" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg x-show="!saving" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="5" y1="12" x2="19" y2="12" />
                         <polyline points="12 5 19 12 12 19" />
                     </svg>
@@ -931,7 +1082,7 @@
         function onboardingTraveler() {
             return {
                 step: 1,
-                stepLabels: ['Welcome', 'Bahasa', 'Foto Profil'],
+                stepLabels: ['Welcome', 'Bahasa', 'Foto Profil', 'Soul Match'],
                 saving: false,
                 locale: '{{ auth()->user()->locale ?? "" }}',
                 preview: null,
@@ -966,6 +1117,26 @@
                         else alert('Terjadi kesalahan. Coba lagi.');
                     } catch (e) {
                         alert('Network error. Periksa koneksimu.');
+                    } finally {
+                        this.saving = false;
+                    }
+                },
+
+                async startSoulMatch() {
+                    this.saving = true;
+                    try {
+                        const fd = new FormData();
+                        fd.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+                        fd.append('step', 'complete');
+
+                        const res = await fetch('{{ route("onboarding.traveler.save") }}', {
+                            method: 'POST', body: fd,
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        });
+                        const data = await res.json();
+                        if (data.success) window.location.href = '{{ route("soul-match.intro") }}';
+                    } catch (e) {
+                        alert('Network error.');
                     } finally {
                         this.saving = false;
                     }

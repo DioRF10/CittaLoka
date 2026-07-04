@@ -43,10 +43,14 @@
                     <div
                         style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.75rem; flex-wrap:wrap; margin-bottom:0.6rem;">
                         <div style="display:flex; align-items:center; gap:0.65rem;">
-                            <div
-                                style="width:42px; height:42px; border-radius:50%; background:#1E3A2F; color:white; display:flex; align-items:center; justify-content:center; font-size:0.95rem; font-weight:600; flex-shrink:0;">
-                                {{ strtoupper(substr($review->user->name ?? 'G', 0, 1)) }}
-                            </div>
+                            @if($review->user && method_exists($review->user, 'avatarUrl') && $review->user->avatarUrl())
+                                <img src="{{ $review->user->avatarUrl() }}" alt="{{ $review->user->name }}" style="width:42px; height:42px; border-radius:50%; object-fit:cover; flex-shrink:0; border:1px solid #EDE7DC;">
+                            @else
+                                <div
+                                    style="width:42px; height:42px; border-radius:50%; background:#1E3A2F; color:white; display:flex; align-items:center; justify-content:center; font-size:0.95rem; font-weight:600; flex-shrink:0;">
+                                    {{ strtoupper(substr($review->user->name ?? 'G', 0, 1)) }}
+                                </div>
+                            @endif
                             <div>
                                 <div style="font-size:0.95rem; font-weight:600; color:#2C2C2C;">
                                     {{ $review->user->name ?? 'Guest' }}</div>

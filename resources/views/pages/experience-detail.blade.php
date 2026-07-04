@@ -198,11 +198,17 @@
                             style="background:#EDE7DC; color:#1E3A2F; font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; padding:0.3rem 0.75rem; border-radius:999px;">
                             {{ strtoupper($experience->kategori?->getNama($locale) ?? 'Experience') }}
                         </span>
-                        <span style="display:flex; align-items:center; gap:0.3rem; font-size:0.85rem; color:#7A7A6E;">
-                            <span style="color:#C4783A;">★</span>
-                            <strong style="color:#2C2C2C;">{{ number_format($experience->rating_avg, 1) }}</strong>
-                            <span>({{ $experience->total_reviews }} reviews)</span>
-                        </span>
+                        @if($experience->total_reviews > 0)
+                            <span style="display:flex; align-items:center; gap:0.3rem; font-size:0.85rem; color:#7A7A6E;">
+                                <span style="color:#C4783A;">★</span>
+                                <strong style="color:#2C2C2C;">{{ number_format($experience->rating_avg, 1) }}</strong>
+                                <span>({{ $experience->total_reviews }} reviews)</span>
+                            </span>
+                        @else
+                            <span style="display:flex; align-items:center; gap:0.3rem; font-size:0.85rem; color:#7A7A6E; font-style:italic;">
+                                Belum ada review
+                            </span>
+                        @endif
                     </div>
 
                     {{-- Judul + Wishlist --}}
@@ -416,7 +422,7 @@
                                     <span style="font-size:0.75rem; color:#7A7A6E; width:8px;">{{ $star }}</span>
                                     <div style="flex:1; height:6px; background:#EDE7DC; border-radius:999px; overflow:hidden;">
                                         <div
-                                            style="height:100%; background:#1E3A2F; border-radius:999px; width:{{ $star === 5 ? '80%' : ($star === 4 ? '12%' : ($star === 3 ? '5%' : '2%')) }};">
+                                            style="height:100%; background:#1E3A2F; border-radius:999px; width:{{ $ratingBreakdown[$star] ?? 0 }}%;">
                                         </div>
                                     </div>
                                 </div>
@@ -433,10 +439,14 @@
                             @foreach($reviews as $review)
                                 <div style="background:#F7F3ED; border-radius:12px; padding:1rem; border:1.5px solid #EDE7DC;">
                                     <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.75rem;">
-                                        <div
-                                            style="width:36px; height:36px; border-radius:50%; background:#1E3A2F; color:white; display:flex; align-items:center; justify-content:center; font-size:0.875rem; font-weight:500; flex-shrink:0;">
-                                            {{ strtoupper(substr($review->user->name ?? 'G', 0, 1)) }}
-                                        </div>
+                                        @if($review->user && method_exists($review->user, 'avatarUrl') && $review->user->avatarUrl())
+                                            <img src="{{ $review->user->avatarUrl() }}" alt="{{ $review->user->name }}" style="width:36px; height:36px; border-radius:50%; object-fit:cover; flex-shrink:0; border:1px solid #EDE7DC;">
+                                        @else
+                                            <div
+                                                style="width:36px; height:36px; border-radius:50%; background:#1E3A2F; color:white; display:flex; align-items:center; justify-content:center; font-size:0.875rem; font-weight:500; flex-shrink:0;">
+                                                {{ strtoupper(substr($review->user->name ?? 'G', 0, 1)) }}
+                                            </div>
+                                        @endif
                                         <div>
                                             <div style="font-size:0.85rem; font-weight:500; color:#2C2C2C;">
                                                 {{ $review->user->name ?? 'Guest' }}</div>
@@ -449,6 +459,14 @@
                                     </div>
                                     @if($review->text)
                                         <div style="font-size:0.8rem; color:#4A4A4A; line-height:1.6;">{{ $review->text }}</div>
+                                    @endif
+                                    @if($review->photos->isNotEmpty())
+                                        <div style="display:flex; gap:0.4rem; flex-wrap:wrap; margin-top:0.6rem;">
+                                            @foreach($review->photos as $photo)
+                                                <img src="{{ $photo->url }}" alt="Review photo"
+                                                    style="width:56px; height:56px; object-fit:cover; border-radius:6px; border:1px solid #EDE7DC;">
+                                            @endforeach
+                                        </div>
                                     @endif
                                 </div>
                             @endforeach
@@ -469,11 +487,15 @@
                             <span style="font-size:0.875rem; color:#9CA3AF;">/ person</span>
                         </div>
                         <div style="display:flex; align-items:center; gap:0.3rem; margin-bottom:1.25rem; font-size:0.8rem;">
-                            <span style="color:#C4783A;">★</span>
-                            <strong style="color:#1E3A2F;">{{ number_format($experience->rating_avg, 1) }}</strong>
-                            <a href="#reviews"
-                                style="color:#7A7A6E; text-decoration:underline;">({{ $experience->total_reviews }}
-                                reviews)</a>
+                            @if($experience->total_reviews > 0)
+                                <span style="color:#C4783A;">★</span>
+                                <strong style="color:#1E3A2F;">{{ number_format($experience->rating_avg, 1) }}</strong>
+                                <a href="#reviews"
+                                    style="color:#7A7A6E; text-decoration:underline;">({{ $experience->total_reviews }}
+                                    reviews)</a>
+                            @else
+                                <span style="color:#7A7A6E; font-style:italic;">Belum ada review</span>
+                            @endif
                         </div>
 
                         {{-- Input Group --}}

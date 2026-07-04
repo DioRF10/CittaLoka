@@ -85,9 +85,13 @@
         
         {{-- Rating --}}
         <div class="flex items-center gap-1.5 mb-2">
-            <span class="text-[#F6B84B] text-[10px]">★</span>
-            <span class="text-white text-xs font-semibold">{{ number_format($exp->rating_avg, 1) }}</span>
-            <span class="text-gray-400 text-xs">({{ $exp->total_reviews }})</span>
+            @if($exp->total_reviews > 0)
+                <span class="text-[#F6B84B] text-[10px]">★</span>
+                <span class="text-white text-xs font-semibold">{{ number_format($exp->rating_avg, 1) }}</span>
+                <span class="text-gray-400 text-xs">({{ $exp->total_reviews }})</span>
+            @else
+                <span class="text-gray-400 text-xs italic">Belum ada review</span>
+            @endif
         </div>
 
         {{-- Title --}}

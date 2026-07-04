@@ -9,6 +9,7 @@ use App\Http\Controllers\Onboarding\HostOnboardingController;
 use App\Http\Controllers\ExperienceController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\ProfileController;
 use App\Models\Experience;
 use App\Http\Controllers\Host\HostDashboardController;
 use App\Http\Controllers\Host\ExperienceFormController;
@@ -109,6 +110,7 @@ Route::get('/auth/google/callback', [App\Http\Controllers\Auth\GoogleController:
 // Protected pages (sementara)
 // =============================================================================
 Route::get('/experiences', [ExperienceController::class, 'index'])->name('experiences.index');
+Route::get('/experiences/{slug}/reviews', [ExperienceController::class, 'reviews'])->name('experiences.reviews');
 Route::get('/experiences/{slug}', [ExperienceController::class, 'show'])
     ->name('experiences.show');
 Route::get('/experiences/{slug}/times', [ExperienceController::class, 'getTimes'])->name('experiences.times');
@@ -153,6 +155,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('notifications.delete-all');
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
     Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+    Route::get('/my-profile', [ProfileController::class, 'index'])->name('my-profile.index');
+    Route::put('/my-profile', [ProfileController::class, 'update'])->name('my-profile.update');
     Route::post('/hosts/follow-toggle', [FollowController::class, 'toggle'])->name('hosts.follow-toggle');
 
 });

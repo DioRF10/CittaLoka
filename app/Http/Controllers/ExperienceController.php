@@ -31,13 +31,13 @@ class ExperienceController extends Controller
         // Filter harga (format: min-max)
         if ($request->harga) {
             [$min, $max] = explode('-', $request->input('harga'));
-            $query->whereBetween('harga', [(int)$min, (int)$max]);
+            $query->whereBetween('harga', [(int) $min, (int) $max]);
         }
 
         // Filter durasi (format: min-max dalam menit)
         if ($request->durasi && $request->durasi !== 'any') {
             [$min, $max] = explode('-', $request->input('durasi'));
-            $query->whereBetween('durasi_menit', [(int)$min, (int)$max]);
+            $query->whereBetween('durasi_menit', [(int) $min, (int) $max]);
         }
 
         // Filter tipe (bisa multiple: "Outdoor,Indoor")
@@ -60,21 +60,21 @@ class ExperienceController extends Controller
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('judul', 'like', "%{$search}%")
-                  ->orWhere('lokasi_nama', 'like', "%{$search}%")
-                  ->orWhere('kabupaten', 'like', "%{$search}%");
+                    ->orWhere('lokasi_nama', 'like', "%{$search}%")
+                    ->orWhere('kabupaten', 'like', "%{$search}%");
             });
         }
 
         // Sort
-        match($request->input('sort', 'relevan')) {
-            'harga_asc'  => $query->orderBy('harga', 'asc'),
+        match ($request->input('sort', 'relevan')) {
+            'harga_asc' => $query->orderBy('harga', 'asc'),
             'harga_desc' => $query->orderBy('harga', 'desc'),
-            'rating'     => $query->orderBy('rating_avg', 'desc'),
-            default      => $query->orderBy('is_featured', 'desc')->orderBy('rating_avg', 'desc'),
+            'rating' => $query->orderBy('rating_avg', 'desc'),
+            default => $query->orderBy('is_featured', 'desc')->orderBy('rating_avg', 'desc'),
         };
 
         $experiences = $query->paginate(12)->withQueryString();
-        $kategoris   = Kategori::all();
+        $kategoris = Kategori::all();
 
         return view('pages.experiences', compact('experiences', 'kategoris'));
     }
@@ -89,13 +89,13 @@ class ExperienceController extends Controller
             'photos',
             'availabilities' => function ($q) {
                 $q->where('date', '>=', now()->toDateString())
-                  ->where('is_blocked', false)
-                  ->orderBy('date')
-                  ->orderBy('time');
+                    ->where('is_blocked', false)
+                    ->orderBy('date')
+                    ->orderBy('time');
             },
         ])->where('slug', $slug)
-          ->where('status', 'active')
-          ->firstOrFail();
+            ->where('status', 'active')
+            ->firstOrFail();
 
         $reviews = $experience->approvedReviews()
             ->with(['user', 'photos', 'reply'])
@@ -122,6 +122,35 @@ class ExperienceController extends Controller
         return view('pages.experience-detail', compact('experience', 'reviews', 'ratingBreakdown', 'approvedCount', 'serviceFee'));
     }
 
+    public function reviews(string $slug)
+    {
+        $experience = Experience::with(['host.user', 'kategori', 'photos'])
+            ->where('slug', $slug)
+            ->where('status', 'active')
+            ->firstOrFail();
+
+        $reviews = $experience->approvedReviews()
+            ->with(['user', 'photos', 'reply'])
+            ->paginate(10);
+
+        $ratingBreakdown = [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0];
+        $approvedCount = $experience->approvedReviews()->count();
+
+        if ($approvedCount > 0) {
+            $counts = $experience->approvedReviews()
+                ->reorder()
+                ->selectRaw('rating, COUNT(*) as total')
+                ->groupBy('rating')
+                ->pluck('total', 'rating');
+
+            foreach ($counts as $rating => $total) {
+                $ratingBreakdown[(int) $rating] = round(($total / $approvedCount) * 100);
+            }
+        }
+
+        return view('pages.experience-reviews', compact('experience', 'reviews', 'ratingBreakdown', 'approvedCount'));
+    }
+
     // ── API: Get available times by date ─────────────────────────────────
 
     public function getTimes(string $slug, Request $request)
@@ -143,9 +172,9 @@ class ExperienceController extends Controller
             ->get()
             ->filter(fn($a) => $a->time !== null)
             ->map(fn($a) => [
-                'time'           => Carbon::parse($a->time)->format('H:i'),
+                'time' => Carbon::parse($a->time)->format('H:i'),
                 'available_slot' => $a->getAvailableSlot(),
-                'max_slot'       => $a->max_slot,
+                'max_slot' => $a->max_slot,
             ])
             ->values();
 

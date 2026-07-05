@@ -339,6 +339,19 @@
                             <span x-text="'Complaint kamu: ' + booking?.my_complaint_status"></span>
                         </div>
                     </template>
+                    <template x-if="!booking?.can_file_complaint && !booking?.my_complaint_status && booking?.complaint_disabled_reason">
+                        <div x-data="{ showTip: false }" style="position:relative; flex:1;">
+                            <span
+                                @mouseenter="showTip = true"
+                                @mouseleave="showTip = false"
+                                style="display:flex; align-items:center; justify-content:center; padding:0.7rem 1rem; background:#F7F3ED; color:#B8B0A2; border:1.5px solid #EDE7DC; border-radius:10px; font-size:0.8rem; font-weight:600; font-family:'DM Sans',sans-serif; cursor:not-allowed; user-select:none;">
+                                Ajukan Complaint
+                            </span>
+                            <div x-show="showTip" x-transition.opacity
+                                style="position:absolute; bottom:100%; left:50%; transform:translateX(-50%); margin-bottom:0.5rem; background:#1E3A2F; color:white; padding:0.5rem 0.8rem; border-radius:6px; font-size:0.7rem; white-space:nowrap; z-index:10; pointer-events:none;"
+                                x-text="booking?.complaint_disabled_reason"></div>
+                        </div>
+                    </template>
                 </div>
 
             </div>

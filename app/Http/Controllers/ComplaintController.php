@@ -20,7 +20,7 @@ class ComplaintController extends Controller
         $booking = Booking::with(['experience.photos', 'experience.host.user'])
             ->where('kode_booking', $kode)
             ->where('user_id', Auth::id())
-            ->whereIn('status', ['confirmed', 'completed'])
+            ->where('status', 'completed')
             ->whereDoesntHave('complaints', function ($q) {
                 $q->where('filed_by_user_id', Auth::id());
             })
@@ -40,7 +40,7 @@ class ComplaintController extends Controller
     {
         $booking = Booking::where('kode_booking', $kode)
             ->where('user_id', Auth::id())
-            ->whereIn('status', ['confirmed', 'completed'])
+            ->where('status', 'completed')
             ->whereDoesntHave('complaints', function ($q) {
                 $q->where('filed_by_user_id', Auth::id());
             })

@@ -292,13 +292,19 @@ class HostDashboardController extends Controller
                 : null,
             'coupon_code' => null,
             'notes_for_host' => $booking->notes_for_host,
-            'can_file_complaint' => in_array($booking->status, ['confirmed', 'completed'])
+            'can_file_complaint' => $booking->status === 'completed'
                 && \App\Models\Complaint::canFileFor($booking)
                 && !$booking->complaints()->where('filed_by_user_id', auth()->id())->exists(),
             'complaint_deadline' => optional(\App\Models\Complaint::deadlineFor($booking))->translatedFormat('d M Y, H:i'),
             'my_complaint_status' => optional(
                 $booking->complaints()->where('filed_by_user_id', auth()->id())->first()
             )?->getStatusLabel(),
+            'complaint_disabled_reason' => match (true) {
+                $booking->status === 'confirmed' => 'Complaint bisa diajukan setelah experience selesai.',
+                $booking->status === 'completed'
+                    && optional(\App\Models\Complaint::deadlineFor($booking))->isPast() => 'Batas waktu pengajuan complaint sudah lewat.',
+                default => null,
+            },
         ]);
     }
 

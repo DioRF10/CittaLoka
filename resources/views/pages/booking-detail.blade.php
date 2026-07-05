@@ -120,9 +120,18 @@
                     $myComplaint = $booking->complaints->where('filed_by_user_id', auth()->id())->first();
                     $alreadyFiledByMe = (bool) $myComplaint;
                     $complaintDeadline = \App\Models\Complaint::deadlineFor($booking);
-                    $canFileComplaint = in_array($booking->status, ['confirmed', 'completed'])
+                    $canFileComplaint = $booking->status === 'completed'
                         && !$alreadyFiledByMe
                         && \App\Models\Complaint::canFileFor($booking);
+
+                    $disabledReason = null;
+                    if (!$canFileComplaint && !$alreadyFiledByMe) {
+                        if ($booking->status === 'confirmed') {
+                            $disabledReason = 'Complaint bisa diajukan setelah experience selesai.';
+                        } elseif ($booking->status === 'completed' && $complaintDeadline && $complaintDeadline->isPast()) {
+                            $disabledReason = 'Batas waktu pengajuan complaint sudah lewat.';
+                        }
+                    }
                 @endphp
 
                 @if($canFileComplaint)
@@ -150,10 +159,19 @@
                             <span style="font-size:0.75rem; color:#7A7A6E;">Diajukan pada {{ $myComplaint->created_at->translatedFormat('d M Y') }}, sedang ditinjau tim CittaLoka.</span>
                         @endif
                     </div>
-                @elseif($booking->status === 'completed' && $complaintDeadline && $complaintDeadline->isPast())
-                    <span style="font-size:0.78rem; color:#9CA3AF; font-style:italic;">
-                        Batas waktu pengajuan complaint untuk booking ini sudah lewat.
-                    </span>
+                @elseif($disabledReason)
+                    <div x-data="{ showTip: false }" style="position:relative; display:inline-block;">
+                        <span
+                            @mouseenter="showTip = true"
+                            @mouseleave="showTip = false"
+                            style="padding:0.6rem 1.25rem; background:#F7F3ED; color:#B8B0A2; border:1.5px solid #EDE7DC; border-radius:8px; font-size:0.85rem; font-weight:500; font-family:'DM Sans',sans-serif; display:inline-block; cursor:not-allowed; user-select:none;">
+                            Ajukan Complaint
+                        </span>
+                        <div x-show="showTip" x-transition.opacity
+                            style="position:absolute; bottom:100%; left:0; margin-bottom:0.5rem; background:#1E3A2F; color:white; padding:0.5rem 0.8rem; border-radius:6px; font-size:0.72rem; white-space:nowrap; z-index:10; pointer-events:none;">
+                            {{ $disabledReason }}
+                        </div>
+                    </div>
                 @endif
             </div>
         </div>

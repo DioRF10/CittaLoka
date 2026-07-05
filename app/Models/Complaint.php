@@ -38,17 +38,12 @@ class Complaint extends Model
 
     /**
      * Apakah booking ini masih boleh diajukan complaint baru?
-     * - status 'confirmed': selalu boleh (belum ada batas waktu, karena
-     *   completed_at belum ke-set).
-     * - status 'completed': boleh selama masih dalam WINDOW_HOURS sejak
-     *   completed_at.
+     * Hanya booking berstatus 'completed' yang boleh, dan cuma selama masih
+     * dalam WINDOW_HOURS sejak completed_at. Booking yang masih 'confirmed'
+     * (experience belum berlangsung/selesai) belum bisa diajukan complaint.
      */
     public static function canFileFor(Booking $booking): bool
     {
-        if ($booking->status === 'confirmed') {
-            return true;
-        }
-
         $deadline = self::deadlineFor($booking);
 
         return $deadline !== null && now()->lessThanOrEqualTo($deadline);

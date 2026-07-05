@@ -28,7 +28,7 @@ class HostComplaintController extends Controller
         $booking = Booking::with(['experience', 'user'])
             ->where('kode_booking', $kode)
             ->where('host_id', $host->id)
-            ->whereIn('status', ['confirmed', 'completed'])
+            ->where('status', 'completed')
             ->whereDoesntHave('complaints', function ($q) {
                 $q->where('filed_by_user_id', Auth::id());
             })
@@ -50,7 +50,7 @@ class HostComplaintController extends Controller
 
         $booking = Booking::where('kode_booking', $kode)
             ->where('host_id', $host->id)
-            ->whereIn('status', ['confirmed', 'completed'])
+            ->where('status', 'completed')
             ->whereDoesntHave('complaints', function ($q) {
                 $q->where('filed_by_user_id', Auth::id());
             })

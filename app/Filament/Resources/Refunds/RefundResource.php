@@ -44,9 +44,10 @@ class RefundResource extends Resource
 
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        // Hanya tampilkan booking yang punya konteks refund
+        // Tampilkan booking yang dibatalkan (refund traveler) maupun yang di-refund
+        // lewat penyelesaian complaint (status 'refunded').
         return parent::getEloquentQuery()
-            ->where('status', 'cancelled')
+            ->whereIn('status', ['cancelled', 'refunded'])
             ->whereNotNull('refund_percentage');
     }
 

@@ -28,11 +28,28 @@ class DisburseBookingPayouts extends Command
             ->where('disbursement_status', 'pending')
             ->whereNotNull('completed_at')
             ->where('completed_at', '<=', now()->subHours(self::DISPUTE_WINDOW_HOURS))
+            ->whereDoesntHave('complaints', function ($q) {
+                $q->whereIn('status', ['pending', 'in_review']);
+            })
             ->whereHas('host', function ($q) {
                 $q->where('bank_review_status', 'verified');
             })
             ->with('host')
             ->get();
+
+        $heldByComplaint = Booking::where('status', 'completed')
+            ->where('payment_status', 'paid')
+            ->where('disbursement_status', 'pending')
+            ->whereNotNull('completed_at')
+            ->where('completed_at', '<=', now()->subHours(self::DISPUTE_WINDOW_HOURS))
+            ->whereHas('complaints', function ($q) {
+                $q->whereIn('status', ['pending', 'in_review']);
+            })
+            ->count();
+
+        if ($heldByComplaint > 0) {
+            $this->warn("{$heldByComplaint} booking ditahan disbursement-nya karena masih ada complaint aktif.");
+        }
 
         if ($bookings->isEmpty()) {
             $this->info('Tidak ada booking yang siap di-disburse saat ini.');

@@ -9,7 +9,10 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -111,6 +114,21 @@ class ComplaintsTable
                             ->label('Catatan Penyelesaian')
                             ->helperText('Akan dikirim ke pengaju complaint.')
                             ->required(),
+
+                        Checkbox::make('give_refund')
+                            ->label('Beri refund ke traveler')
+                            ->live()
+                            ->visible(fn (Complaint $record): bool => $record->filed_by_role === 'traveler'
+                                && $record->booking->refund_status === 'not_applicable'),
+
+                        TextInput::make('refund_amount')
+                            ->label('Nominal Refund')
+                            ->numeric()
+                            ->prefix('Rp')
+                            ->required(fn (Get $get): bool => (bool) $get('give_refund'))
+                            ->visible(fn (Get $get): bool => (bool) $get('give_refund'))
+                            ->maxValue(fn (Complaint $record): float => (float) $record->booking->total_harga)
+                            ->helperText(fn (Complaint $record): string => 'Maksimal Rp ' . number_format($record->booking->total_harga, 0, ',', '.') . ' (total harga booking).'),
                     ])
                     ->action(function (Complaint $record, array $data): void {
                         $record->update([
@@ -119,6 +137,25 @@ class ComplaintsTable
                             'resolved_by_user_id' => auth()->id(),
                             'resolved_at' => now(),
                         ]);
+
+                        if (!empty($data['give_refund']) && !empty($data['refund_amount'])) {
+                            $booking = $record->booking;
+                            $amount = (float) $data['refund_amount'];
+                            $percentage = $booking->total_harga > 0
+                                ? (int) round(($amount / $booking->total_harga) * 100)
+                                : null;
+
+                            $booking->update([
+                                'status' => 'refunded',
+                                'refund_amount' => $amount,
+                                'refund_percentage' => $percentage,
+                                'refund_status' => 'pending',
+                                'refund_note' => 'Refund atas Complaint #' . $record->id . ' (' . $record->getCategoryLabel() . ')',
+                                'cancel_reason' => 'Refund atas Complaint #' . $record->id . ': ' . $record->getCategoryLabel(),
+                                'cancelled_by' => 'admin',
+                                'cancelled_at' => now(),
+                            ]);
+                        }
 
                         $record->filedBy->notify(new ComplaintResolvedNotification($record));
 

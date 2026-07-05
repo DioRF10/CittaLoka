@@ -34,6 +34,11 @@ class HostComplaintController extends Controller
             })
             ->firstOrFail();
 
+        if (!Complaint::canFileFor($booking)) {
+            return redirect()->route('host.bookings.index')
+                ->with('error', 'Batas waktu pengajuan complaint untuk booking ini sudah lewat (' . Complaint::WINDOW_HOURS . ' jam setelah experience selesai).');
+        }
+
         return view('host.complaint-create', compact('booking'));
     }
 
@@ -50,6 +55,11 @@ class HostComplaintController extends Controller
                 $q->where('filed_by_user_id', Auth::id());
             })
             ->firstOrFail();
+
+        if (!Complaint::canFileFor($booking)) {
+            return redirect()->route('host.bookings.index')
+                ->with('error', 'Batas waktu pengajuan complaint untuk booking ini sudah lewat (' . Complaint::WINDOW_HOURS . ' jam setelah experience selesai).');
+        }
 
         $request->validate([
             'category' => 'required|in:no_show,not_as_described,safety_concern,payment_issue,inappropriate_behavior,other',

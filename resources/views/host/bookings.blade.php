@@ -5,6 +5,17 @@
 
 @section('content')
 
+@if(session('success'))
+    <div style="background:#F0FDF4; border:1.5px solid #BBF7D0; color:#166534; padding:0.75rem 1rem; border-radius:10px; font-size:0.85rem; margin-bottom:1.25rem;">
+        {{ session('success') }}
+    </div>
+@endif
+@if(session('error'))
+    <div style="background:#FEF2F2; border:1.5px solid #FECACA; color:#C0392B; padding:0.75rem 1rem; border-radius:10px; font-size:0.85rem; margin-bottom:1.25rem;">
+        {{ session('error') }}
+    </div>
+@endif
+
 <div x-data="{
     showDetailModal: false,
     loading: false,
@@ -312,11 +323,21 @@
                         onmouseout="this.style.background='white'">
                         Tutup
                     </button>
-                    <template x-if="booking?.status === 'confirmed' || booking?.status === 'completed'">
-                        <a :href="'{{ url('/dashboard/complaints') }}/' + booking?.kode_booking + '/create'"
-                            style="flex:1; display:flex; align-items:center; justify-content:center; padding:0.7rem 1rem; background:white; color:#C0392B; border:1.5px solid #FECACA; border-radius:10px; font-size:0.8rem; font-weight:600; text-decoration:none; font-family:'DM Sans',sans-serif;">
-                            Ajukan Complaint
-                        </a>
+                    <template x-if="booking?.can_file_complaint">
+                        <div style="flex:1; display:flex; flex-direction:column; gap:0.3rem;">
+                            <a :href="'{{ url('/dashboard/complaints') }}/' + booking?.kode_booking + '/create'"
+                                style="display:flex; align-items:center; justify-content:center; padding:0.7rem 1rem; background:white; color:#C0392B; border:1.5px solid #FECACA; border-radius:10px; font-size:0.8rem; font-weight:600; text-decoration:none; font-family:'DM Sans',sans-serif;">
+                                Ajukan Complaint
+                            </a>
+                            <template x-if="booking?.complaint_deadline">
+                                <span style="font-size:0.68rem; color:#9CA3AF; text-align:center;" x-text="'Batas: ' + booking?.complaint_deadline"></span>
+                            </template>
+                        </div>
+                    </template>
+                    <template x-if="!booking?.can_file_complaint && booking?.my_complaint_status">
+                        <div style="flex:1; text-align:center; padding:0.6rem 1rem; background:#F7F3ED; border:1px solid #EDE7DC; border-radius:10px; font-size:0.75rem; color:#1E3A2F;">
+                            <span x-text="'Complaint kamu: ' + booking?.my_complaint_status"></span>
+                        </div>
                     </template>
                 </div>
 

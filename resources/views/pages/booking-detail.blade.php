@@ -116,13 +116,44 @@
                     </a>
                 @endif
 
-                @if(in_array($booking->status, ['confirmed', 'completed']) && !$booking->complaints->where('filed_by_user_id', auth()->id())->count())
-                    <a href="{{ route('complaints.create', $booking->kode_booking) }}"
-                        style="padding:0.6rem 1.25rem; background:white; color:#C0392B; border:1.5px solid #FECACA; border-radius:8px; font-size:0.85rem; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.2s; text-decoration:none; display:inline-block;"
-                        onmouseover="this.style.borderColor='#C0392B'"
-                        onmouseout="this.style.borderColor='#FECACA'">
-                        Ajukan Complaint
-                    </a>
+                @php
+                    $myComplaint = $booking->complaints->where('filed_by_user_id', auth()->id())->first();
+                    $alreadyFiledByMe = (bool) $myComplaint;
+                    $complaintDeadline = \App\Models\Complaint::deadlineFor($booking);
+                    $canFileComplaint = in_array($booking->status, ['confirmed', 'completed'])
+                        && !$alreadyFiledByMe
+                        && \App\Models\Complaint::canFileFor($booking);
+                @endphp
+
+                @if($canFileComplaint)
+                    <div style="display:flex; flex-direction:column; align-items:flex-start; gap:0.3rem;">
+                        <a href="{{ route('complaints.create', $booking->kode_booking) }}"
+                            style="padding:0.6rem 1.25rem; background:white; color:#C0392B; border:1.5px solid #FECACA; border-radius:8px; font-size:0.85rem; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.2s; text-decoration:none; display:inline-block;"
+                            onmouseover="this.style.borderColor='#C0392B'"
+                            onmouseout="this.style.borderColor='#FECACA'">
+                            Ajukan Complaint
+                        </a>
+                        @if($complaintDeadline)
+                            <span style="font-size:0.72rem; color:#9CA3AF;">
+                                Batas waktu pengajuan: {{ $complaintDeadline->translatedFormat('d M Y, H:i') }}
+                            </span>
+                        @endif
+                    </div>
+                @elseif($alreadyFiledByMe)
+                    <div style="display:flex; flex-direction:column; align-items:flex-start; gap:0.3rem; padding:0.6rem 1rem; background:#F7F3ED; border:1px solid #EDE7DC; border-radius:8px;">
+                        <span style="font-size:0.8rem; font-weight:600; color:#1E3A2F;">
+                            Complaint kamu: {{ $myComplaint->getStatusLabel() }}
+                        </span>
+                        @if($myComplaint->resolution_notes)
+                            <span style="font-size:0.75rem; color:#7A7A6E;">{{ $myComplaint->resolution_notes }}</span>
+                        @else
+                            <span style="font-size:0.75rem; color:#7A7A6E;">Diajukan pada {{ $myComplaint->created_at->translatedFormat('d M Y') }}, sedang ditinjau tim CittaLoka.</span>
+                        @endif
+                    </div>
+                @elseif($booking->status === 'completed' && $complaintDeadline && $complaintDeadline->isPast())
+                    <span style="font-size:0.78rem; color:#9CA3AF; font-style:italic;">
+                        Batas waktu pengajuan complaint untuk booking ini sudah lewat.
+                    </span>
                 @endif
             </div>
         </div>
@@ -270,64 +301,6 @@
                             </div>
                         @else
                             <p style="font-size:0.78rem; color:#9CA3AF; font-style:italic;">No refund applicable for this cancellation.</p>
-                        @endif
-                    </div>
-                @endif
-
-                {{-- Complaint Status --}}
-                @php
-                    $userComplaint = $booking->complaints->where('filed_by_user_id', auth()->id())->first();
-                @endphp
-                @if($userComplaint)
-                    <div style="background:white; border-radius:16px; border:1.5px solid #EDE7DC; padding:1.5rem;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
-                            <h3 style="font-family:'Cormorant Garamond',Georgia,serif; font-size:1.2rem; font-weight:500; color:#1E3A2F; margin:0;">
-                                Complaint Detail
-                            </h3>
-                            @php
-                                $cStatusColor = match($userComplaint->status) {
-                                    'pending'   => '#C4783A',
-                                    'in_review' => '#2D5240',
-                                    'resolved'  => '#1E3A2F',
-                                    'dismissed' => '#C0392B',
-                                    default     => '#7A7A6E',
-                                };
-                                $cStatusBg = match($userComplaint->status) {
-                                    'pending'   => '#FDF6EE',
-                                    'in_review' => '#EBF5EE',
-                                    'resolved'  => '#E8E4DC',
-                                    'dismissed' => '#FEF2F2',
-                                    default     => '#F3F4F6',
-                                };
-                            @endphp
-                            <span style="font-size:0.75rem; font-weight:700; padding:0.3rem 0.8rem; border-radius:999px; background:{{ $cStatusBg }}; color:{{ $cStatusColor }};">
-                                {{ strtoupper($userComplaint->getStatusLabel()) }}
-                            </span>
-                        </div>
-                        <div style="font-size:0.875rem; color:#4A4A4A; margin-bottom:0.5rem;">
-                            <strong>Kategori:</strong> {{ $userComplaint->getCategoryLabel() }}
-                        </div>
-                        <p style="font-size:0.875rem; color:#4A4A4A; line-height:1.6; margin-bottom:0;">
-                            {{ $userComplaint->description }}
-                        </p>
-                        @if($userComplaint->photos && $userComplaint->photos->count() > 0)
-                            <div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
-                                @foreach($userComplaint->photos as $photo)
-                                    <a href="{{ $photo->url }}" target="_blank">
-                                        <img src="{{ $photo->url }}" alt="Bukti Complaint" style="width:72px; height:72px; object-fit:cover; border-radius:8px; border:1px solid #EDE7DC;">
-                                    </a>
-                                @endforeach
-                            </div>
-                        @endif
-                        @if($userComplaint->resolution_notes)
-                            <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid #EDE7DC;">
-                                <div style="font-size:0.8rem; font-weight:600; color:#1E3A2F; margin-bottom:0.4rem;">
-                                    Catatan Resolusi (Admin):
-                                </div>
-                                <p style="font-size:0.85rem; color:#4A4A4A; line-height:1.5; margin:0;">
-                                    {{ $userComplaint->resolution_notes }}
-                                </p>
-                            </div>
                         @endif
                     </div>
                 @endif

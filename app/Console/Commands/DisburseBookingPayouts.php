@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Booking;
+use App\Models\Complaint;
 use App\Models\User;
 use App\Notifications\DisbursementFailedAdminNotification;
 use App\Services\XenditService;
@@ -15,19 +16,18 @@ class DisburseBookingPayouts extends Command
 
     protected $description = 'Kirim disbursement Xendit ke host untuk booking completed yang sudah lewat window dispute (48 jam) dan belum di-payout';
 
-    /**
-     * Window dispute — jumlah jam setelah booking completed
-     * sebelum dana boleh dicairkan ke host.
-     */
-    private const DISPUTE_WINDOW_HOURS = 48;
-
     public function handle(): int
     {
+        // Window dispute disamakan dengan Complaint::WINDOW_HOURS — satu sumber
+        // kebenaran, supaya batas waktu complaint dan batas waktu disbursement
+        // selalu konsisten.
+        $disputeWindowHours = Complaint::WINDOW_HOURS;
+
         $bookings = Booking::where('status', 'completed')
             ->where('payment_status', 'paid')
             ->where('disbursement_status', 'pending')
             ->whereNotNull('completed_at')
-            ->where('completed_at', '<=', now()->subHours(self::DISPUTE_WINDOW_HOURS))
+            ->where('completed_at', '<=', now()->subHours($disputeWindowHours))
             ->whereDoesntHave('complaints', function ($q) {
                 $q->whereIn('status', ['pending', 'in_review']);
             })
@@ -41,7 +41,7 @@ class DisburseBookingPayouts extends Command
             ->where('payment_status', 'paid')
             ->where('disbursement_status', 'pending')
             ->whereNotNull('completed_at')
-            ->where('completed_at', '<=', now()->subHours(self::DISPUTE_WINDOW_HOURS))
+            ->where('completed_at', '<=', now()->subHours($disputeWindowHours))
             ->whereHas('complaints', function ($q) {
                 $q->whereIn('status', ['pending', 'in_review']);
             })

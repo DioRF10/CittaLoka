@@ -42,6 +42,15 @@ class ComplaintForm
                             ->disabled()
                             ->dehydrated(false)
                             ->columnSpanFull(),
+
+                        \Filament\Forms\Components\Placeholder::make('photos')
+                            ->label('Foto Bukti')
+                            ->content(fn ($record) => new \Illuminate\Support\HtmlString(
+                                $record?->photos->count() > 0
+                                    ? '<div style="display:flex; gap:8px; flex-wrap:wrap;">' . $record->photos->map(fn($p) => "<a href='{$p->url}' target='_blank'><img src='{$p->url}' style='width:100px; height:100px; object-fit:cover; border-radius:8px; border:1px solid #ddd;'></a>")->join('') . '</div>'
+                                    : '-'
+                            ))
+                            ->columnSpanFull(),
                     ]),
 
                 Section::make('Penyelesaian')

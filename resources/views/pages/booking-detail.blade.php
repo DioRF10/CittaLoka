@@ -310,6 +310,15 @@
                         <p style="font-size:0.875rem; color:#4A4A4A; line-height:1.6; margin-bottom:0;">
                             {{ $userComplaint->description }}
                         </p>
+                        @if($userComplaint->photos && $userComplaint->photos->count() > 0)
+                            <div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+                                @foreach($userComplaint->photos as $photo)
+                                    <a href="{{ $photo->url }}" target="_blank">
+                                        <img src="{{ $photo->url }}" alt="Bukti Complaint" style="width:72px; height:72px; object-fit:cover; border-radius:8px; border:1px solid #EDE7DC;">
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
                         @if($userComplaint->resolution_notes)
                             <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid #EDE7DC;">
                                 <div style="font-size:0.8rem; font-weight:600; color:#1E3A2F; margin-bottom:0.4rem;">

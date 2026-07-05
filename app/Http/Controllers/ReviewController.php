@@ -49,7 +49,8 @@ class ReviewController extends Controller
             'host_id'       => $booking->host_id,
             'rating'        => $request->rating,
             'text'          => $request->text,
-            'status'        => 'pending',
+            'status'        => 'approved',
+            'published_at'  => now(),
         ]);
 
         if ($request->hasFile('photos')) {
@@ -67,6 +68,6 @@ class ReviewController extends Controller
         }
 
         return redirect()->route('bookings.index')
-            ->with('success', 'Terima kasih! Review kamu sudah terkirim dan akan tayang setelah disetujui admin.');
+            ->with('success', 'Terima kasih! Review kamu sudah berhasil terkirim dan telah tayang.');
     }
 }

@@ -27,6 +27,11 @@ class ComplaintInfolist
                     ->label('Deskripsi')
                     ->columnSpanFull(),
 
+                \Filament\Infolists\Components\ImageEntry::make('photos.url')
+                    ->label('Foto Bukti')
+                    ->columnSpanFull()
+                    ->size(150),
+
                 TextEntry::make('status')
                     ->badge()
                     ->formatStateUsing(fn (Complaint $record): string => $record->getStatusLabel()),

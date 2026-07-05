@@ -136,6 +136,10 @@ class Booking extends Model
     {
         return $this->hasOne(Review::class);
     }
+       public function complaints()
+    {
+        return $this->hasMany(Complaint::class);
+    }
 
     // public function coupon()
     // {

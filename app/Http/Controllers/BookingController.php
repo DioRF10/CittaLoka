@@ -52,7 +52,7 @@ class BookingController extends Controller
 
     public function show(string $kode)
     {
-        $booking = Booking::with(['experience.photos', 'experience.host.user', 'experience.kategori'])
+        $booking = Booking::with(['experience.photos', 'experience.host.user', 'experience.kategori', 'complaints', 'memoryBook'])
             ->where('kode_booking', $kode)
             ->where('user_id', Auth::id())
             ->firstOrFail();

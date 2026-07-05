@@ -312,6 +312,12 @@
                         onmouseout="this.style.background='white'">
                         Tutup
                     </button>
+                    <template x-if="booking?.status === 'confirmed' || booking?.status === 'completed'">
+                        <a :href="'{{ url('/dashboard/complaints') }}/' + booking?.kode_booking + '/create'"
+                            style="flex:1; display:flex; align-items:center; justify-content:center; padding:0.7rem 1rem; background:white; color:#C0392B; border:1.5px solid #FECACA; border-radius:10px; font-size:0.8rem; font-weight:600; text-decoration:none; font-family:'DM Sans',sans-serif;">
+                            Ajukan Complaint
+                        </a>
+                    </template>
                 </div>
 
             </div>

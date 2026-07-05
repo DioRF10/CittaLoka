@@ -146,19 +146,6 @@ return new class extends Migration {
             $table->unique(['coupon_id', 'user_id']);
         });
 
-        // ── complaints ───────────────────────────────────────────────────
-        Schema::create('complaints', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('booking_id')->constrained('bookings');
-            $table->foreignId('user_id')->constrained('users');
-            $table->string('category', 50)->nullable();
-            $table->text('description');
-            $table->json('evidence_urls')->nullable();
-            $table->enum('status', ['open', 'in_progress', 'resolved', 'rejected'])->default('open');
-            $table->text('admin_note')->nullable();
-            $table->timestamp('resolved_at')->nullable();
-            $table->timestamps();
-        });
 
         // ── notif ────────────────────────────────────────────────────────
         Schema::create('notif', function (Blueprint $table) {
@@ -190,7 +177,7 @@ return new class extends Migration {
     {
         Schema::dropIfExists('admin_logs');
         Schema::dropIfExists('notif');
-        Schema::dropIfExists('complaints');
+
         Schema::dropIfExists('coupon_usages');
         Schema::dropIfExists('payouts');
         Schema::dropIfExists('seasonal_event_experiences');

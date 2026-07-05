@@ -36,9 +36,6 @@ Route::get('/', function () {
     return view('pages.home', compact('featuredExperiences'));
 })->name('home');
 
-// =============================================================================
-// AUTH — Register
-// =============================================================================
 Route::get('/register', function () {
     return view('auth.choose-role');
 })->name('register');
@@ -58,23 +55,17 @@ Route::get('/register/form', function () {
 
 Route::post('/register', [RegisterController::class, 'store'])->name('register.store');
 
-// =============================================================================
-// AUTH — Login
-// =============================================================================
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'store'])->name('login.store');
 Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
-// =============================================================================
-// AUTH — Email Verification
-// =============================================================================
 Route::get('/email/verify', function () {
     return view('auth.verify-email');
 })->middleware('auth')->name('verification.notice');
 
 Route::get('/email/verify/{id}/{hash}', function (Illuminate\Foundation\Auth\EmailVerificationRequest $request) {
     $request->fulfill();
-    return redirect()->route('login')->with('status', '✓ Email berhasil terverifikasi! Silakan login dengan akun Anda.');
+    return redirect()->route('login')->with('status', 'Email berhasil terverifikasi! Silakan login dengan akun Anda.');
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
 Route::post('/email/verification-notification', function (Request $request) {
@@ -82,9 +73,6 @@ Route::post('/email/verification-notification', function (Request $request) {
     return back()->with('status', 'verification-link-sent');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
-// =============================================================================
-// AUTH — Forgot Password
-// =============================================================================
 Route::get('/forgot-password', [App\Http\Controllers\Auth\PasswordController::class, 'request'])
     ->middleware('guest')->name('password.request');
 
@@ -100,15 +88,9 @@ Route::get('/reset-password/{token}', [App\Http\Controllers\Auth\PasswordControl
 Route::post('/reset-password', [App\Http\Controllers\Auth\PasswordController::class, 'store'])
     ->middleware('guest')->name('password.store');
 
-// =============================================================================
-// Google OAuth
-// =============================================================================
 Route::get('/auth/google/redirect', [App\Http\Controllers\Auth\GoogleController::class, 'redirect'])->name('auth.google.redirect');
 Route::get('/auth/google/callback', [App\Http\Controllers\Auth\GoogleController::class, 'callback'])->name('auth.google.callback');
 
-// =============================================================================
-// Protected pages (sementara)
-// =============================================================================
 Route::get('/experiences', [ExperienceController::class, 'index'])->name('experiences.index');
 Route::get('/experiences/{slug}/reviews', [ExperienceController::class, 'reviews'])->name('experiences.reviews');
 Route::get('/experiences/{slug}', [ExperienceController::class, 'show'])
@@ -120,20 +102,11 @@ Route::get('/seasonal-calendar', [SeasonalCalendarController::class, 'index'])
 Route::get('/seasonal-calendar/{id}', [SeasonalCalendarController::class, 'show'])
     ->name('seasonal-calendar.show');
 
-
-// =============================================================================
-// Soul Match
-// =============================================================================
 Route::get('/soul-match', [App\Http\Controllers\SoulMatchController::class, 'intro'])->name('soul-match.intro');
 Route::get('/soul-match/quiz', [App\Http\Controllers\SoulMatchController::class, 'show'])->name('soul-match.quiz');
 Route::post('/soul-match/quiz', [App\Http\Controllers\SoulMatchController::class, 'submit'])->name('soul-match.submit');
 Route::get('/soul-match/results', [App\Http\Controllers\SoulMatchController::class, 'results'])->name('soul-match.results');
 
-
-
-// =============================================================================
-// Booking
-// =============================================================================
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/checkout/{slug}', [CheckoutController::class, 'show'])->name('checkout.show');
     Route::post('/checkout/{slug}', [CheckoutController::class, 'store'])->name('checkout.store');
@@ -145,8 +118,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/bookings/{kode}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
     Route::get('/bookings/{kode}/review', [App\Http\Controllers\ReviewController::class, 'create'])->name('reviews.create');
     Route::post('/bookings/{kode}/review', [App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
+    Route::get('/bookings/{kode}/complaint', [App\Http\Controllers\ComplaintController::class, 'create'])->name('complaints.create');
+    Route::post('/bookings/{kode}/complaint', [App\Http\Controllers\ComplaintController::class, 'store'])->name('complaints.store');
 
-    // Notifikasi
     Route::get('/notifications/{id}/click', [NotificationController::class, 'click'])
         ->name('notifications.click');
     Route::post('/notifications/read-all', [NotificationController::class, 'readAll'])
@@ -159,15 +133,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/my-profile', [ProfileController::class, 'update'])->name('my-profile.update');
     Route::post('/hosts/follow-toggle', [FollowController::class, 'toggle'])->name('hosts.follow-toggle');
 
-});
-Route::get('/memory-books', [MemoryBookController::class, 'index'])
-    ->name('memory-books.index');
-Route::get('/memory-book/{kode}', [MemoryBookController::class, 'show'])
-    ->name('memory-book.show');
+    Route::get('/memory-books', [MemoryBookController::class, 'index'])
+        ->name('memory-books.index');
+    Route::get('/memory-book/{kode}', [MemoryBookController::class, 'show'])
+        ->name('memory-book.show');
 
-// =============================================================================
-// Onboarding
-// =============================================================================
+});
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/onboarding/tourist', [TravelerOnboardingController::class, 'index'])
         ->name('onboarding.traveler');
@@ -185,16 +157,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['auth', 'verified', 'host'])->prefix('dashboard')->name('host.')->group(function () {
 
-    // Pastikan hanya role 'host' yang bisa akses
-    // Tambahkan middleware ini kalau sudah punya EnsureUserIsHost middleware:
-    // Route::middleware('role:host')->group(function () { ... });
-    // Atau pakai inline check di controller (sudah ada via getHost())
-
-    // Dashboard Overview
     Route::get('/', [HostDashboardController::class, 'index'])->name('dashboard');
 
-
-    // Experience CRUD
     Route::get('/experiences/create', [ExperienceFormController::class, 'create'])->name('experiences.create');
     Route::post('/experiences', [ExperienceFormController::class, 'store'])->name('experiences.store');
     Route::get('/experiences/{id}/edit', [ExperienceFormController::class, 'edit'])->name('experiences.edit');
@@ -202,12 +166,9 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('dashboard')->name('host
     Route::post('/experiences/{id}/submit-review', [ExperienceFormController::class, 'submitReview'])->name('experiences.submitReview');
     Route::delete('/experiences/photos/{photoId}', [ExperienceFormController::class, 'deletePhoto'])->name('experiences.deletePhoto');
 
-    // My Experiences — urutan penting: 'create' harus sebelum '{id}'
     Route::get('/experiences', [HostDashboardController::class, 'experiences'])->name('experiences.index');
     Route::delete('/experiences/{id}', [HostDashboardController::class, 'deleteExperience'])->name('experiences.destroy');
 
-
-    // Memory Books
     Route::get('/memory-books', [HostDashboardController::class, 'memoryBooks'])->name('memory-books.index');
     Route::get('/memory-books/{id}/fill', [MemoryBookFillController::class, 'show'])
         ->name('memory-books.fill');
@@ -216,31 +177,29 @@ Route::middleware(['auth', 'verified', 'host'])->prefix('dashboard')->name('host
     Route::delete('/memory-books/photos/{photoId}', [MemoryBookFillController::class, 'deletePhoto'])
         ->name('memory-books.photos.delete');
 
-    // Bookings
     Route::get('/bookings', [HostDashboardController::class, 'bookings'])->name('bookings.index');
     Route::get('/bookings/{id}/detail', [HostDashboardController::class, 'bookingDetail'])->name('bookings.detail');
 
-    // Reviews
+    // Complaints
+    Route::get('/complaints/{kode}/create', [App\Http\Controllers\Host\HostComplaintController::class, 'create'])->name('complaints.create');
+    Route::post('/complaints/{kode}', [App\Http\Controllers\Host\HostComplaintController::class, 'store'])->name('complaints.store');
+
     Route::get('/reviews', [App\Http\Controllers\Host\HostReviewController::class, 'index'])->name('reviews.index');
     Route::post('/reviews/{review}/reply', [App\Http\Controllers\Host\HostReviewController::class, 'reply'])->name('reviews.reply');
 
-    // Availability
     Route::get('/availability', [HostDashboardController::class, 'availability'])->name('availability.index');
     Route::post('/availability', [HostDashboardController::class, 'storeAvailability'])->name('availability.store');
     Route::delete('/availability/{id}', [HostDashboardController::class, 'deleteAvailability'])->name('availability.delete');
 
-    // Earnings
     Route::get('/earnings/export', [HostDashboardController::class, 'exportPayouts'])
         ->name('earnings.export');
     Route::get('/earnings', [HostDashboardController::class, 'earnings'])->name('earnings');
 
-    // Settings
     Route::get('/settings', [HostDashboardController::class, 'settings'])->name('settings');
     Route::put('/settings', [HostDashboardController::class, 'updateSettings'])->name('settings.update');
     Route::post('/settings/resubmit-ktp', [HostDashboardController::class, 'resubmitKtp'])->name('settings.resubmit-ktp');
     Route::post('/settings/resubmit-bank', [HostDashboardController::class, 'resubmitBank'])->name('settings.resubmit-bank');
 
-    // Profile
     Route::get('/profile', [HostProfileController::class, 'index'])->name('profile.index');
     Route::put('/profile', [HostProfileController::class, 'update'])->name('profile.update');
     Route::post('/profile/heritage', [HostProfileController::class, 'storeHeritage'])->name('profile.heritage.store');

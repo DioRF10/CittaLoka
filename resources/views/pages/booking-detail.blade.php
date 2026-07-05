@@ -96,14 +96,9 @@
                         Cancel Booking
                     </a>
                 @elseif($booking->status === 'completed' && !$booking->review)
-                    <a href="#"
+                    <a href="{{ route('reviews.create', $booking->kode_booking) }}"
                         style="padding:0.6rem 1.25rem; background:#1E3A2F; color:white; border-radius:8px; font-size:0.85rem; font-weight:500; text-decoration:none; font-family:'DM Sans',sans-serif;">
                         Write a Review
-                    </a>
-                @elseif($booking->status === 'completed' && $booking->review)
-                    <a href="#"
-                        style="padding:0.6rem 1.25rem; background:white; color:#1E3A2F; border:1.5px solid #E2DDD5; border-radius:8px; font-size:0.85rem; font-weight:500; text-decoration:none; font-family:'DM Sans',sans-serif;">
-                        View Memory Book
                     </a>
                 @elseif(in_array($booking->status, ['cancelled', 'expired', 'refunded']))
                     @if($exp)
@@ -112,6 +107,22 @@
                             Book Again
                         </a>
                     @endif
+                @endif
+
+                @if($booking->status === 'completed' && $booking->memoryBook && $booking->memoryBook->status === 'sent')
+                    <a href="{{ route('memory-book.show', $booking->kode_booking) }}"
+                        style="padding:0.6rem 1.25rem; background:white; color:#1E3A2F; border:1.5px solid #E2DDD5; border-radius:8px; font-size:0.85rem; font-weight:500; text-decoration:none; font-family:'DM Sans',sans-serif;">
+                        View Memory Book
+                    </a>
+                @endif
+
+                @if(in_array($booking->status, ['confirmed', 'completed']) && !$booking->complaints->where('filed_by_user_id', auth()->id())->count())
+                    <a href="{{ route('complaints.create', $booking->kode_booking) }}"
+                        style="padding:0.6rem 1.25rem; background:white; color:#C0392B; border:1.5px solid #FECACA; border-radius:8px; font-size:0.85rem; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.2s; text-decoration:none; display:inline-block;"
+                        onmouseover="this.style.borderColor='#C0392B'"
+                        onmouseout="this.style.borderColor='#FECACA'">
+                        Ajukan Complaint
+                    </a>
                 @endif
             </div>
         </div>
@@ -259,6 +270,55 @@
                             </div>
                         @else
                             <p style="font-size:0.78rem; color:#9CA3AF; font-style:italic;">No refund applicable for this cancellation.</p>
+                        @endif
+                    </div>
+                @endif
+
+                {{-- Complaint Status --}}
+                @php
+                    $userComplaint = $booking->complaints->where('filed_by_user_id', auth()->id())->first();
+                @endphp
+                @if($userComplaint)
+                    <div style="background:white; border-radius:16px; border:1.5px solid #EDE7DC; padding:1.5rem;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+                            <h3 style="font-family:'Cormorant Garamond',Georgia,serif; font-size:1.2rem; font-weight:500; color:#1E3A2F; margin:0;">
+                                Complaint Detail
+                            </h3>
+                            @php
+                                $cStatusColor = match($userComplaint->status) {
+                                    'pending'   => '#C4783A',
+                                    'in_review' => '#2D5240',
+                                    'resolved'  => '#1E3A2F',
+                                    'dismissed' => '#C0392B',
+                                    default     => '#7A7A6E',
+                                };
+                                $cStatusBg = match($userComplaint->status) {
+                                    'pending'   => '#FDF6EE',
+                                    'in_review' => '#EBF5EE',
+                                    'resolved'  => '#E8E4DC',
+                                    'dismissed' => '#FEF2F2',
+                                    default     => '#F3F4F6',
+                                };
+                            @endphp
+                            <span style="font-size:0.75rem; font-weight:700; padding:0.3rem 0.8rem; border-radius:999px; background:{{ $cStatusBg }}; color:{{ $cStatusColor }};">
+                                {{ strtoupper($userComplaint->getStatusLabel()) }}
+                            </span>
+                        </div>
+                        <div style="font-size:0.875rem; color:#4A4A4A; margin-bottom:0.5rem;">
+                            <strong>Kategori:</strong> {{ $userComplaint->getCategoryLabel() }}
+                        </div>
+                        <p style="font-size:0.875rem; color:#4A4A4A; line-height:1.6; margin-bottom:0;">
+                            {{ $userComplaint->description }}
+                        </p>
+                        @if($userComplaint->resolution_notes)
+                            <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid #EDE7DC;">
+                                <div style="font-size:0.8rem; font-weight:600; color:#1E3A2F; margin-bottom:0.4rem;">
+                                    Catatan Resolusi (Admin):
+                                </div>
+                                <p style="font-size:0.85rem; color:#4A4A4A; line-height:1.5; margin:0;">
+                                    {{ $userComplaint->resolution_notes }}
+                                </p>
+                            </div>
                         @endif
                     </div>
                 @endif

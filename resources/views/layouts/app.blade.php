@@ -13,6 +13,8 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <style>[x-cloak] { display: none !important; }</style>
+
     @stack('styles')
 </head>
 <body style="font-family: 'DM Sans', sans-serif; background: #FAFAF8;">

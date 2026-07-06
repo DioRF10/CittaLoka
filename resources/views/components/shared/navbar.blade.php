@@ -6,15 +6,15 @@ $user = computed(fn() => auth()->user());
 
 ?>
 
-<nav class="w-full border-b sticky top-0 z-50" style="background: #FAFAF8; border-color: #E8E4DC;">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+<nav class="w-full border-b sticky top-0 z-50" style="background: #FAFAF8; border-color: #E8E4DC;" x-data="{ mobileMenuOpen: false }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
 
         {{-- Logo --}}
         <a href="/" class="flex-shrink-0">
-            <img src="{{ asset('images/auth/bb.png') }}" alt="CittaLoka" class="h-12 w-auto">
+            <img src="{{ asset('images/auth/bb.png') }}" alt="CittaLoka" class="h-10 sm:h-12 w-auto">
         </a>
 
-        {{-- Menu Tengah --}}
+        {{-- Menu Tengah (desktop) --}}
         <div class="hidden md:flex items-center gap-8">
             <a href="/experiences"
                 class="text-sm font-medium transition-colors hover:text-[#1a2e1c] {{ request()->is('experiences*') ? 'text-[#1a2e1c]' : 'text-[#6B7280]' }}">
@@ -35,11 +35,11 @@ $user = computed(fn() => auth()->user());
         </div>
 
         {{-- Kanan --}}
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-1.5 sm:gap-3">
 
             {{-- Language Toggle --}}
             <button
-                class="text-xs font-medium px-3 py-1.5 rounded-full transition duration-200 hover:bg-[#F0EDE6] hover:text-[#1a2e1c] hover:shadow-sm cursor-pointer"
+                class="hidden sm:inline-block text-xs font-medium px-3 py-1.5 rounded-full transition duration-200 hover:bg-[#F0EDE6] hover:text-[#1a2e1c] hover:shadow-sm cursor-pointer"
                 style="color: #6B7280; border: 1px solid transparent;">
                 EN
             </button>
@@ -47,12 +47,12 @@ $user = computed(fn() => auth()->user());
             @guest
                 {{-- Kondisi 1: Guest --}}
                 <a href="{{ route('login') }}"
-                    class="text-sm font-medium px-4 py-2 rounded-lg transition-colors hover:bg-[#F0EDE6]"
+                    class="text-xs sm:text-sm font-medium px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg transition-colors hover:bg-[#F0EDE6] whitespace-nowrap"
                     style="color: #1a2e1c;">
                     Login
                 </a>
                 <a href="{{ route('register') }}"
-                    class="text-sm font-medium px-4 py-2 rounded-lg text-white transition-all hover:-translate-y-0.5"
+                    class="text-xs sm:text-sm font-medium px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg text-white transition-all hover:-translate-y-0.5 whitespace-nowrap"
                     style="background: #1a2e1c;" onmouseover="this.style.background='#2D4A32'"
                     onmouseout="this.style.background='#1a2e1c'">
                     Sign Up
@@ -238,8 +238,51 @@ $user = computed(fn() => auth()->user());
                 </div>
             @endauth
 
+            {{-- Hamburger (mobile only) --}}
+            <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 rounded-lg hover:bg-[#F0EDE6] transition-colors" aria-label="Menu">
+                <svg x-show="!mobileMenuOpen" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1a2e1c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                </svg>
+                <svg x-show="mobileMenuOpen" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1a2e1c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+
         </div>
 
+    </div>
+
+    {{-- Mobile Menu Panel --}}
+    <div x-show="mobileMenuOpen" x-cloak @click.outside="mobileMenuOpen = false"
+        x-transition:enter="transition ease-out duration-150"
+        x-transition:enter-start="opacity-0 -translate-y-2"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        class="md:hidden border-t" style="border-color: #E8E4DC; background: #FAFAF8;">
+        <div class="px-4 py-3 flex flex-col gap-1">
+            <a href="/experiences" @click="mobileMenuOpen = false"
+                class="px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->is('experiences*') ? 'text-[#1a2e1c] bg-[#F0EDE6]' : 'text-[#4A4A4A]' }}">
+                Explore
+            </a>
+            <a href="/soul-match" @click="mobileMenuOpen = false"
+                class="px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->is('soul-match*') ? 'text-[#1a2e1c] bg-[#F0EDE6]' : 'text-[#4A4A4A]' }}">
+                Soul Match
+            </a>
+            <a href="/about" @click="mobileMenuOpen = false"
+                class="px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->is('about*') ? 'text-[#1a2e1c] bg-[#F0EDE6]' : 'text-[#4A4A4A]' }}">
+                About
+            </a>
+            <a href="/seasonal-calendar" @click="mobileMenuOpen = false"
+                class="px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->is('seasonal-calendar*') ? 'text-[#1a2e1c] bg-[#F0EDE6]' : 'text-[#4A4A4A]' }}">
+                Seasonal Calendar
+            </a>
+            <div class="border-t my-1" style="border-color: #E8E4DC;"></div>
+            <button class="text-left px-3 py-2.5 rounded-lg text-sm font-medium text-[#4A4A4A] sm:hidden">
+                🌐 English
+            </button>
+        </div>
     </div>
 </nav>
 

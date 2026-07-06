@@ -110,6 +110,7 @@ Route::get('/soul-match/results', [App\Http\Controllers\SoulMatchController::cla
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/checkout/{slug}', [CheckoutController::class, 'show'])->name('checkout.show');
     Route::post('/checkout/{slug}', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::post('/checkout/{slug}/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('checkout.apply-coupon');
     Route::get('/checkout/success/{kode}', [CheckoutController::class, 'success'])->name('checkout.success');
     Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
     Route::get('/bookings/{kode}', [BookingController::class, 'show'])->name('bookings.show');

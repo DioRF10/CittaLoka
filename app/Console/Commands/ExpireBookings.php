@@ -33,6 +33,11 @@ class ExpireBookings extends Command
                 $availability->decrement('booked_slot', $booking->jumlah_peserta);
             }
 
+            // Kembalikan kuota kupon yang sempat kepakai tapi tidak jadi bayar
+            if ($booking->coupon_id) {
+                \App\Models\Coupon::where('id', $booking->coupon_id)->decrement('used_count');
+            }
+
             $this->info("Expired booking: {$booking->kode_booking}");
         }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Coupon;
 use App\Models\Experience;
 use App\Models\ExperienceAvailability;
 use App\Services\XenditService;
@@ -12,6 +13,40 @@ use Carbon\Carbon;
 
 class CheckoutController extends Controller
 {
+
+    // ── AJAX: Terapkan Kupon ────────────────────────────────────────────
+
+    public function applyCoupon(Request $request, string $slug)
+    {
+        $request->validate([
+            'code' => 'required|string|max:50',
+            'guests' => 'required|integer|min:1',
+        ]);
+
+        $experience = Experience::where('slug', $slug)->where('status', 'active')->firstOrFail();
+
+        $subtotal = (float) $experience->harga * (int) $request->guests;
+
+        $coupon = Coupon::whereRaw('UPPER(code) = ?', [strtoupper($request->code)])->first();
+
+        if (!$coupon) {
+            return response()->json(['success' => false, 'message' => 'Kode kupon tidak ditemukan.']);
+        }
+
+        $error = $coupon->validationError($subtotal);
+        if ($error) {
+            return response()->json(['success' => false, 'message' => $error]);
+        }
+
+        $discount = $coupon->calculateDiscount($subtotal);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Kupon berhasil diterapkan!',
+            'discount_amount' => $discount,
+            'code' => $coupon->code,
+        ]);
+    }
 
     // ── Step 2: Halaman Konfirmasi ────────────────────────────────────────
 
@@ -122,8 +157,26 @@ class CheckoutController extends Controller
         $hargaPerOrang = (float) $experience->harga;
         $subtotal      = $hargaPerOrang * $guests;
         $platformFee   = round($subtotal * 0.10);
-        $total         = $subtotal + $platformFee;
         $hostEarning   = $subtotal;
+
+        // ── Validasi ulang kupon di server (jangan percaya nominal dari client) ──
+        $coupon = null;
+        $discountAmount = 0;
+
+        if ($request->filled('coupon_code')) {
+            $coupon = Coupon::whereRaw('UPPER(code) = ?', [strtoupper($request->coupon_code)])->first();
+
+            if ($coupon && !$coupon->validationError($subtotal)) {
+                $discountAmount = $coupon->calculateDiscount($subtotal);
+            } else {
+                // Kupon jadi tidak valid lagi (misal kepakai orang lain duluan) — abaikan diam-diam,
+                // jangan gagalkan booking-nya, cukup tidak dapat diskon.
+                $coupon = null;
+                $discountAmount = 0;
+            }
+        }
+
+        $total = $subtotal + $platformFee - $discountAmount;
 
         $locale = app()->getLocale();
 
@@ -145,11 +198,16 @@ class CheckoutController extends Controller
             'total_harga'               => $total,
             'platform_fee'              => $platformFee,
             'host_earning'              => $hostEarning,
-            'discount_amount'           => 0,
+            'coupon_id'                 => $coupon?->id,
+            'discount_amount'           => $discountAmount,
             'status'                    => 'pending_payment',
             'payment_status'            => 'unpaid',
             'notes_for_host'            => $request->input('notes_for_host'),
         ]);
+
+        if ($coupon) {
+            $coupon->increment('used_count');
+        }
 
         // Tahan slot dulu (akan dikembalikan otomatis kalau invoice expired)
         $availability->increment('booked_slot', $guests);

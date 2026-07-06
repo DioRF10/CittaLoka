@@ -36,16 +36,21 @@ class ComplaintFiledAdminNotification extends Notification
             ->line('Mohon segera ditinjau.');
     }
 
-    public function toArray(object $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
         $booking = $this->complaint->booking;
 
-        return [
-            'type' => 'complaint_filed_admin',
-            'kode_booking' => $booking->kode_booking,
-            'title' => 'Complaint Baru',
-            'message' => $this->complaint->getFiledByRoleLabel() . ' mengajukan complaint untuk booking ' . $booking->kode_booking,
-            'url' => url('/admin/complaints/' . $this->complaint->id),
-        ];
+        return \Filament\Notifications\Notification::make()
+            ->title('Complaint Baru')
+            ->body($this->complaint->getFiledByRoleLabel() . ' mengajukan complaint untuk booking ' . $booking->kode_booking . ' — ' . $this->complaint->getCategoryLabel())
+            ->icon('heroicon-o-exclamation-triangle')
+            ->iconColor('danger')
+            ->actions([
+                \Filament\Actions\Action::make('view')
+                    ->label('Lihat Complaint')
+                    ->url(url('/admin/complaints/' . $this->complaint->id))
+                    ->markAsRead(),
+            ])
+            ->getDatabaseMessage();
     }
 }

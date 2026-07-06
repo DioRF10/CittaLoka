@@ -82,6 +82,10 @@ class XenditWebhookController extends Controller
                     $booking->availability->decrement('booked_slot', $booking->jumlah_peserta);
                 }
 
+                if ($booking->coupon_id) {
+                    \App\Models\Coupon::where('id', $booking->coupon_id)->decrement('used_count');
+                }
+
                 Log::info('Booking expired via Xendit', ['kode_booking' => $booking->kode_booking]);
                 break;
 
@@ -92,6 +96,10 @@ class XenditWebhookController extends Controller
 
                 if ($booking->availability) {
                     $booking->availability->decrement('booked_slot', $booking->jumlah_peserta);
+                }
+
+                if ($booking->coupon_id) {
+                    \App\Models\Coupon::where('id', $booking->coupon_id)->decrement('used_count');
                 }
 
                 Log::info('Booking payment failed via Xendit', ['kode_booking' => $booking->kode_booking]);

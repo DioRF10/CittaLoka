@@ -290,7 +290,7 @@ class HostDashboardController extends Controller
             'discount' => $booking->discount_amount > 0
                 ? 'Rp ' . number_format($booking->discount_amount, 0, ',', '.')
                 : null,
-            'coupon_code' => null,
+            'coupon_code' => $booking->coupon?->code,
             'notes_for_host' => $booking->notes_for_host,
             'can_file_complaint' => $booking->status === 'completed'
                 && \App\Models\Complaint::canFileFor($booking)

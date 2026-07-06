@@ -34,14 +34,19 @@ class DisbursementFailedAdminNotification extends Notification
             ->line('Mohon segera ditinjau dan diproses secara manual jika perlu.');
     }
 
-    public function toArray(object $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
-        return [
-            'type'         => 'disbursement_failed_admin',
-            'kode_booking' => $this->booking->kode_booking,
-            'title'        => 'Disbursement Gagal',
-            'message'      => 'Booking ' . $this->booking->kode_booking . ' gagal di-disburse: ' . $this->reason,
-            'url'          => url('/admin/payouts'),
-        ];
+        return \Filament\Notifications\Notification::make()
+            ->title('Disbursement Gagal')
+            ->body('Booking ' . $this->booking->kode_booking . ' gagal di-disburse: ' . $this->reason)
+            ->icon('heroicon-o-x-circle')
+            ->iconColor('danger')
+            ->actions([
+                \Filament\Actions\Action::make('view')
+                    ->label('Lihat Payouts')
+                    ->url(url('/admin/payouts'))
+                    ->markAsRead(),
+            ])
+            ->getDatabaseMessage();
     }
 }

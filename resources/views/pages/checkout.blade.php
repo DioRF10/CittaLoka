@@ -101,7 +101,54 @@
                     </div>
 
                     {{-- Price Breakdown --}}
-                    <div style="padding:1.25rem; border-bottom:1px solid #EDE7DC;">
+                    <div style="padding:1.25rem; border-bottom:1px solid #EDE7DC;"
+                        x-data="{
+                            couponCode: '',
+                            applying: false,
+                            appliedCode: null,
+                            discount: 0,
+                            message: '',
+                            success: false,
+                            subtotal: {{ $subtotal }},
+                            platformFee: {{ $platformFee }},
+                            async applyCoupon() {
+                                if (!this.couponCode.trim()) return;
+                                this.applying = true;
+                                this.message = '';
+                                try {
+                                    const fd = new FormData();
+                                    fd.append('code', this.couponCode.trim());
+                                    fd.append('guests', {{ $guests }});
+                                    fd.append('_token', document.querySelector('meta[name=csrf-token]').content);
+                                    const res = await fetch('{{ route('checkout.apply-coupon', $experience->slug) }}', {
+                                        method: 'POST', body: fd,
+                                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                                    });
+                                    const data = await res.json();
+                                    this.message = data.message;
+                                    this.success = data.success;
+                                    if (data.success) {
+                                        this.discount = data.discount_amount;
+                                        this.appliedCode = data.code;
+                                    } else {
+                                        this.discount = 0;
+                                        this.appliedCode = null;
+                                    }
+                                } catch (e) {
+                                    this.success = false;
+                                    this.message = 'Terjadi kesalahan, coba lagi.';
+                                } finally {
+                                    this.applying = false;
+                                }
+                            },
+                            removeCoupon() {
+                                this.appliedCode = null;
+                                this.discount = 0;
+                                this.couponCode = '';
+                                this.message = '';
+                            },
+                            get total() { return this.subtotal + this.platformFee - this.discount; }
+                        }">
                         <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:#4A4A4A; margin-bottom:0.6rem;">
                             <span>{{ $guests }} {{ $guests === 1 ? 'guest' : 'guests' }}</span>
                             <span>Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
@@ -110,10 +157,41 @@
                             <span>Platform fee</span>
                             <span>Rp {{ number_format($platformFee, 0, ',', '.') }}</span>
                         </div>
+
+                        {{-- Coupon input --}}
+                        <div style="margin-bottom:0.75rem;">
+                            <template x-if="!appliedCode">
+                                <div style="display:flex; gap:0.5rem;">
+                                    <input type="text" x-model="couponCode" placeholder="Kode kupon"
+                                        style="flex:1; padding:0.6rem 0.85rem; border:1.5px solid #E2DDD5; border-radius:8px; font-size:0.82rem; font-family:'DM Sans',sans-serif; text-transform:uppercase; outline:none;"
+                                        @keydown.enter.prevent="applyCoupon()">
+                                    <button type="button" @click="applyCoupon()" :disabled="applying"
+                                        style="padding:0.6rem 1rem; background:#1E3A2F; color:white; border:none; border-radius:8px; font-size:0.8rem; font-weight:600; cursor:pointer; white-space:nowrap;">
+                                        <span x-show="!applying">Terapkan</span>
+                                        <span x-show="applying">...</span>
+                                    </button>
+                                </div>
+                            </template>
+                            <template x-if="appliedCode">
+                                <div style="display:flex; align-items:center; justify-content:space-between; padding:0.5rem 0.85rem; background:#EBF5EE; border:1px solid #B8DFC8; border-radius:8px;">
+                                    <span style="font-size:0.8rem; color:#166534; font-weight:600;" x-text="'✓ ' + appliedCode"></span>
+                                    <button type="button" @click="removeCoupon()" style="background:none; border:none; color:#166534; font-size:0.75rem; text-decoration:underline; cursor:pointer;">Hapus</button>
+                                </div>
+                            </template>
+                            <p x-show="message && !appliedCode" x-text="message" style="font-size:0.75rem; color:#C0392B; margin-top:0.4rem;"></p>
+                        </div>
+
+                        <div x-show="discount > 0" style="display:flex; justify-content:space-between; font-size:0.85rem; color:#166534; margin-bottom:0.75rem;">
+                            <span>Diskon kupon</span>
+                            <span x-text="'- Rp ' + discount.toLocaleString('id-ID')"></span>
+                        </div>
+
                         <div style="display:flex; justify-content:space-between; font-size:1rem; font-weight:700; color:#1E3A2F; padding-top:0.75rem; border-top:1px solid #EDE7DC;">
                             <span>Total</span>
-                            <span>Rp {{ number_format($total, 0, ',', '.') }}</span>
+                            <span x-text="'Rp ' + total.toLocaleString('id-ID')"></span>
                         </div>
+
+                        <input type="hidden" name="coupon_code" :value="appliedCode" form="checkout-form">
                     </div>
 
                     {{-- Booking Code --}}
@@ -161,7 +239,7 @@
 
                 <div style="background:white; border-radius:16px; border:1.5px solid #EDE7DC; padding:1.75rem;">
 
-                    <form method="POST" action="{{ route('checkout.store', $experience->slug) }}">
+                    <form id="checkout-form" method="POST" action="{{ route('checkout.store', $experience->slug) }}">
                         @csrf
                         <input type="hidden" name="date"   value="{{ $date }}">
                         <input type="hidden" name="time"   value="{{ $time }}">

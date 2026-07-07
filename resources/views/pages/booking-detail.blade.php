@@ -4,6 +4,13 @@
 
 @section('content')
 
+<style>
+    .bd-main-grid { display:grid; grid-template-columns:1fr 340px; gap:1.5rem; align-items:start; }
+    @media (max-width: 768px) {
+        .bd-main-grid { grid-template-columns:1fr; }
+    }
+</style>
+
 @php
     $locale = app()->getLocale();
     $exp = $booking->experience;
@@ -45,7 +52,7 @@
 
     {{-- Breadcrumb --}}
     <div style="background:#F7F3ED; padding:0.75rem 0; border-bottom:1px solid #EDE7DC;">
-        <div style="max-width:900px; margin:0 auto; padding:0 2rem;">
+        <div style="max-width:900px; margin:0 auto; padding:0 1.25rem;">
             <nav style="font-size:0.8rem; color:#7A7A6E; display:flex; align-items:center; gap:0.4rem;">
                 <a href="{{ route('home') }}" style="color:#7A7A6E; text-decoration:none;">Home</a>
                 <span>/</span>
@@ -56,7 +63,7 @@
         </div>
     </div>
 
-    <div style="max-width:900px; margin:0 auto; padding:2.5rem 2rem 0;">
+    <div style="max-width:900px; margin:0 auto; padding:2.5rem 1.25rem 0;">
 
         {{-- Success/Error Messages --}}
         @if(session('success'))
@@ -177,7 +184,7 @@
         </div>
 
         {{-- Main Grid --}}
-        <div style="display:grid; grid-template-columns:1fr 340px; gap:1.5rem; align-items:start;">
+        <div class="bd-main-grid">
 
             {{-- ══ KIRI ══ --}}
             <div style="display:flex; flex-direction:column; gap:1.25rem;">

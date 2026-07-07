@@ -4,11 +4,26 @@
 
 @section('content')
 
+<style>
+    .checkout-steps-row { display:flex; align-items:center; justify-content:center; gap:0; margin-bottom:2.5rem; }
+    .checkout-step-connector { width:80px; height:1px; background:#E2DDD5; margin:0 0.5rem; margin-bottom:1.2rem; }
+    .checkout-main-grid { display:grid; grid-template-columns:1fr 1fr; gap:2rem; align-items:start; }
+    .checkout-name-email-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
+
+    @media (max-width: 768px) {
+        .checkout-steps-row { gap:0; }
+        .checkout-step-connector { width:28px; margin:0 0.25rem; margin-bottom:1.2rem; }
+        .checkout-step-label { display:none; }
+        .checkout-main-grid { grid-template-columns:1fr; gap:2.5rem; }
+        .checkout-name-email-grid { grid-template-columns:1fr; }
+    }
+</style>
+
 <div style="background:#F7F3ED; min-height:100vh; padding-bottom:4rem;">
 
     {{-- Progress Steps --}}
-    <div style="max-width:800px; margin:0 auto; padding:2.5rem 2rem 2rem;">
-        <div style="display:flex; align-items:center; justify-content:center; gap:0; margin-bottom:2.5rem;">
+    <div style="max-width:800px; margin:0 auto; padding:2.5rem 1.25rem 2rem;">
+        <div class="checkout-steps-row">
 
             @php
                 $steps = [
@@ -22,16 +37,16 @@
             @foreach($steps as $i => $step)
                 <div style="display:flex; align-items:center;">
                     <div style="display:flex; flex-direction:column; align-items:center; gap:0.35rem;">
-                        <div style="width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:600;
+                        <div style="width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:600; flex-shrink:0;
                             {{ $step['num'] === 2 ? 'background:#1E3A2F; color:white;' : 'background:#E8E4DC; color:#7A7A6E;' }}">
                             {{ $step['num'] }}
                         </div>
-                        <span style="font-size:0.7rem; font-weight:{{ $step['num'] === 2 ? '600' : '400' }}; color:{{ $step['num'] === 2 ? '#1E3A2F' : '#9CA3AF' }}; white-space:nowrap;">
+                        <span class="checkout-step-label" style="font-size:0.7rem; font-weight:{{ $step['num'] === 2 ? '600' : '400' }}; color:{{ $step['num'] === 2 ? '#1E3A2F' : '#9CA3AF' }}; white-space:nowrap;">
                             {{ $step['label'] }}
                         </span>
                     </div>
                     @if(!$loop->last)
-                        <div style="width:80px; height:1px; background:#E2DDD5; margin:0 0.5rem; margin-bottom:1.2rem;"></div>
+                        <div class="checkout-step-connector"></div>
                     @endif
                 </div>
             @endforeach
@@ -45,7 +60,7 @@
         @endif
 
         {{-- Main Grid --}}
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem; align-items:start;">
+        <div class="checkout-main-grid">
 
             {{-- ══ KIRI: Booking Summary ══ --}}
             <div>
@@ -246,7 +261,7 @@
                         <input type="hidden" name="guests" value="{{ $guests }}">
 
                         {{-- Nama & Email --}}
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem;">
+                        <div class="checkout-name-email-grid">
                             <div>
                                 <label style="font-size:0.65rem; font-weight:700; color:#7A7A6E; text-transform:uppercase; letter-spacing:0.08em; display:block; margin-bottom:0.4rem;">Full Name</label>
                                 <input type="text" name="full_name" value="{{ Auth::user()->name }}" readonly
@@ -320,7 +335,7 @@
                         {{-- Security Badge --}}
                         <div style="display:flex; align-items:center; justify-content:center; gap:1rem; margin-top:1rem; font-size:0.75rem; color:#9CA3AF;">
                             <span style="display:flex; align-items:center; gap:0.3rem;">
-                                🔒 Secured by Midtrans
+                                🔒 Secured by Xendit
                             </span>
                             <span>•</span>
                             <span style="display:flex; align-items:center; gap:0.3rem;">

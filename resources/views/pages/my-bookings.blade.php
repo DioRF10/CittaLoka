@@ -7,7 +7,7 @@
 @php $locale = app()->getLocale(); @endphp
 
 <div style="background:#FAFAF8; min-height:100vh; padding-bottom:5rem;">
-    <div style="max-width:760px; margin:0 auto; padding:3rem 2rem 0;">
+    <div style="max-width:760px; margin:0 auto; padding:3rem 1.25rem 0;">
 
         {{-- Header --}}
         <h1 style="font-family:'Cormorant Garamond',Georgia,serif; font-size:2.5rem; font-weight:500; color:#1E3A2F; margin-bottom:1.5rem;">

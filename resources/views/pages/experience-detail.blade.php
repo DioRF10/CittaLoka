@@ -194,10 +194,53 @@
                 @else
                     <div style="width:100%; height:100%; background:#C8BAA5;"></div>
                 @endif
-                <button onclick="alert('Gallery coming soon')"
-                    style="position:absolute; bottom:1rem; right:1rem; background:white; border:1.5px solid #EDE7DC; border-radius:8px; padding:0.5rem 1rem; font-size:0.8rem; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif;">
-                    🖼 See all photos
+                <button onclick="openGallery(0)"
+                    style="position:absolute; bottom:1rem; right:1rem; background:white; border:1.5px solid #EDE7DC; border-radius:8px; padding:0.5rem 1rem; font-size:0.8rem; font-weight:500; cursor:pointer; font-family:'DM Sans',sans-serif; display:flex; align-items:center; gap:0.4rem; box-shadow:0 2px 8px rgba(0,0,0,0.08); transition:all 0.2s;"
+                    onmouseover="this.style.background='#F7F3ED'"
+                    onmouseout="this.style.background='white'">
+                    See all {{ $photos->count() }} photos
                 </button>
+            </div>
+        </div>
+
+        {{-- ── Photo Gallery Lightbox Modal ── --}}
+        <div id="gallery-modal"
+            style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.95); flex-direction:column; align-items:center; justify-content:center;"
+            onclick="handleModalClick(event)">
+
+            {{-- Header --}}
+            <div style="position:absolute; top:0; left:0; right:0; padding:1rem 1.5rem; display:flex; align-items:center; justify-content:space-between; background:linear-gradient(to bottom,rgba(0,0,0,0.7),transparent); z-index:10;">
+                <div style="font-family:'DM Sans',sans-serif; color:white;">
+                    <div style="font-size:0.85rem; font-weight:600;">{{ $judul }}</div>
+                    <div id="gallery-counter" style="font-size:0.75rem; opacity:0.6;"></div>
+                </div>
+                <button onclick="closeGallery()" style="background:rgba(255,255,255,0.15); border:none; color:white; width:40px; height:40px; border-radius:50%; font-size:1.25rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">&times;</button>
+            </div>
+
+            {{-- Main Image --}}
+            <div style="flex:1; display:flex; align-items:center; justify-content:center; width:100%; padding:5rem 4rem 1rem; box-sizing:border-box; position:relative;">
+
+                {{-- Prev Button --}}
+                <button onclick="prevPhoto()" id="gallery-prev" style="position:absolute; left:1rem; background:rgba(255,255,255,0.1); border:1.5px solid rgba(255,255,255,0.2); color:white; width:48px; height:48px; border-radius:50%; font-size:1.5rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; z-index:5;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">‹</button>
+
+                <img id="gallery-main-img"
+                    src=""
+                    alt=""
+                    style="max-width:100%; max-height:calc(100vh - 16rem); object-fit:contain; border-radius:8px; transition:opacity 0.2s; box-shadow:0 8px 40px rgba(0,0,0,0.5);">
+
+                {{-- Next Button --}}
+                <button onclick="nextPhoto()" id="gallery-next" style="position:absolute; right:1rem; background:rgba(255,255,255,0.1); border:1.5px solid rgba(255,255,255,0.2); color:white; width:48px; height:48px; border-radius:50%; font-size:1.5rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; z-index:5;" onmouseover="this.style.background='rgba(255,255,255,0.25)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">›</button>
+            </div>
+
+            {{-- Thumbnail Strip --}}
+            <div id="gallery-thumbs" style="display:flex; gap:0.5rem; padding:1rem 1.5rem; overflow-x:auto; max-width:100%; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.3) transparent; flex-shrink:0;">
+                @foreach($photos as $i => $photo)
+                    <img src="{{ $photo->url }}" alt="Photo {{ $i + 1 }}"
+                        onclick="openGallery({{ $i }})"
+                        data-index="{{ $i }}"
+                        class="gallery-thumb"
+                        style="width:64px; height:64px; object-fit:cover; border-radius:6px; cursor:pointer; flex-shrink:0; border:2px solid transparent; transition:all 0.2s; opacity:0.6;">
+                @endforeach
             </div>
         </div>
 
@@ -809,5 +852,78 @@ function bookingWidget() {
 <style>
 .spin-icon { animation: spin 1s linear infinite; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* Gallery scrollbar */
+#gallery-thumbs::-webkit-scrollbar { height:4px; }
+#gallery-thumbs::-webkit-scrollbar-track { background:rgba(255,255,255,0.05); border-radius:2px; }
+#gallery-thumbs::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.3); border-radius:2px; }
+.gallery-thumb:hover { opacity:1 !important; transform:scale(1.05); }
+.gallery-thumb.active { border-color:#C4783A !important; opacity:1 !important; }
 </style>
+
+<script>
+const galleryPhotos = @json($photos->pluck('url')->values());
+let currentIndex = 0;
+
+function openGallery(index) {
+    currentIndex = index;
+    const modal = document.getElementById('gallery-modal');
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    updateGallery();
+}
+
+function closeGallery() {
+    document.getElementById('gallery-modal').style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+function handleModalClick(e) {
+    if (e.target === document.getElementById('gallery-modal')) closeGallery();
+}
+
+function updateGallery() {
+    const img = document.getElementById('gallery-main-img');
+    const counter = document.getElementById('gallery-counter');
+    const thumbs = document.querySelectorAll('.gallery-thumb');
+    const total = galleryPhotos.length;
+
+    // Fade transition
+    img.style.opacity = '0';
+    setTimeout(() => {
+        img.src = galleryPhotos[currentIndex];
+        img.style.opacity = '1';
+    }, 100);
+
+    counter.textContent = (currentIndex + 1) + ' / ' + total;
+
+    // Update active thumbnail
+    thumbs.forEach(t => t.classList.remove('active'));
+    const activethumb = document.querySelector('.gallery-thumb[data-index="' + currentIndex + '"]');
+    if (activethumb) {
+        activethumb.classList.add('active');
+        activethumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+
+    // Show/hide prev-next
+    document.getElementById('gallery-prev').style.visibility = currentIndex === 0 ? 'hidden' : 'visible';
+    document.getElementById('gallery-next').style.visibility = currentIndex === total - 1 ? 'hidden' : 'visible';
+}
+
+function prevPhoto() {
+    if (currentIndex > 0) { currentIndex--; updateGallery(); }
+}
+function nextPhoto() {
+    if (currentIndex < galleryPhotos.length - 1) { currentIndex++; updateGallery(); }
+}
+
+// Keyboard support
+document.addEventListener('keydown', function(e) {
+    const modal = document.getElementById('gallery-modal');
+    if (modal.style.display === 'none') return;
+    if (e.key === 'ArrowLeft')  prevPhoto();
+    if (e.key === 'ArrowRight') nextPhoto();
+    if (e.key === 'Escape')     closeGallery();
+});
+</script>
 @endpush

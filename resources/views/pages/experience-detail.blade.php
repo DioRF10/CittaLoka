@@ -385,7 +385,7 @@
                 {{-- Reviews --}}
                 <div id="reviews" style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.25rem;">
                     <h2 style="font-family:'Cormorant Garamond',Georgia,serif; font-size:1.5rem; font-weight:500; color:#1E3A2F;">Guest Reviews</h2>
-                    <a href="#" style="font-size:0.8rem; color:#1E3A2F; text-decoration:underline; font-weight:500;">See all {{ $experience->total_reviews }} reviews</a>
+                    <a href="{{ route('experiences.reviews', $experience->slug) }}" style="font-size:0.8rem; color:#1E3A2F; text-decoration:underline; font-weight:500;">See all {{ $experience->total_reviews }} reviews</a>
                 </div>
                 <div style="display:flex; align-items:center; gap:2rem; margin-bottom:1.5rem;">
                     <div style="text-align:center;">

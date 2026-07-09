@@ -24,19 +24,19 @@ class ExperienceForm
                             ->label('Judul')
                             ->disabled()
                             ->dehydrated(false)
-                            ->afterStateHydrated(fn ($component, ?Experience $record) => $component->state($record?->getJudul())),
+                            ->afterStateHydrated(fn($component, ?Experience $record) => $component->state($record?->getJudul())),
 
                         TextInput::make('host_display')
                             ->label('Host')
                             ->disabled()
                             ->dehydrated(false)
-                            ->afterStateHydrated(fn ($component, ?Experience $record) => $component->state($record?->host?->user?->name)),
+                            ->afterStateHydrated(fn($component, ?Experience $record) => $component->state($record?->host?->user?->name)),
 
                         TextInput::make('kategori_display')
                             ->label('Kategori')
                             ->disabled()
                             ->dehydrated(false)
-                            ->afterStateHydrated(fn ($component, ?Experience $record) => $component->state($record?->kategori?->getNama() ?? '-')),
+                            ->afterStateHydrated(fn($component, ?Experience $record) => $component->state($record?->kategori?->getNama() ?? '-')),
 
                         TextInput::make('kabupaten')
                             ->label('Kabupaten')
@@ -69,7 +69,7 @@ class ExperienceForm
                             ->disabled()
                             ->dehydrated(false)
                             ->columnSpanFull()
-                            ->afterStateHydrated(fn ($component, ?Experience $record) => $component->state($record?->getDeskripsi())),
+                            ->afterStateHydrated(fn($component, ?Experience $record) => $component->state($record?->getDeskripsi())),
 
                         Textarea::make('lokasi_nama')
                             ->label('Lokasi')

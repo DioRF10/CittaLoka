@@ -24,10 +24,7 @@ $user = computed(fn() => auth()->user());
                 class="text-sm font-medium transition-colors hover:text-[#1a2e1c] {{ request()->is('soul-match*') ? 'text-[#1a2e1c]' : 'text-[#6B7280]' }}">
                 Soul Match
             </a>
-            <a href="/about"
-                class="text-sm font-medium transition-colors hover:text-[#1a2e1c] {{ request()->is('about*') ? 'text-[#1a2e1c]' : 'text-[#6B7280]' }}">
-                About
-            </a>
+
             <a href="/seasonal-calendar"
                 class="text-sm font-medium transition-colors hover:text-[#1a2e1c] {{ request()->is('seasonal-calendar*') ? 'text-[#1a2e1c]' : 'text-[#6B7280]' }}">
                 Seasonal Calendar

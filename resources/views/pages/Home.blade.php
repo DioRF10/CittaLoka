@@ -66,7 +66,7 @@
         {{-- Foto Kanan --}}
         <div class="relative">
             <div class="rounded-2xl overflow-hidden" style="height: 480px;">
-                <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"
+                <img src="{{ asset('images/penari bali.jpg') }}"
                      alt="Balinese Dancer"
                      class="w-full h-full object-cover">
             </div>
@@ -151,89 +151,7 @@
             /** @var \App\Models\Experience $exp */
         @endphp
         @forelse($featuredExperiences ?? [] as $exp)
-        <a href="/experiences/{{ $exp->slug }}" class="group relative block overflow-hidden rounded-[24px] transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl" style="background-color: #141414; height: 420px; text-decoration:none; color:inherit;">
-            
-            {{-- Background Image --}}
-            <div class="absolute inset-0">
-                <img src="{{ $exp->photos->first()?->url ?? 'https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=400&q=80' }}"
-                     alt="{{ $exp->getJudul() }}"
-                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy">
-            </div>
-
-            {{-- Heavy Dark Gradient Overlay --}}
-            <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(20,20,20,0) 0%, rgba(20,20,20,0.1) 30%, rgba(20,20,20,0.85) 65%, rgba(20,20,20,1) 100%);"></div>
-
-            {{-- Top Elements: Category Badge --}}
-            <div class="absolute top-4 left-4 right-4 flex justify-between items-start z-10">
-                <div class="px-2.5 py-1.5 rounded flex items-center gap-1.5"
-                    style="background: rgba(40,30,20,0.6); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.15);">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
-                    </svg>
-                    <span class="text-[9px] font-semibold text-white uppercase tracking-wider">{{ $exp->kategori ? $exp->kategori->getNama() : 'EXPERIENCE' }}</span>
-                </div>
-            </div>
-
-            {{-- Bottom Content --}}
-            <div class="absolute bottom-0 left-0 right-0 p-5 z-10 flex flex-col justify-end">
-                
-                {{-- Rating --}}
-                <div class="flex items-center gap-1.5 mb-2">
-                    <span class="text-white text-[10px]">★</span>
-                    <span class="text-white text-xs font-semibold">{{ number_format((float) $exp->rating_avg, 1) }}</span>
-                    <span class="text-gray-400 text-xs">({{ $exp->total_reviews ?? 0 }})</span>
-                </div>
-
-                {{-- Title --}}
-                <h3 class="text-[1.1rem] text-white font-medium mb-3 leading-snug"
-                    style="font-family: 'Playfair Display', serif; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
-                    {{ $exp->getJudul() }}
-                </h3>
-
-                {{-- Location & Duration --}}
-                <div class="flex items-center text-gray-300 text-[11px] gap-2 mb-4">
-                    <span class="flex items-center gap-1">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>
-                        </svg>
-                        {{ $exp->kabupaten ?? $exp->lokasi_nama ?? 'Bali' }}
-                    </span>
-                    <span class="w-1 h-1 rounded-full bg-gray-500"></span>
-                    <span class="flex items-center gap-1">
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-                        </svg>
-                        {{ $exp->getDurasiFormatted() }}
-                    </span>
-                </div>
-
-                {{-- Divider --}}
-                <div class="w-full h-px bg-white/10 mb-3"></div>
-
-                {{-- Host & Price Footer --}}
-                <div class="flex items-center justify-between">
-                    {{-- Host --}}
-                    <div class="flex items-center gap-2.5">
-                        <img src="{{ $exp->host?->user?->avatarUrl() ?? 'https://ui-avatars.com/api/?name=Host' }}" alt="Host" class="w-8 h-8 rounded-full object-cover border border-white/20">
-                        <div class="flex flex-col">
-                            <span class="text-[9px] text-gray-400 mb-0.5">Hosted by</span>
-                            <span class="text-xs text-white font-medium">{{ $exp->host?->user?->name ?? 'Host' }}</span>
-                            <span class="text-[9px] text-gray-400 flex items-center gap-1 mt-0.5">
-                                Local Host
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="#10B981" stroke="#10B981"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4" stroke="white" stroke-width="2"/></svg>
-                            </span>
-                        </div>
-                    </div>
-
-                    {{-- Price --}}
-                    <div class="flex flex-col items-end">
-                        <span class="text-[9px] text-gray-400 mb-0.5">From</span>
-                        <span class="text-sm text-white font-semibold">{{ $exp->getHargaFormatted() }}</span>
-                        <span class="text-[9px] text-gray-400 mt-0.5">/ person</span>
-                    </div>
-                </div>
-            </div>
-        </a>
+        <x-experience-card :exp="$exp" />
         @empty
         {{-- Placeholder saat belum ada data --}}
         @foreach([
@@ -330,40 +248,7 @@
 
 </section>
 
-{{-- ═══════════════════════════════════════════════════════════════
-     SECTION 4: OUR STORY
-════════════════════════════════════════════════════════════════ --}}
-<section class="max-w-7xl mx-auto px-6 mb-20">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
 
-        <div>
-            <p class="text-xs font-medium uppercase tracking-widest mb-4" style="color: #C4783A; letter-spacing: 0.12em;">Our Story</p>
-            <h2 class="font-normal mb-6" style="font-family: 'Playfair Display', serif; font-size: clamp(28px, 3vw, 40px); color: #1a2e1c; line-height: 1.2;">
-                Preserving the heartbeat of Balinese tradition.
-            </h2>
-            <p class="text-sm leading-relaxed mb-4" style="color: #6B7280;">
-                CittaLoka was born from a desire to bridge the gap between curious global travelers and the keepers of Bali's sacred traditions. We believe that true travel isn't just about seeing; it's about belonging.
-            </p>
-            <p class="text-sm leading-relaxed mb-8" style="color: #6B7280;">
-                Our platform carefully vets every host, ensuring they are not just guides, but legitimate practitioners of their craft, farmers of their land, and storytellers of their lineage. We reinvest 20% of all bookings back into local community education and heritage restoration.
-            </p>
-            <a href="/about"
-               class="inline-flex items-center gap-2 px-6 py-3.5 rounded-lg text-sm font-medium text-white transition-all hover:-translate-y-0.5"
-               style="background: #1a2e1c;"
-               onmouseover="this.style.background='#2D4A32'"
-               onmouseout="this.style.background='#1a2e1c'">
-                Learn Our Story →
-            </a>
-        </div>
-
-        <div class="rounded-2xl overflow-hidden" style="height: 460px;">
-            <img src="https://images.unsplash.com/photo-1604999333679-b86d54738315?w=600&q=80"
-                 alt="Balinese Woman"
-                 class="w-full h-full object-cover">
-        </div>
-
-    </div>
-</section>
 
 
 <section class="mx-6 lg:mx-auto max-w-7xl mb-20">

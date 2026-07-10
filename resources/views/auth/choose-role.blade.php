@@ -119,11 +119,11 @@
 
         .auth-photo-quote h2 {
             font-family: var(--font-heading);
-            font-size: 32px;
+            font-size: 42px;
             color: #FFFFFF;
             font-weight: 400;
             margin-bottom: 16px;
-            line-height: 1.25;
+            line-height: 1.2;
         }
 
         .auth-photo-quote p {
@@ -380,13 +380,18 @@
 
         {{-- Kolom Kiri: Foto --}}
         <div class="auth-photo">
-            <img src="https://images.unsplash.com/photo-1555400038-63f5ba517a47?w=1200&q=80"
-                alt="Bali Traditional Culture Scene">
+            <img src="{{ asset('images/auth/travelling.png') }}" alt="Cultural Experience">
             <div class="auth-photo-overlay"></div>
+
+            {{-- Logo --}}
+            <div class="auth-photo-brand">
+                <div class="auth-photo-brand-dot"></div>
+                <span>CittaLoka</span>
+            </div>
+
             <div class="auth-photo-quote">
                 <h2>Begin your cultural journey.</h2>
-                <p>Connect with local hosts, discover authentic traditions, and experience cultures beyond the ordinary.
-                </p>
+                <p>Connect with local hosts, discover authentic traditions, and experience cultures beyond the ordinary.</p>
             </div>
         </div>
 

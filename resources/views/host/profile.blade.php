@@ -95,13 +95,13 @@
 
     <div class="profile-tabs">
         <button class="profile-tab" :class="activeTab === 'public' ? 'active' : ''" x-on:click="activeTab = 'public'">
-            🌿 Public Profile
+            Public Profile
         </button>
         <button class="profile-tab" :class="activeTab === 'heritage' ? 'active' : ''" x-on:click="activeTab = 'heritage'">
-            🌳 Heritage Tree
+            Heritage Tree
         </button>
         <button class="profile-tab" :class="activeTab === 'account' ? 'active' : ''" x-on:click="activeTab = 'account'">
-            ⚙️ Account & Bank
+            Account & Bank
         </button>
     </div>
 

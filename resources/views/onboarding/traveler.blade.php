@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400&family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -44,72 +44,92 @@
             display: none !important;
         }
 
-        /* ── Shell Layout (sama seperti onboarding host) ── */
+        /* ── Shell Layout ── */
         .onboarding-shell {
             display: grid;
-            grid-template-columns: 380px 1fr;
+            grid-template-columns: 420px 1fr;
             min-height: 100vh;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 960px) {
             .onboarding-shell {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* ── Left Panel ── */
+        /* ── Left Panel — Full Photo ── */
         .left-panel {
-            background: var(--cream);
-            padding: 2.5rem 2.25rem;
-            display: flex;
-            flex-direction: column;
             position: sticky;
             top: 0;
             height: 100vh;
-            overflow-y: auto;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 960px) {
             .left-panel {
-                position: relative;
-                height: auto;
-                padding: 1.75rem 1.5rem;
+                display: none;
             }
         }
 
-        .left-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            margin-bottom: 2.5rem;
+        /* Background photo that switches per step */
+        .left-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.6s ease;
+            z-index: 1;
         }
 
-        .left-logo-mark {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: var(--green-dark);
+        /* Dark overlay gradient */
+        .left-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(15, 27, 17, 0.22) 0%,
+                rgba(15, 27, 17, 0.88) 100%
+            );
+            z-index: 2;
+        }
+
+        /* Logo top-left */
+        .left-logo {
+            position: absolute;
+            top: 2.5rem;
+            left: 2.5rem;
+            z-index: 3;
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: var(--cream);
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.1rem;
+            gap: 0.55rem;
+        }
+
+        .left-logo-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--terracotta);
             flex-shrink: 0;
         }
 
         .left-logo-text {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--green-dark);
-            line-height: 1.1;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.01em;
+            line-height: 1;
         }
 
-        .left-logo-tagline {
-            font-size: 0.68rem;
-            color: var(--gray-text);
-            letter-spacing: 0.03em;
+        /* Bottom text content */
+        .left-content {
+            position: relative;
+            z-index: 3;
+            padding: 2.5rem;
         }
 
         .left-eyebrow {
@@ -119,97 +139,104 @@
             text-transform: uppercase;
             color: var(--terracotta);
             margin-bottom: 0.6rem;
+            display: block;
         }
 
         .left-title {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.9rem;
+            font-size: 2.4rem;
             font-weight: 500;
-            color: var(--green-dark);
-            line-height: 1.2;
-            margin-bottom: 0.9rem;
+            color: #fff;
+            line-height: 1.15;
+            margin-bottom: 0.85rem;
         }
 
         .left-desc {
             font-size: 0.88rem;
-            color: var(--gray-text);
+            color: rgba(255, 255, 255, 0.78);
             line-height: 1.65;
-            margin-bottom: 1.75rem;
-        }
-
-        .left-image {
-            border-radius: 14px;
-            aspect-ratio: 3/4;
-            background: linear-gradient(160deg, #1E3A2F 0%, #2D4A32 55%, #C4783A 130%);
-            margin-bottom: 1.5rem;
-            flex-grow: 1;
-            min-height: 180px;
-            display: flex;
-            align-items: flex-end;
-            padding: 1.25rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .left-image::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.08), transparent 60%);
-        }
-
-        .left-image-caption {
-            color: rgba(255, 255, 255, 0.85);
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 0.95rem;
             font-style: italic;
-            position: relative;
-            z-index: 1;
         }
 
+        /* Info box (glass-style) */
         .left-info-box {
-            background: #fff;
-            border: 1px solid var(--gray-border);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(8px);
             border-radius: 12px;
-            padding: 1rem 1.1rem;
-            margin-bottom: 1rem;
+            padding: 0.9rem 1rem;
+            margin-bottom: 1.25rem;
             display: flex;
             gap: 0.75rem;
             align-items: flex-start;
         }
 
         .left-info-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #F3F0EA 0%, #F9F7F2 100%);
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: rgba(196, 120, 58, 0.25);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            position: relative;
-        }
-
-        .left-info-icon::before {
-            content: '';
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--terracotta);
-            box-shadow: 0 0 0 6px rgba(196, 120, 58, 0.08);
+            font-size: 1rem;
         }
 
         .left-info-title {
             font-size: 0.82rem;
             font-weight: 700;
-            color: var(--green-dark);
+            color: #fff;
             margin-bottom: 0.2rem;
         }
 
         .left-info-text {
             font-size: 0.78rem;
-            color: var(--gray-text);
+            color: rgba(255, 255, 255, 0.7);
             line-height: 1.5;
+        }
+
+        /* Benefit list */
+        .left-benefit-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .left-benefit-item {
+            display: flex;
+            gap: 0.7rem;
+            align-items: flex-start;
+        }
+
+        .left-benefit-dot {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(196, 120, 58, 0.25);
+            border: 1.5px solid rgba(196, 120, 58, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+            font-size: 0.7rem;
+            color: var(--terracotta);
+            font-weight: 700;
+        }
+
+        .left-benefit-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.1rem;
+        }
+
+        .left-benefit-desc {
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.65);
+            line-height: 1.4;
         }
 
         /* ── Right Panel ── */
@@ -224,82 +251,7 @@
             }
         }
 
-        /* ── Step Indicator ── */
-        .step-indicator {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.8rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
 
-        .step-node-wrapper {
-            display: flex;
-            align-items: center;
-            flex: 1;
-            min-width: 0;
-            gap: 0.75rem;
-        }
-
-        .step-node {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.35rem;
-            min-width: 64px;
-        }
-
-        .step-circle {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 1.5px solid var(--gray-border);
-            background: #fff;
-            color: var(--gray-text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.88rem;
-            font-weight: 700;
-            flex-shrink: 0;
-            transition: all 0.2s ease;
-        }
-
-        .step-circle.done {
-            background: var(--green-dark);
-            border-color: var(--green-dark);
-            color: #fff;
-        }
-
-        .step-circle.active {
-            background: #fff;
-            border-color: var(--green-dark);
-            color: var(--green-dark);
-            box-shadow: 0 0 0 4px rgba(30, 58, 47, 0.08);
-        }
-
-        .step-label {
-            font-size: 0.72rem;
-            color: var(--gray-text);
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .step-label.active-label {
-            color: var(--green-dark);
-            font-weight: 700;
-        }
-
-        .step-line {
-            flex: 1;
-            height: 1px;
-            background: var(--gray-border);
-        }
-
-        .step-line.done {
-            background: var(--green-dark);
-        }
 
         /* ── Form Card ── */
         .form-card {
@@ -741,48 +693,53 @@
     <div class="onboarding-shell" x-data="onboardingTraveler()" x-cloak>
 
         {{-- ═══════════════════════════════════════════════
-        LEFT PANEL — context per step
+        LEFT PANEL — Full Photo with per-step content
         ═══════════════════════════════════════════════ --}}
         <div class="left-panel">
 
+            {{-- Background photo — changes per step --}}
+            <img x-show="step === 1" class="left-bg" src="{{ asset('images/onboarding-step1.png') }}" alt="Bali rice terrace">
+            <img x-show="step === 2" class="left-bg" src="{{ asset('images/onboarding-step2.png') }}" alt="Local conversation">
+            <img x-show="step === 3" class="left-bg" src="{{ asset('images/onboarding-step3.png') }}" alt="Traveler portrait">
+            <img x-show="step === 4" class="left-bg" src="{{ asset('images/onboarding-step4.png') }}" alt="Soul journey">
+            <img x-show="step === 5" class="left-bg" src="{{ asset('images/auth/travelling.png') }}" alt="Bali journey">
+
+            {{-- Dark overlay --}}
+            <div class="left-overlay"></div>
+
+            {{-- Logo top-left --}}
             <div class="left-logo">
-                <div class="left-logo-mark">C</div>
-                <div>
-                    <div class="left-logo-text">CittaLoka</div>
-                    <div class="left-logo-tagline">Experience Bali from Inside</div>
-                </div>
+                <div class="left-logo-dot"></div>
+                <span class="left-logo-text">CittaLoka</span>
             </div>
 
             {{-- Step 1 content --}}
             <template x-if="step === 1">
-                <div style="display:flex; flex-direction:column; flex:1;">
-                    <p class="left-eyebrow">Living Culture Platform</p>
+                <div class="left-content">
+                    <span class="left-eyebrow">Living Culture Platform</span>
                     <h1 class="left-title">Jelajahi Bali<br>dari dalam</h1>
-                    <p class="left-desc">Temukan pengalaman budaya otentik bersama komunitas lokal Bali. Terhubung
-                        dengan orang-orang nyata, pelajari tradisi yang bermakna, dan ciptakan kenangan yang
-                        bertahan lama setelah perjalananmu berakhir.</p>
+                    <p class="left-desc">Temukan pengalaman budaya otentik bersama komunitas lokal Bali — terhubung dengan orang nyata, tradisi bermakna, dan kenangan yang bertahan seumur hidup.</p>
 
-                    <div class="welcome-benefit-list">
-                        <div class="welcome-benefit-item">
-                            <div class="welcome-benefit-icon"></div>
+                    <div class="left-benefit-list" style="margin-top:1.25rem;">
+                        <div class="left-benefit-item">
+                            <div class="left-benefit-dot">✦</div>
                             <div>
-                                <div class="welcome-benefit-title">Pengalaman Otentik</div>
-                                <div class="welcome-benefit-desc">Jelajahi Bali di luar tempat wisata biasa.</div>
+                                <div class="left-benefit-title">Pengalaman Otentik</div>
+                                <div class="left-benefit-desc">Jelajahi Bali jauh di luar tempat wisata biasa.</div>
                             </div>
                         </div>
-                        <div class="welcome-benefit-item">
-                            <div class="welcome-benefit-icon"></div>
+                        <div class="left-benefit-item">
+                            <div class="left-benefit-dot">✦</div>
                             <div>
-                                <div class="welcome-benefit-title">Koneksi Lokal</div>
-                                <div class="welcome-benefit-desc">Bertemu orang-orang yang menjalani budaya itu
-                                    setiap hari.</div>
+                                <div class="left-benefit-title">Koneksi Lokal</div>
+                                <div class="left-benefit-desc">Bertemu orang yang menjalani budaya itu setiap hari.</div>
                             </div>
                         </div>
-                        <div class="welcome-benefit-item">
-                            <div class="welcome-benefit-icon"></div>
+                        <div class="left-benefit-item">
+                            <div class="left-benefit-dot">✦</div>
                             <div>
-                                <div class="welcome-benefit-title">Kenangan Bermakna</div>
-                                <div class="welcome-benefit-desc">Ciptakan cerita yang layak untuk dikenang.</div>
+                                <div class="left-benefit-title">Kenangan Bermakna</div>
+                                <div class="left-benefit-desc">Ciptakan cerita yang layak untuk dikenang.</div>
                             </div>
                         </div>
                     </div>
@@ -791,82 +748,58 @@
 
             {{-- Step 2 content --}}
             <template x-if="step === 2">
-                <div style="display:flex; flex-direction:column; flex:1;">
-                    <p class="left-eyebrow">Langkah 2 dari 3</p>
-                    <h1 class="left-title">Bahasa pilihanmu</h1>
-                    <p class="left-desc">Kami akan menampilkan experience dan konten dalam bahasa yang paling
-                        nyaman buat kamu.</p>
-
-                    <div class="left-info-box">
-                        <div class="left-info-icon"></div>
+                <div class="left-content">
+                    <span class="left-eyebrow">Langkah 2 dari 4</span>
+                    <h1 class="left-title">Bahasa<br>pilihanmu</h1>
+                    <p class="left-desc">Kami akan menampilkan experience dan konten dalam bahasa yang paling nyaman buat kamu.</p>
+                    <div class="left-info-box" style="margin-top:1.25rem;">
+                        <div class="left-info-icon">🌐</div>
                         <div>
                             <div class="left-info-title">Bisa diganti kapan saja</div>
-                            <div class="left-info-text">Kamu selalu bisa mengubah preferensi bahasa ini nanti dari
-                                halaman pengaturan akun.</div>
+                            <div class="left-info-text">Kamu selalu bisa mengubah preferensi bahasa dari halaman pengaturan akun.</div>
                         </div>
-                    </div>
-
-                    <div class="left-image" style="flex-grow:1;">
-                        <span class="left-image-caption">Setiap bahasa membuka cerita yang berbeda.</span>
                     </div>
                 </div>
             </template>
 
             {{-- Step 3 content --}}
             <template x-if="step === 3">
-                <div style="display:flex; flex-direction:column; flex:1;">
-                    <p class="left-eyebrow">Langkah 3 dari 4</p>
-                    <h1 class="left-title">Tunjukkan dirimu</h1>
-                    <p class="left-desc">Foto profil membantu host mengenalimu saat kalian bertemu langsung untuk
-                        sebuah experience.</p>
-
-                    <div class="left-info-box">
-                        <div class="left-info-icon"></div>
+                <div class="left-content">
+                    <span class="left-eyebrow">Langkah 3 dari 4</span>
+                    <h1 class="left-title">Tunjukkan<br>dirimu</h1>
+                    <p class="left-desc">Foto profil membantu host mengenalimu saat kalian bertemu langsung untuk sebuah experience.</p>
+                    <div class="left-info-box" style="margin-top:1.25rem;">
+                        <div class="left-info-icon">📸</div>
                         <div>
                             <div class="left-info-title">Opsional, tapi disarankan</div>
-                            <div class="left-info-text">Kamu bisa melewati langkah ini dan menambahkan foto kapan
-                                saja dari profil kamu nanti.</div>
+                            <div class="left-info-text">Kamu bisa melewati langkah ini dan menambahkan foto kapan saja dari profil nanti.</div>
                         </div>
-                    </div>
-
-                    <div class="left-image" style="flex-grow:1;">
-                        <span class="left-image-caption">Wajah di balik setiap perjalanan.</span>
                     </div>
                 </div>
             </template>
 
-            {{-- Step 4 content — Soul Match tease --}}
+            {{-- Step 4 content — Soul Match --}}
             <template x-if="step === 4">
-                <div style="display:flex; flex-direction:column; flex:1;">
-                    <p class="left-eyebrow">Langkah 4 dari 4</p>
+                <div class="left-content">
+                    <span class="left-eyebrow">Langkah 4 dari 4</span>
                     <h1 class="left-title">Temukan Jiwa<br>Perjalananmu</h1>
-                    <p class="left-desc">Setiap traveler berbeda. Ada yang mencari petualangan, ada yang mencari
-                        ketenangan, ada yang mencari percakapan bermakna.</p>
-
-                    <div class="left-info-box">
-                        <div class="left-info-icon"></div>
+                    <p class="left-desc">Setiap traveler berbeda. Ada yang mencari petualangan, ketenangan, atau percakapan bermakna.</p>
+                    <div class="left-info-box" style="margin-top:1.25rem;">
+                        <div class="left-info-icon">✨</div>
                         <div>
                             <div class="left-info-title">2 menit saja</div>
-                            <div class="left-info-text">Soul Match akan merekomendasikan host Bali yang paling
-                                cocok dengan caramu menjelajah.</div>
+                            <div class="left-info-text">Soul Match merekomendasikan host Bali yang paling cocok dengan caramu menjelajah.</div>
                         </div>
-                    </div>
-
-                    <div class="left-image" style="flex-grow:1;">
-                        <span class="left-image-caption">Kenali dirimu, temukan hostmu.</span>
                     </div>
                 </div>
             </template>
 
-            {{-- Completion --}}
+            {{-- Step 5 Completion --}}
             <template x-if="step === 5">
-                <div style="display:flex; flex-direction:column; flex:1;">
-                    <p class="left-eyebrow">Selesai</p>
-                    <h1 class="left-title">Perjalananmu dimulai di sini</h1>
+                <div class="left-content">
+                    <span class="left-eyebrow">Selesai 🎉</span>
+                    <h1 class="left-title">Perjalananmu<br>dimulai di sini</h1>
                     <p class="left-desc">Selamat datang di komunitas CittaLoka. Bali yang otentik menantimu.</p>
-                    <div class="left-image" style="flex-grow:1;">
-                        <span class="left-image-caption">Pengalaman pertamamu, menunggu untuk ditemukan.</span>
-                    </div>
                 </div>
             </template>
 
@@ -877,22 +810,7 @@
         ═══════════════════════════════════════════════ --}}
         <div class="right-panel">
 
-            {{-- Step Indicator --}}
-            <div class="step-indicator" x-show="step <= 4">
-                <template x-for="(label, index) in stepLabels" :key="index">
-                    <div class="step-node-wrapper">
-                        <div x-show="index > 0" class="step-line" :class="{ done: step > index }"></div>
-                        <div class="step-node">
-                            <div class="step-circle" :class="{ done: step > index + 1, active: step === index + 1 }">
-                                <span x-show="step > index + 1">✓</span>
-                                <span x-show="step <= index + 1" x-text="index + 1"></span>
-                            </div>
-                            <div class="step-label" :class="{ 'active-label': step === index + 1 }" x-text="label">
-                            </div>
-                        </div>
-                    </div>
-                </template>
-            </div>
+
 
             {{-- ═══════════════════ STEP 1: WELCOME ═══════════════════ --}}
             <div x-show="step === 1" class="form-card">

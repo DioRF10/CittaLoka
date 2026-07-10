@@ -57,7 +57,7 @@
     {{-- Header --}}
     <div class="mb-6">
         <h1 class="profile-header-title">My Profile</h1>
-        <p style="font-size:0.9rem; color:#6B7280; margin-top:0.5rem;">Kelola informasi akun kamu.</p>
+        <p style="font-size:0.9rem; color:#6B7280; margin-top:0.5rem;">Manage your account information.</p>
     </div>
 
     {{-- Success/Error --}}
@@ -76,13 +76,13 @@
 
         <div class="profile-tabs">
             <button class="profile-tab" :class="activeTab === 'public' ? 'active' : ''" x-on:click="activeTab = 'public'">
-                🌿 Profil Publik
+                Public Profile
             </button>
             <button class="profile-tab" :class="activeTab === 'contact' ? 'active' : ''" x-on:click="activeTab = 'contact'">
-                📞 Kontak
+                Contach
             </button>
             <button class="profile-tab" :class="activeTab === 'security' ? 'active' : ''" x-on:click="activeTab = 'security'">
-                🔒 Keamanan
+                Security
             </button>
         </div>
 
@@ -95,7 +95,7 @@
 
                 <div class="form-section">
                     <div class="form-section-header">
-                        <div class="form-section-title">Foto Profil</div>
+                        <div class="form-section-title">Profile Picture</div>
                     </div>
                     <div class="form-section-body" x-data="{ preview: null }">
                         <div style="display:flex; align-items:center; gap:1.5rem; margin-bottom:1.5rem;">
@@ -103,7 +103,7 @@
                                 style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid #EDE7DC;">
                             <label style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.6rem 1rem; border:1.5px solid #EDE7DC; border-radius:8px; cursor:pointer; font-size:0.82rem; font-weight:500; color:#1a2e1c;">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                                Ganti Foto
+                                Change Photo
                                 <input type="file" name="avatar" accept="image/png, image/jpeg"
                                     style="display:none;"
                                     @change="preview = URL.createObjectURL($event.target.files[0])">
@@ -112,11 +112,11 @@
 
                         <div class="form-grid-2">
                             <div class="form-group">
-                                <label class="form-label">Nama</label>
+                                <label class="form-label">Name</label>
                                 <input type="text" name="name" class="form-input" value="{{ old('name', $user->name) }}" required>
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Bahasa</label>
+                                <label class="form-label">Language</label>
                                 <select name="locale" class="form-select">
                                     <option value="id" {{ $user->locale === 'id' ? 'selected' : '' }}>🇮🇩 Bahasa Indonesia</option>
                                     <option value="en" {{ $user->locale === 'en' ? 'selected' : '' }}>🇬🇧 English</option>

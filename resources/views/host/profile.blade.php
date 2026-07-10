@@ -189,11 +189,39 @@
                             @endforeach
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Video URL (60 seconds)</label>
-                        <input type="url" name="video_url" class="form-input"
-                            value="{{ $host->video_url }}" placeholder="https://youtube.com/... or https://vimeo.com/...">
-                        <span style="font-size:0.72rem; color:#9CA3AF;">A short video introducing yourself to guests.</span>
+                    <div class="form-group" x-data="videoUpload('{{ $host->video_url ?? '' }}')">
+                        <label class="form-label">Video Perkenalan (maks. 60 detik)</label>
+
+                        {{-- Current / Preview --}}
+                        <div x-show="previewUrl" style="margin-bottom:0.75rem;">
+                            <video x-bind:src="previewUrl" controls
+                                style="width:100%; max-height:240px; border-radius:10px; background:#000; display:block;"></video>
+                            <button type="button" x-on:click="removeVideo()"
+                                style="margin-top:0.4rem; font-size:0.75rem; color:#B91C1C; background:none; border:none; cursor:pointer; padding:0;">
+                                ✕ Hapus video
+                            </button>
+                        </div>
+                        {{-- Hidden flag to tell controller to delete (always in DOM) --}}
+                        <input type="hidden" name="remove_video" x-bind:value="removeFlag ? '1' : '0'">
+
+                        {{-- Upload area --}}
+                        <label x-show="!previewUrl || removeFlag"
+                            style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.5rem;
+                                   padding:1.5rem; border:2px dashed #C8C0B4; border-radius:10px; cursor:pointer;
+                                   background:#FAFAF8; transition:border-color 0.15s;"
+                            onmouseover="this.style.borderColor='#1E3A2F'" onmouseout="this.style.borderColor='#C8C0B4'">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7A7A6E" stroke-width="1.5" stroke-linecap="round">
+                                <circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/>
+                            </svg>
+                            <span style="font-size:0.82rem; font-weight:600; color:#1E3A2F;">Pilih file video</span>
+                            <span style="font-size:0.72rem; color:#9CA3AF;">MP4, MOV, WebM — maks. 100MB</span>
+                            <input type="file" name="video_file" accept="video/*" style="display:none;"
+                                x-on:change="onFileChange($event)">
+                        </label>
+
+                        <span style="font-size:0.72rem; color:#9CA3AF; margin-top:0.3rem; display:block;">
+                            Video pendek yang memperkenalkan diri kamu kepada tamu.
+                        </span>
                     </div>
                 </div>
             </div>
@@ -552,6 +580,25 @@
 <script>
 function heritageTree() {
     return {}
+}
+
+function videoUpload(existingUrl = '') {
+    return {
+        previewUrl: existingUrl || null,
+        removeFlag: false,
+
+        onFileChange(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            this.removeFlag = false;
+            this.previewUrl = URL.createObjectURL(file);
+        },
+
+        removeVideo() {
+            this.removeFlag = true;
+            this.previewUrl = null;
+        },
+    };
 }
 </script>
 @endpush

@@ -16,6 +16,7 @@ class Host extends Model
         'bio',
         'village',
         'video_url',
+        'video_public_id',
         'ktp_path',
         'ktp_status',
         'ktp_rejection_note',

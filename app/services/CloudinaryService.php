@@ -41,8 +41,29 @@ class CloudinaryService
         ];
     }
 
+    public function uploadVideo($file, string $folder = 'cittaloka/videos'): array
+    {
+        $result = $this->cloudinary->uploadApi()->upload(
+            $file->getRealPath(),
+            [
+                'folder'        => $folder,
+                'resource_type' => 'video',
+            ]
+        );
+
+        return [
+            'url'       => $result['secure_url'],
+            'public_id' => $result['public_id'],
+        ];
+    }
+
     public function delete(string $publicId): void
     {
         $this->cloudinary->uploadApi()->destroy($publicId);
+    }
+
+    public function deleteVideo(string $publicId): void
+    {
+        $this->cloudinary->uploadApi()->destroy($publicId, ['resource_type' => 'video']);
     }
 }

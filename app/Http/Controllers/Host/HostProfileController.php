@@ -42,7 +42,8 @@ class HostProfileController extends Controller
                 'name'                   => 'required|string|max:100',
                 'bio'                    => 'nullable|string|max:500',
                 'village'                => 'nullable|string|max:100',
-                'video_url'              => 'nullable|url|max:255',
+                'video_file'             => 'nullable|file|mimes:mp4,mov,avi,webm|max:102400',
+                'remove_video'           => 'nullable|in:0,1',
                 'avatar'                 => 'nullable|image|mimes:jpeg,jpg,png|max:2048',
                 'soul_type_affinities'   => 'nullable|array|max:2',
                 'soul_type_affinities.*' => 'string|in:the_creator,the_seeker,the_connector,the_guardian,the_wanderer,the_dreamer',
@@ -61,10 +62,33 @@ class HostProfileController extends Controller
 
             Auth::user()->update(['name' => $request->name]);
 
+            // Handle video file upload / removal via Cloudinary
+            $videoUrl      = $host->video_url;       // keep existing by default
+            $videoPublicId = $host->video_public_id;
+
+            if ($request->input('remove_video') === '1') {
+                if ($videoPublicId) {
+                    (new CloudinaryService())->deleteVideo($videoPublicId);
+                }
+                $videoUrl      = null;
+                $videoPublicId = null;
+            }
+
+            if ($request->hasFile('video_file')) {
+                // Delete old video from Cloudinary before replacing
+                if ($videoPublicId) {
+                    (new CloudinaryService())->deleteVideo($videoPublicId);
+                }
+                $uploaded      = (new CloudinaryService())->uploadVideo($request->file('video_file'), 'cittaloka/host-videos');
+                $videoUrl      = $uploaded['url'];
+                $videoPublicId = $uploaded['public_id'];
+            }
+
             $host->update([
                 'bio'                  => $request->bio,
                 'village'              => $request->village,
-                'video_url'            => $request->video_url,
+                'video_url'            => $videoUrl,
+                'video_public_id'      => $videoPublicId,
                 'soul_type_affinities' => $request->input('soul_type_affinities', []),
             ]);
 

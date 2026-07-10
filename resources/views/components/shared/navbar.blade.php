@@ -82,7 +82,7 @@ $user = computed(fn() => auth()->user());
                         class="absolute right-0 mt-2 w-80 rounded-xl border border-[#E8E4DC] bg-white shadow-lg z-50 max-h-96 overflow-y-auto">
 
                         <div class="px-4 py-3 border-b flex items-center justify-between" style="border-color:#E8E4DC;">
-                            <span class="text-sm font-semibold" style="color:#1a2e1c;">Notifikasi</span>
+                            <span class="text-sm font-semibold" style="color:#1a2e1c;">Notification</span>
                             <div style="display:flex; align-items:center; gap:0.6rem;">
                                 @if($unreadCount > 0)
                                     <form method="POST" action="{{ route('notifications.read-all') }}">

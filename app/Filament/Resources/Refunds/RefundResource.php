@@ -17,6 +17,10 @@ class RefundResource extends Resource
 {
     protected static ?string $model = Booking::class;
 
+    protected static ?string $modelLabel = 'Refund';
+
+    protected static ?string $pluralModelLabel = 'Refunds';
+
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-receipt-refund';
 
     protected static string|UnitEnum|null $navigationGroup = 'Operasional';

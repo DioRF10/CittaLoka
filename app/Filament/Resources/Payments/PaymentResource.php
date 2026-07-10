@@ -17,6 +17,10 @@ class PaymentResource extends Resource
 {
     protected static ?string $model = Booking::class;
 
+    protected static ?string $modelLabel = 'Payment';
+
+    protected static ?string $pluralModelLabel = 'Payments';
+
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-banknotes';
 
     protected static string|UnitEnum|null $navigationGroup = 'Operasional';

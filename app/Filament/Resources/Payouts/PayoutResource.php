@@ -17,6 +17,10 @@ class PayoutResource extends Resource
 {
     protected static ?string $model = Booking::class;
 
+    protected static ?string $modelLabel = 'Payout';
+
+    protected static ?string $pluralModelLabel = 'Payouts';
+
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-currency-dollar';
 
     protected static string|UnitEnum|null $navigationGroup = 'Operasional';

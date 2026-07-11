@@ -166,8 +166,8 @@
                         style="color:#1a2e1c;">
                         <option value="relevan">Sort: Relevance</option>
                         <option value="rating">Rating Tertinggi</option>
-                        <option value="harga_asc">Harga Terendah</option>
-                        <option value="harga_desc">Harga Tertinggi</option>
+                        <option value="harga_asc">Lowest Price</option>
+                        <option value="harga_desc">Highest Price</option>
                     </select>
                 </div>
 

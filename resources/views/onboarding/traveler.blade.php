@@ -89,11 +89,9 @@
         .left-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(
-                to bottom,
-                rgba(15, 27, 17, 0.22) 0%,
-                rgba(15, 27, 17, 0.88) 100%
-            );
+            background: linear-gradient(to bottom,
+                    rgba(15, 27, 17, 0.22) 0%,
+                    rgba(15, 27, 17, 0.88) 100%);
             z-index: 2;
         }
 
@@ -235,7 +233,7 @@
 
         .left-benefit-desc {
             font-size: 0.78rem;
-            color: rgba(255,255,255,0.65);
+            color: rgba(255, 255, 255, 0.65);
             line-height: 1.4;
         }
 
@@ -698,10 +696,14 @@
         <div class="left-panel">
 
             {{-- Background photo — changes per step --}}
-            <img x-show="step === 1" class="left-bg" src="{{ asset('images/onboarding-step1.png') }}" alt="Bali rice terrace">
-            <img x-show="step === 2" class="left-bg" src="{{ asset('images/onboarding-step2.png') }}" alt="Local conversation">
-            <img x-show="step === 3" class="left-bg" src="{{ asset('images/onboarding-step3.png') }}" alt="Traveler portrait">
-            <img x-show="step === 4" class="left-bg" src="{{ asset('images/onboarding-step4.png') }}" alt="Soul journey">
+            <img x-show="step === 1" class="left-bg" src="{{ asset('images/onboarding-step1.png') }}"
+                alt="Bali rice terrace">
+            <img x-show="step === 2" class="left-bg" src="{{ asset('images/onboarding-step2.png') }}"
+                alt="Local conversation">
+            <img x-show="step === 3" class="left-bg" src="{{ asset('images/onboarding-step3.png') }}"
+                alt="Traveler portrait">
+            <img x-show="step === 4" class="left-bg" src="{{ asset('images/onboarding-step4.png') }}"
+                alt="Soul journey">
             <img x-show="step === 5" class="left-bg" src="{{ asset('images/auth/travelling.png') }}" alt="Bali journey">
 
             {{-- Dark overlay --}}
@@ -718,13 +720,14 @@
                 <div class="left-content">
                     <span class="left-eyebrow">Living Culture Platform</span>
                     <h1 class="left-title">Jelajahi Bali<br>dari dalam</h1>
-                    <p class="left-desc">Temukan pengalaman budaya otentik bersama komunitas lokal Bali — terhubung dengan orang nyata, tradisi bermakna, dan kenangan yang bertahan seumur hidup.</p>
+                    <p class="left-desc">Discover authentic Balinese culture with a local community — connect with real
+                        people, meaningful traditions, and memories that last a lifetime.</p>
 
                     <div class="left-benefit-list" style="margin-top:1.25rem;">
                         <div class="left-benefit-item">
                             <div class="left-benefit-dot">✦</div>
                             <div>
-                                <div class="left-benefit-title">Pengalaman Otentik</div>
+                                <div class="left-benefit-title">Authentic Experiences</div>
                                 <div class="left-benefit-desc">Jelajahi Bali jauh di luar tempat wisata biasa.</div>
                             </div>
                         </div>
@@ -732,7 +735,8 @@
                             <div class="left-benefit-dot">✦</div>
                             <div>
                                 <div class="left-benefit-title">Koneksi Lokal</div>
-                                <div class="left-benefit-desc">Bertemu orang yang menjalani budaya itu setiap hari.</div>
+                                <div class="left-benefit-desc">Bertemu orang yang menjalani budaya itu setiap hari.
+                                </div>
                             </div>
                         </div>
                         <div class="left-benefit-item">
@@ -750,13 +754,15 @@
             <template x-if="step === 2">
                 <div class="left-content">
                     <span class="left-eyebrow">Langkah 2 dari 4</span>
-                    <h1 class="left-title">Bahasa<br>pilihanmu</h1>
-                    <p class="left-desc">Kami akan menampilkan experience dan konten dalam bahasa yang paling nyaman buat kamu.</p>
+                    <h1 class="left-title">Your Preferred<br>Language</h1>
+                    <p class="left-desc">We'll show experiences and content in the language most comfortable for you.
+                    </p>
                     <div class="left-info-box" style="margin-top:1.25rem;">
                         <div class="left-info-icon">🌐</div>
                         <div>
                             <div class="left-info-title">Bisa diganti kapan saja</div>
-                            <div class="left-info-text">Kamu selalu bisa mengubah preferensi bahasa dari halaman pengaturan akun.</div>
+                            <div class="left-info-text">You can always change your language preference from your account
+                                settings.</div>
                         </div>
                     </div>
                 </div>
@@ -767,12 +773,14 @@
                 <div class="left-content">
                     <span class="left-eyebrow">Langkah 3 dari 4</span>
                     <h1 class="left-title">Tunjukkan<br>dirimu</h1>
-                    <p class="left-desc">Foto profil membantu host mengenalimu saat kalian bertemu langsung untuk sebuah experience.</p>
+                    <p class="left-desc">Your profile photo helps hosts recognize you when you meet for an experience.
+                    </p>
                     <div class="left-info-box" style="margin-top:1.25rem;">
                         <div class="left-info-icon">📸</div>
                         <div>
                             <div class="left-info-title">Opsional, tapi disarankan</div>
-                            <div class="left-info-text">Kamu bisa melewati langkah ini dan menambahkan foto kapan saja dari profil nanti.</div>
+                            <div class="left-info-text">Kamu bisa melewati langkah ini dan menambahkan foto kapan saja
+                                dari profil nanti.</div>
                         </div>
                     </div>
                 </div>
@@ -783,12 +791,14 @@
                 <div class="left-content">
                     <span class="left-eyebrow">Langkah 4 dari 4</span>
                     <h1 class="left-title">Temukan Jiwa<br>Perjalananmu</h1>
-                    <p class="left-desc">Setiap traveler berbeda. Ada yang mencari petualangan, ketenangan, atau percakapan bermakna.</p>
+                    <p class="left-desc">Setiap traveler berbeda. Ada yang mencari petualangan, ketenangan, atau
+                        percakapan bermakna.</p>
                     <div class="left-info-box" style="margin-top:1.25rem;">
                         <div class="left-info-icon">✨</div>
                         <div>
                             <div class="left-info-title">2 menit saja</div>
-                            <div class="left-info-text">Soul Match merekomendasikan host Bali yang paling cocok dengan caramu menjelajah.</div>
+                            <div class="left-info-text">Soul Match recommends Balinese hosts that match your travel
+                                style.</div>
                         </div>
                     </div>
                 </div>
@@ -799,7 +809,7 @@
                 <div class="left-content">
                     <span class="left-eyebrow">Selesai 🎉</span>
                     <h1 class="left-title">Perjalananmu<br>dimulai di sini</h1>
-                    <p class="left-desc">Selamat datang di komunitas CittaLoka. Bali yang otentik menantimu.</p>
+                    <p class="left-desc">Welcome to the CittaLoka community. Authentic Bali awaits you.</p>
                 </div>
             </template>
 
@@ -814,7 +824,7 @@
 
             {{-- ═══════════════════ STEP 1: WELCOME ═══════════════════ --}}
             <div x-show="step === 1" class="form-card">
-                <h2 class="form-title">Selamat datang di CittaLoka! 🌿</h2>
+                <h2 class="form-title">Welcome to CittaLoka! 🌿</h2>
                 <p class="form-subtitle">Sebelum mulai menjelajah, mari atur beberapa preferensi kecil supaya
                     pengalamanmu lebih personal.</p>
 
@@ -851,8 +861,8 @@
                             <div class="radio-card-dot">
                                 <div class="radio-card-dot-inner" x-show="locale === 'id'"></div>
                             </div>
-                            <div class="radio-card-title">Bahasa Indonesia</div>
-                            <div class="radio-card-desc">Tampilkan semua konten dalam Bahasa Indonesia.</div>
+                            <div class="radio-card-title">Indonesian</div>
+                            <div class="radio-card-desc">Display all content in Indonesian.</div>
                             <span class="badge-recommended">Disarankan</span>
                         </div>
                         <div class="radio-card" :class="{ selected: locale === 'en' }" @click="locale = 'en'">
@@ -933,7 +943,8 @@
             {{-- ═══════════════════ STEP 4: SOUL MATCH TEASE ═══════════════════ --}}
             <div x-show="step === 4" class="form-card">
                 <h2 class="form-title">Temukan Soul Type-mu</h2>
-                <p class="form-subtitle">Ambil 2 menit buat kenalan sama dirimu sendiri — kami rekomendasikan host
+                <p class="form-subtitle">Take 2 minutes to get to know yourself — we'll recommend hosts that match you
+                    best.
                     Bali yang paling nyambung sama caramu menjelajah.</p>
 
                 <div class="tip-box">
@@ -968,7 +979,7 @@
             <div x-show="step === 5" class="form-card completion-wrap">
                 <div class="completion-icon"></div>
                 <h2 class="completion-title">Perjalananmu dimulai di sini</h2>
-                <p class="completion-sub">Selamat datang di CittaLoka. Bali yang otentik menantimu.</p>
+                <p class="completion-sub">Welcome to CittaLoka. Authentic Bali awaits you.</p>
 
                 <button class="btn-next" type="button" style="margin:0 auto;" :disabled="saving" @click="complete()">
                     <span x-show="saving" class="spinner"></span>
@@ -1000,7 +1011,7 @@
         function onboardingTraveler() {
             return {
                 step: 1,
-                stepLabels: ['Welcome', 'Bahasa', 'Foto Profil', 'Soul Match'],
+                stepLabels: ['Welcome', 'Language', 'Profile Photo', 'Soul Match'],
                 saving: false,
                 locale: '{{ auth()->user()->locale ?? "" }}',
                 preview: null,

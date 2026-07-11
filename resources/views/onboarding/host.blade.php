@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menjadi Host | CittaLoka</title>
+    <title>Become a Host | CittaLoka</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1085,18 +1085,18 @@
             {{-- Step 1 content --}}
             <template x-if="step === 1">
                 <div style="display:flex; flex-direction:column; flex:1;">
-                    <p class="left-eyebrow">Mengapa Bergabung</p>
-                    <h1 class="left-title">Mengapa menjadi<br>Host di CittaLoka?</h1>
-                    <p class="left-desc">CittaLoka membantu Anda berbagi pengetahuan dan budaya, sekaligus mendapatkan
-                        penghasilan yang adil dari setiap pengalaman yang Anda bagikan.</p>
+                    <p class="left-eyebrow">Why Join</p>
+                    <h1 class="left-title">Why become<br>a Host on CittaLoka?</h1>
+                    <p class="left-desc">CittaLoka helps you share knowledge and culture, while earning fair income from
+                        every experience you share.</p>
 
                     <div class="welcome-benefit-list">
                         <div class="welcome-benefit-item">
                             <div class="welcome-benefit-icon">💰</div>
                             <div>
-                                <div class="welcome-benefit-title">90% dari setiap booking</div>
-                                <div class="welcome-benefit-desc">Kami hanya mengambil 10% komisi untuk operasional
-                                    platform.</div>
+                                <div class="welcome-benefit-title">90% of every booking</div>
+                                <div class="welcome-benefit-desc">We only take 10% commission for platform operations.
+                                </div>
                             </div>
                         </div>
                         <div class="welcome-benefit-item">
@@ -1131,8 +1131,8 @@
                         <div class="left-info-icon">💡</div>
                         <div>
                             <div class="left-info-title">Kenapa informasi ini penting?</div>
-                            <div class="left-info-text">Bahasa dan lokasi membantu kami menerjemahkan cerita Anda secara
-                                akurat, serta menampilkan pengalaman Anda ke wisatawan yang relevan.</div>
+                            <div class="left-info-text">Language and location help us translate your story accurately
+                                and show your experience to relevant travelers.</div>
                         </div>
                     </div>
 
@@ -1147,8 +1147,8 @@
                 <div style="display:flex; flex-direction:column; flex:1;">
                     <p class="left-eyebrow">Langkah 3 dari 5</p>
                     <h1 class="left-title">Ceritakan tentang diri Anda</h1>
-                    <p class="left-desc">Profil yang lengkap membantu wisatawan mengenal Anda dan terinspirasi dengan
-                        pengalaman yang Anda bagikan.</p>
+                    <p class="left-desc">A complete profile helps travelers get to know you and feel inspired by the
+                        experiences you share.</p>
 
                     <div class="left-info-box">
                         <div class="left-info-icon">❤️</div>
@@ -1207,7 +1207,7 @@
                     </div>
 
                     <div class="left-image" style="flex-grow:1;">
-                        <span class="left-image-caption">Pengalaman yang adil, dimulai dari kepercayaan.</span>
+                        <span class="left-image-caption">Fair experiences start with trust.</span>
                     </div>
                 </div>
             </template>
@@ -1216,7 +1216,7 @@
             <template x-if="step === 6">
                 <div style="display:flex; flex-direction:column; flex:1;">
                     <p class="left-eyebrow">Selesai</p>
-                    <h1 class="left-title">Selamat datang di komunitas CittaLoka</h1>
+                    <h1 class="left-title">Welcome to the CittaLoka community</h1>
                     <p class="left-desc">Anda sudah menjadi bagian dari host yang membagikan budaya Bali kepada dunia.
                     </p>
                     <div class="left-image" style="flex-grow:1;">
@@ -1273,7 +1273,7 @@
 
             {{-- ═══════════════════ STEP 1: WELCOME ═══════════════════ --}}
             <div x-show="step === 1" class="form-card">
-                <h2 class="form-title">Selamat datang, calon Host! 👋</h2>
+                <h2 class="form-title">Welcome, future Host! 👋</h2>
                 <p class="form-subtitle" style="margin-bottom:1.75rem;">Sebelum memulai, mari pahami bagaimana CittaLoka
                     bekerja dan keuntungan menjadi bagian dari kami.</p>
 
@@ -1354,8 +1354,9 @@
                 </div>
 
                 <div class="field-group">
-                    <label class="field-label">Bahasa Utama <span class="required">*</span></label>
-                    <p class="field-hint" style="margin-top:-0.2rem; margin-bottom:0.85rem;">Bahasa yang paling sering
+                    <label class="field-label">Primary Language <span class="required">*</span></label>
+                    <p class="field-hint" style="margin-top:-0.2rem; margin-bottom:0.85rem;">The language you feel most
+                        comfortable communicating and creating content in.
                         Anda gunakan saat berkomunikasi dan membuat konten.</p>
 
                     <div class="radio-card-grid">
@@ -1364,9 +1365,9 @@
                             <div class="radio-card-dot">
                                 <div class="radio-card-dot-inner" x-show="form.locale === 'id'"></div>
                             </div>
-                            <div class="radio-card-title">Bahasa Indonesia</div>
-                            <div class="radio-card-desc">Saya lebih nyaman berkomunikasi dan membuat konten dalam Bahasa
-                                Indonesia.</div>
+                            <div class="radio-card-title">Indonesian</div>
+                            <div class="radio-card-desc">I'm most comfortable communicating and creating content in
+                                Indonesian.</div>
                             <span class="badge-recommended">Disarankan</span>
                         </div>
                         <div class="radio-card" :class="{ selected: form.locale === 'en' }"
@@ -1426,8 +1427,8 @@
                 <div class="form-header">
                     <div class="form-header-icon">👤</div>
                     <div>
-                        <h2 class="form-title">Profil Host (Story)</h2>
-                        <p class="form-subtitle">Ceritakan siapa Anda dan apa yang ingin Anda bagikan kepada wisatawan.
+                        <h2 class="form-title">Host Profile (Story)</h2>
+                        <p class="form-subtitle">Tell travelers who you are and what you want to share with them.
                         </p>
                     </div>
                 </div>
@@ -1538,8 +1539,8 @@
                     <div class="form-header-icon">🛡️</div>
                     <div>
                         <h2 class="form-title">Verifikasi Identitas</h2>
-                        <p class="form-subtitle">Unggah foto KTP Anda untuk verifikasi akun Host. Proses ini membantu
-                            kami menjaga keamanan platform dan kepercayaan wisatawan.</p>
+                        <p class="form-subtitle">Upload your ID for account verification. This process helps us keep the
+                            platform safe and earn traveler trust.</p>
                     </div>
                 </div>
 
@@ -1725,8 +1726,8 @@
             {{-- ═══════════════════ STEP 6: COMPLETION ═══════════════════ --}}
             <div x-show="step === 6" class="form-card completion-wrap">
                 <div class="completion-icon">🏡</div>
-                <h2 class="completion-title">Selamat, Anda resmi menjadi Host!</h2>
-                <p class="completion-sub">Selamat bergabung dengan komunitas host CittaLoka. KTP Anda sedang ditinjau —
+                <h2 class="completion-title">Congratulations, you're officially a Host!</h2>
+                <p class="completion-sub">Welcome to the CittaLoka community. Your ID is under review —
                     kami akan memberi tahu hasilnya dalam 24 jam melalui email.</p>
 
                 <div class="bank-status-box verified" style="text-align:left;" x-show="finalBankStatus === 'verified'">
@@ -1781,7 +1782,7 @@
         function onboardingHost() {
             return {
                 step: 1,
-                stepLabels: ['Welcome', 'Bahasa & Lokasi', 'Profil Host', 'Verifikasi Identitas', 'Informasi Bank'],
+                stepLabels: ['Welcome', 'Language & Location', 'Host Profile', 'ID Verification', 'Bank Info'],
                 dashboardUrl: '{{ route("host.dashboard") }}',
 
                 form: {

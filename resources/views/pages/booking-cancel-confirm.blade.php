@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Batalkan Booking | CittaLoka</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600&family=DM+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -113,8 +116,13 @@
             margin-bottom: 0.3rem;
         }
 
-        .refund-box.has-refund .refund-title { color: var(--success-text); }
-        .refund-box.no-refund .refund-title { color: var(--danger-text); }
+        .refund-box.has-refund .refund-title {
+            color: var(--success-text);
+        }
+
+        .refund-box.no-refund .refund-title {
+            color: var(--danger-text);
+        }
 
         .refund-text {
             font-size: 0.82rem;
@@ -175,48 +183,52 @@
         }
     </style>
 </head>
+
 <body>
 
-@include('components.shared.navbar')
+    @include('components.shared.navbar')
 
-<div class="container-wrap">
-    <div class="card">
-        <div class="icon-circle">⚠️</div>
-        <h1 class="title">Batalkan Booking?</h1>
-        <p class="subtitle">Tindakan ini tidak dapat dibatalkan. Pastikan Anda sudah membaca kebijakan refund di bawah ini.</p>
+    <div class="container-wrap">
+        <div class="card">
+            <div class="icon-circle">⚠️</div>
+            <h1 class="title">Batalkan Booking?</h1>
+            <p class="subtitle">Tindakan ini tidak dapat dibatalkan. Pastikan Anda sudah membaca kebijakan refund di
+                bawah ini.</p>
 
-        <div class="booking-summary">
-            <div class="booking-summary-title">{{ $booking->experience_title_snapshot }}</div>
-            <div class="booking-summary-detail">
-                {{ \Carbon\Carbon::parse($booking->tanggal_experience)->locale('id')->isoFormat('D MMMM YYYY') }} ·
-                {{ \Carbon\Carbon::parse($booking->jam_experience)->format('H:i') }} WITA ·
-                {{ $booking->jumlah_peserta }} peserta
+            <div class="booking-summary">
+                <div class="booking-summary-title">{{ $booking->experience_title_snapshot }}</div>
+                <div class="booking-summary-detail">
+                    {{ \Carbon\Carbon::parse($booking->tanggal_experience)->locale('id')->isoFormat('D MMMM YYYY') }} ·
+                    {{ \Carbon\Carbon::parse($booking->jam_experience)->format('H:i') }} WITA ·
+                    {{ $booking->jumlah_peserta }} peserta
+                </div>
             </div>
+
+            <div class="refund-box {{ $refundAmount > 0 ? 'has-refund' : 'no-refund' }}">
+                <div class="refund-title">
+                    {{ $refundAmount > 0 ? '✓ Refund ' . $refundPercentage . '%' : '✕ Tidak Ada Refund' }}
+                </div>
+                <div class="refund-text">{{ $policyDescription }}</div>
+            </div>
+
+            <form method="POST" action="{{ route('bookings.cancel', $booking->kode_booking) }}">
+                @csrf
+                @method('PATCH')
+
+                <label class="field-label">Alasan pembatalan (opsional)</label>
+                <textarea name="reason" class="textarea-input" rows="3"
+                    placeholder="Tell us why you're canceling this booking..."></textarea>
+
+                <div class="actions">
+                    <a href="{{ route('bookings.show', $booking->kode_booking) }}" class="btn-back">Batal, Kembali</a>
+                    <button type="submit" class="btn-cancel-action">Ya, Batalkan Booking</button>
+                </div>
+            </form>
         </div>
-
-        <div class="refund-box {{ $refundAmount > 0 ? 'has-refund' : 'no-refund' }}">
-            <div class="refund-title">
-                {{ $refundAmount > 0 ? '✓ Refund ' . $refundPercentage . '%' : '✕ Tidak Ada Refund' }}
-            </div>
-            <div class="refund-text">{{ $policyDescription }}</div>
-        </div>
-
-        <form method="POST" action="{{ route('bookings.cancel', $booking->kode_booking) }}">
-            @csrf
-            @method('PATCH')
-
-            <label class="field-label">Alasan pembatalan (opsional)</label>
-            <textarea name="reason" class="textarea-input" rows="3" placeholder="Ceritakan alasan Anda membatalkan booking ini..."></textarea>
-
-            <div class="actions">
-                <a href="{{ route('bookings.show', $booking->kode_booking) }}" class="btn-back">Batal, Kembali</a>
-                <button type="submit" class="btn-cancel-action">Ya, Batalkan Booking</button>
-            </div>
-        </form>
     </div>
-</div>
 
-@include('components.shared.footer')
+    @include('components.shared.footer')
 
 </body>
+
 </html>

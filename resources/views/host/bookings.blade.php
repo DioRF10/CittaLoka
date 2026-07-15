@@ -19,32 +19,32 @@
     @endif
 
     <div x-data="{
-        showDetailModal: false,
-        loading: false,
-        booking: null,
-        async openDetail(id) {
-            this.showDetailModal = true;
-            this.loading = true;
-            this.booking = null;
-            try {
-                const res = await fetch(`/dashboard/bookings/${id}/detail`, {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
-                });
-                this.booking = await res.json();
-            } catch(e) {
-                this.booking = { error: 'Gagal memuat data booking.' };
-            } finally {
-                this.loading = false;
-            }
-        }
-    }" @keydown.escape.window="showDetailModal = false">
+                showDetailModal: false,
+                loading: false,
+                booking: null,
+                async openDetail(id) {
+                    this.showDetailModal = true;
+                    this.loading = true;
+                    this.booking = null;
+                    try {
+                        const res = await fetch(`/dashboard/bookings/${id}/detail`, {
+                            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                        });
+                        this.booking = await res.json();
+                    } catch(e) {
+                        this.booking = { error: 'Gagal memuat data booking.' };
+                    } finally {
+                        this.loading = false;
+                    }
+                }
+            }" @keydown.escape.window="showDetailModal = false">
 
         {{-- Filter Tabs --}}
         <div style="display:flex; gap:0.4rem; margin-bottom:1.25rem;">
             @foreach([['all', 'All Bookings'], ['upcoming', 'Upcoming'], ['completed', 'Completed'], ['cancelled', 'Cancelled']] as [$val, $label])
                 <a href="{{ route('host.bookings.index', ['filter' => $val]) }}"
                     style="padding:0.45rem 1rem; border-radius:8px; font-size:0.82rem; font-weight:500; text-decoration:none; transition:all 0.15s;
-                        {{ $filter === $val ? 'background:#1E3A2F; color:white;' : 'background:white; color:#4A4A4A; border:1.5px solid #EDE7DC;' }}">
+                                        {{ $filter === $val ? 'background:#1E3A2F; color:white;' : 'background:white; color:#4A4A4A; border:1.5px solid #EDE7DC;' }}">
                     {{ $label }}
                 </a>
             @endforeach
@@ -53,11 +53,12 @@
         {{-- Table --}}
         <div style="background:white; border-radius:12px; border:1.5px solid #EDE7DC; overflow:hidden;">
             <div
-                style="display:grid; grid-template-columns:1fr 1fr 120px 80px 100px 110px 80px; padding:0.75rem 1.5rem; background:#F7F3ED; border-bottom:1px solid #EDE7DC;">
+                style="display:grid; grid-template-columns:1fr 1fr 120px 80px minmax(140px, 180px) 110px 80px; padding:0.75rem 1.5rem; background:#F7F3ED; border-bottom:1px solid #EDE7DC;">
                 @foreach(['Guest', 'Experience', 'Date', 'Guests', 'Status', 'Total', 'Action'] as $col)
                     <div
                         style="font-size:0.7rem; font-weight:700; color:#7A7A6E; text-transform:uppercase; letter-spacing:0.06em;">
-                        {{ $col }}</div>
+                        {{ $col }}
+                    </div>
                 @endforeach
             </div>
 
@@ -86,7 +87,7 @@
                             ? \Carbon\Carbon::parse($booking->jam_experience)->format('H:i')
                             : null;
                     @endphp
-                    <div style="display:grid; grid-template-columns:1fr 1fr 120px 80px 100px 110px 80px; padding:1rem 1.5rem; border-bottom:1px solid #F7F3ED; align-items:center;"
+                    <div style="display:grid; grid-template-columns:1fr 1fr 120px 80px minmax(140px, 180px) 110px 80px; padding:1rem 1.5rem; border-bottom:1px solid #F7F3ED; align-items:center;"
                         onmouseover="this.style.background='#FAFAF8'" onmouseout="this.style.background='white'">
                         <div>
                             <div style="font-size:0.875rem; font-weight:500; color:#1E3A2F;">{{ $booking->user->name }}</div>
@@ -103,10 +104,10 @@
                             @endif
                         </div>
                         <div style="font-size:0.875rem; color:#1E3A2F;">{{ $booking->jumlah_peserta }}</div>
-                        <div>
+                        <div style="min-width:0;">
                             <span
                                 style="font-size:0.68rem; font-weight:700; letter-spacing:0.06em; padding:0.2rem 0.6rem; border-radius:999px; background:{{ $statusBg }}; color:{{ $statusColor }};">
-                                {{ strtoupper($booking->status) }}
+                                {{ strtoupper(str_replace('_', ' ', $booking->status)) }}
                             </span>
                         </div>
                         <div style="font-size:0.875rem; font-weight:600; color:#1E3A2F;">
@@ -182,8 +183,8 @@
                             <div style="display:flex; align-items:center; gap:0.75rem;">
                                 <span x-text="booking?.status_label"
                                     :style="`font-size:0.72rem; font-weight:700; letter-spacing:0.06em; padding:0.3rem 0.875rem; border-radius:999px;
-                            background:${{confirmed:'#EBF5EE',completed:'#E8E4DC',pending_payment:'#FDF6EE',cancelled:'#FEF2F2',expired:'#FEF2F2'}[booking?.status] ?? '#F3F4F6'};
-                            color:${{confirmed:'#2D5240',completed:'#1E3A2F',pending_payment:'#C4783A',cancelled:'#C0392B',expired:'#C0392B'}[booking?.status] ?? '#7A7A6E'}`">
+                                    background:${({ confirmed: '#EBF5EE', completed: '#E8E4DC', pending_payment: '#FDF6EE', cancelled: '#FEF2F2', expired: '#FEF2F2' }[booking?.status] ?? '#F3F4F6')};
+                                    color:${({ confirmed: '#2D5240', completed: '#1E3A2F', pending_payment: '#C4783A', cancelled: '#C0392B', expired: '#C0392B' }[booking?.status] ?? '#7A7A6E')}`">
                                 </span>
                                 <button @click="showDetailModal = false"
                                     style="width:32px; height:32px; border-radius:50%; border:1.5px solid #EDE7DC; background:white; display:flex; align-items:center; justify-content:center; cursor:pointer; color:#7A7A6E; flex-shrink:0;"

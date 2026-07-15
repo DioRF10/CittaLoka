@@ -103,9 +103,9 @@
             <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:1rem;">
                 @php
                     $nexts = [
-                        ['icon' => '✉️', 'label' => 'Check your inbox for details'],
-                        ['icon' => '💬', 'label' => 'Host will contact you'],
-                        ['icon' => '🎉', 'label' => 'Show up & enjoy!'],
+                        ['icon' => '', 'label' => 'Check your inbox for details'],
+                        ['icon' => '', 'label' => 'Host will contact you'],
+                        ['icon' => '', 'label' => 'Show up & enjoy!'],
                     ];
                 @endphp
                 @foreach($nexts as $next)

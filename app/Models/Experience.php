@@ -162,4 +162,9 @@ class Experience extends Model
         return $this->belongsToMany(User::class, 'wishlists', 'experience_id', 'user_id');
     }
 
+    public function seasonalEvents()
+    {
+        return $this->belongsToMany(SeasonalEvent::class, 'seasonal_event_experiences', 'experience_id', 'seasonal_event_id');
+    }
+
 }

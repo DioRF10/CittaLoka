@@ -64,8 +64,8 @@ class CheckoutController extends Controller
             ->firstOrFail();
 
         // Validasi parameter dari booking widget
-        $date   = $request->input('date');
-        $time   = $request->input('time');
+        $date = $request->input('date');
+        $time = $request->input('time');
         $guests = (int) $request->input('guests', $experience->kapasitas_min);
 
         // Redirect balik kalau parameter tidak lengkap
@@ -88,10 +88,10 @@ class CheckoutController extends Controller
 
         // Hitung harga
         $hargaPerOrang = (float) $experience->harga;
-        $subtotal      = $hargaPerOrang * $guests;
-        $platformFee   = round($subtotal * 0.10); // 10%
-        $total         = $subtotal; // traveler bayar sesuai subtotal
-        $hostEarning   = $subtotal - $platformFee; // host dapat subtotal potong admin
+        $subtotal = $hargaPerOrang * $guests;
+        $platformFee = round($subtotal * 0.10); // 10%
+        $total = $subtotal; // traveler bayar sesuai subtotal
+        $hostEarning = $subtotal - $platformFee; // host dapat subtotal potong admin
 
         // Format tanggal & waktu
         $tanggal = Carbon::parse($date)->locale('en')->isoFormat('ddd, MMM D, YYYY');
@@ -99,7 +99,7 @@ class CheckoutController extends Controller
         $jamSelesai = Carbon::parse($time)->addMinutes($experience->durasi_menit)->format('H:i');
 
         $cover = $experience->photos->where('is_cover', true)->first()
-               ?? $experience->photos->first();
+            ?? $experience->photos->first();
 
         $locale = app()->getLocale();
 
@@ -133,11 +133,11 @@ class CheckoutController extends Controller
         }
 
         $request->validate([
-            'date'         => 'required|date',
-            'time'         => 'required',
-            'guests'       => 'required|integer|min:1',
+            'date' => 'required|date',
+            'time' => 'required',
+            'guests' => 'required|integer|min:1',
             'phone_number' => 'required|string|max:20',
-            'agree_terms'  => 'accepted',
+            'agree_terms' => 'accepted',
         ], [
             'agree_terms.accepted' => 'Kamu harus menyetujui Terms & Conditions.',
         ]);
@@ -153,11 +153,11 @@ class CheckoutController extends Controller
             ->where('is_blocked', false)
             ->firstOrFail();
 
-        $guests        = (int) $request->guests;
+        $guests = (int) $request->guests;
         $hargaPerOrang = (float) $experience->harga;
-        $subtotal      = $hargaPerOrang * $guests;
-        $platformFee   = round($subtotal * 0.10);
-        $hostEarning   = $subtotal - $platformFee;
+        $subtotal = $hargaPerOrang * $guests;
+        $platformFee = round($subtotal * 0.10);
+        $hostEarning = $subtotal - $platformFee;
 
         // ── Validasi ulang kupon di server (jangan percaya nominal dari client) ──
         $coupon = null;
@@ -182,27 +182,27 @@ class CheckoutController extends Controller
 
         // Buat booking dengan status pending_payment
         $booking = Booking::create([
-            'kode_booking'              => Booking::generateKode(),
-            'user_id'                   => Auth::id(),
-            'experience_id'             => $experience->id,
-            'host_id'                   => $experience->host_id,
-            'availability_id'           => $availability->id,
+            'kode_booking' => Booking::generateKode(),
+            'user_id' => Auth::id(),
+            'experience_id' => $experience->id,
+            'host_id' => $experience->host_id,
+            'availability_id' => $availability->id,
             'experience_title_snapshot' => $experience->getJudul($locale),
-            'host_name_snapshot'        => $experience->host->user->name,
-            'location_snapshot'         => $experience->lokasi_nama,
-            'harga_per_orang_snapshot'  => $hargaPerOrang,
-            'tanggal_experience'        => $request->date,
-            'jam_experience'            => $request->time,
-            'jumlah_peserta'            => $guests,
-            'is_private'                => false,
-            'total_harga'               => $total,
-            'platform_fee'              => $platformFee,
-            'host_earning'              => $hostEarning,
-            'coupon_id'                 => $coupon?->id,
-            'discount_amount'           => $discountAmount,
-            'status'                    => 'pending_payment',
-            'payment_status'            => 'unpaid',
-            'notes_for_host'            => $request->input('notes_for_host'),
+            'host_name_snapshot' => $experience->host->user->name,
+            'location_snapshot' => $experience->lokasi_nama,
+            'harga_per_orang_snapshot' => $hargaPerOrang,
+            'tanggal_experience' => $request->date,
+            'jam_experience' => $request->time,
+            'jumlah_peserta' => $guests,
+            'is_private' => false,
+            'total_harga' => $total,
+            'platform_fee' => $platformFee,
+            'host_earning' => $hostEarning,
+            'coupon_id' => $coupon?->id,
+            'discount_amount' => $discountAmount,
+            'status' => 'pending_payment',
+            'payment_status' => 'unpaid',
+            'notes_for_host' => $request->input('notes_for_host'),
         ]);
 
         if ($coupon) {
@@ -221,14 +221,14 @@ class CheckoutController extends Controller
                 amount: (int) $total,
                 description: "Booking: {$booking->experience_title_snapshot}",
                 customer: [
-                    'given_names'   => Auth::user()->name,
-                    'email'         => Auth::user()->email,
+                    'given_names' => Auth::user()->name,
+                    'email' => Auth::user()->email,
                     'mobile_number' => $request->phone_number,
-                    'items'         => [
+                    'items' => [
                         [
-                            'name'     => $booking->experience_title_snapshot,
+                            'name' => $booking->experience_title_snapshot,
                             'quantity' => $guests,
-                            'price'    => (int) $hargaPerOrang,
+                            'price' => (int) $hargaPerOrang,
                         ],
                     ],
                 ],
@@ -237,9 +237,9 @@ class CheckoutController extends Controller
             );
 
             $booking->update([
-                'xendit_invoice_id'   => $invoice['id'],
-                'xendit_invoice_url'  => $invoice['invoice_url'],
-                'payment_expired_at'  => $invoice['expiry_date'] ?? now()->addHours(24),
+                'xendit_invoice_id' => $invoice['id'],
+                'xendit_invoice_url' => $invoice['invoice_url'],
+                'payment_expired_at' => $invoice['expiry_date'] ?? now()->addHours(24),
             ]);
 
         } catch (\Exception $e) {

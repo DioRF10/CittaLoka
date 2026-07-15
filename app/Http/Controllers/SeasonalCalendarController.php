@@ -55,7 +55,9 @@ class SeasonalCalendarController extends Controller
      */
     public function show(int $id)
     {
-        $event  = SeasonalEvent::active()->findOrFail($id);
+        $event  = SeasonalEvent::with(['experiences' => function($q) {
+            $q->where('status', 'active');
+        }])->active()->findOrFail($id);
         $locale = app()->getLocale();
 
         return view('pages.seasonal-calendar-detail', compact('event', 'locale'));

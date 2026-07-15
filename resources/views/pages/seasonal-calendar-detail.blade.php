@@ -55,20 +55,33 @@
         </div>
     @endif
 
-    {{-- CTA Explore --}}
-    <div style="background:linear-gradient(135deg, #F7F3ED, #F0EDE6); border-radius:16px; padding:2rem; text-align:center; margin-bottom:2rem;">
-        <h3 style="font-family:'Cormorant Garamond',Georgia,serif; font-size:1.5rem; font-weight:600; color:#1a2e1c; margin-bottom:0.5rem;">
-            Experience Bali During This Season
-        </h3>
-        <p style="font-size:0.875rem; color:#6B7280; margin-bottom:1.25rem; line-height:1.6;">
-            Find authentic cultural experiences to book during this special time in Bali.
-        </p>
-        <a href="{{ route('experiences.index') }}"
-            style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.8rem 1.75rem; background:#1a2e1c; color:white; border-radius:10px; font-size:0.875rem; font-weight:600; text-decoration:none;">
-            Explore Experiences
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-        </a>
-    </div>
+    @if($event->experiences->count() > 0)
+        <div style="margin-bottom:3rem;">
+            <h2 style="font-family:'Cormorant Garamond',Georgia,serif; font-size:2rem; font-weight:600; color:#1a2e1c; margin-bottom:1.5rem;">
+                Experiences for this Season
+            </h2>
+            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:1.5rem;">
+                @foreach($event->experiences as $exp)
+                    <x-experience-card :exp="$exp" />
+                @endforeach
+            </div>
+        </div>
+    @else
+        {{-- CTA Explore --}}
+        <div style="background:linear-gradient(135deg, #F7F3ED, #F0EDE6); border-radius:16px; padding:2rem; text-align:center; margin-bottom:2rem;">
+            <h3 style="font-family:'Cormorant Garamond',Georgia,serif; font-size:1.5rem; font-weight:600; color:#1a2e1c; margin-bottom:0.5rem;">
+                Experience Bali During This Season
+            </h3>
+            <p style="font-size:0.875rem; color:#6B7280; margin-bottom:1.25rem; line-height:1.6;">
+                Find authentic cultural experiences to book during this special time in Bali.
+            </p>
+            <a href="{{ route('experiences.index') }}"
+                style="display:inline-flex; align-items:center; gap:0.5rem; padding:0.8rem 1.75rem; background:#1a2e1c; color:white; border-radius:10px; font-size:0.875rem; font-weight:600; text-decoration:none;">
+                Explore Experiences
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+        </div>
+    @endif
 
 </div>
 

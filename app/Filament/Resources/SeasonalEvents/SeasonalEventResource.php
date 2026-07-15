@@ -12,6 +12,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Select;
 use App\Services\CloudinaryService;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
@@ -85,6 +86,15 @@ class SeasonalEventResource extends Resource
                     Toggle::make('is_active')
                         ->label('Aktif Ditampilkan')
                         ->default(true),
+
+                    Select::make('experiences')
+                        ->relationship('experiences', 'slug')
+                        ->getOptionLabelFromRecordUsing(fn ($record) => $record->getJudul())
+                        ->searchable(['slug', 'judul->id'])
+                        ->multiple()
+                        ->preload()
+                        ->label('Experiences Terkait')
+                        ->columnSpanFull(),
                 ]),
         ]);
     }

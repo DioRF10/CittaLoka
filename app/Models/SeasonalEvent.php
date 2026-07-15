@@ -51,4 +51,9 @@ class SeasonalEvent extends Model
     {
         return $query->where('is_active', true);
     }
+
+    public function experiences()
+    {
+        return $this->belongsToMany(Experience::class, 'seasonal_event_experiences', 'seasonal_event_id', 'experience_id');
+    }
 }

@@ -123,7 +123,17 @@ class ExperienceForm
 
                         Toggle::make('is_seasonal')
                             ->label('Experience Musiman')
+                            ->live()
                             ->required(),
+
+                        Select::make('seasonalEvents')
+                            ->relationship('seasonalEvents', 'slug')
+                            ->getOptionLabelFromRecordUsing(fn ($record) => $record->getNama())
+                            ->searchable(['slug', 'nama->id'])
+                            ->multiple()
+                            ->preload()
+                            ->label('Seasonal Events')
+                            ->visible(fn (\Filament\Forms\Get $get) => $get('is_seasonal')),
 
                         Textarea::make('admin_note')
                             ->label('Catatan Admin')

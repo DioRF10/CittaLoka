@@ -208,7 +208,7 @@
                                                 style="padding:0.45rem 1rem; background:#1E3A2F; color:white; border-radius:8px; font-size:0.8rem; font-weight:500; text-decoration:none;">
                                                 Write a Review
                                             </a>
-                                            <a href="#"
+                                            <a href="{{ route('memory-book.show', $booking->kode_booking) }}"
                                                 style="padding:0.45rem 1rem; background:white; color:#1E3A2F; border:1.5px solid #E2DDD5; border-radius:8px; font-size:0.8rem; font-weight:500; text-decoration:none;">
                                                 Memory Book
                                             </a>
@@ -217,7 +217,7 @@
                                             <span style="padding:0.45rem 1rem; background:white; color:#7A7A6E; border:1.5px solid #E2DDD5; border-radius:8px; font-size:0.8rem; font-weight:500;">
                                                 {{ $booking->review->status === 'approved' ? 'Review Tayang' : ($booking->review->status === 'rejected' ? 'Review Ditolak' : 'Review Menunggu Approval') }}
                                             </span>
-                                            <a href="#"
+                                            <a href="{{ route('memory-book.show', $booking->kode_booking) }}"
                                                 style="padding:0.45rem 1rem; background:white; color:#1E3A2F; border:1.5px solid #E2DDD5; border-radius:8px; font-size:0.8rem; font-weight:500; text-decoration:none;">
                                                 View Memory Book
                                             </a>

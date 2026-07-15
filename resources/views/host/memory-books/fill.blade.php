@@ -324,12 +324,26 @@
                     {{-- Upload gallery baru --}}
                     @php $maxUpload = 20 - $memoryBook->photos->count(); @endphp
                     @if($maxUpload > 0)
-                        <div>
+                        <div x-data>
                             @if($memoryBook->photos->isNotEmpty())
                                 <div style="font-size:0.78rem; font-weight:600; color:#4A4A4A; margin-bottom:0.75rem;">Add new
                                     photos (max {{ $maxUpload }} more):</div>
                             @endif
-                            <label
+
+                            {{-- Hidden input, dipanggil via $refs --}}
+                            <input
+                                type="file"
+                                name="photos[]"
+                                multiple
+                                accept="image/jpeg,image/png,image/jpg,image/webp"
+                                style="display:none;"
+                                x-ref="galleryInput"
+                                @change="$dispatch('gallery-changed', $event)">
+
+                            {{-- Drop zone / tombol upload --}}
+                            <div
+                                @click="$refs.galleryInput.click()"
+                                @gallery-changed.window="previewPhotos($event.detail)"
                                 style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.5rem; padding:2rem; border:2px dashed #E8E0D3; border-radius:12px; cursor:pointer; background:#FAFAF8; transition:border-color 0.2s;"
                                 onmouseover="this.style.borderColor='#1E3A2F'" onmouseout="this.style.borderColor='#E8E0D3'">
                                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C4783A" stroke-width="1.5"
@@ -338,22 +352,26 @@
                                     <circle cx="8.5" cy="8.5" r="1.5" />
                                     <polyline points="21 15 16 10 5 21" />
                                 </svg>
-                                <span style="font-size:0.82rem; color:#7A7A6E; text-align:center;">Click to upload multiple
-                                    photos at once<br><span style="font-size:0.72rem; color:#9CA3AF;">JPG, PNG — max 5MB per
-                                        photo, max {{ $maxUpload }} photos</span></span>
-                                <input type="file" name="photos[]" multiple accept="image/jpeg,image/png,image/jpg"
-                                    style="display:none;" x-on:change="previewPhotos($event)">
-                            </label>
+                                <span style="font-size:0.82rem; color:#7A7A6E; text-align:center;">
+                                    Klik untuk pilih foto (bisa pilih banyak sekaligus)<br>
+                                    <span style="font-size:0.72rem; color:#9CA3AF;">JPG, PNG, WEBP — maks 5MB per foto, maks {{ $maxUpload }} foto</span>
+                                </span>
+                            </div>
 
                             {{-- Preview new photos --}}
                             <div x-show="newPhotos.length > 0" style="margin-top:0.75rem;">
                                 <div style="font-size:0.72rem; color:#9CA3AF; margin-bottom:0.5rem;"
-                                    x-text="`${newPhotos.length} photos selected`"></div>
+                                    x-text="`${newPhotos.length} foto dipilih (belum disimpan)`"></div>
                                 <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:0.75rem;">
                                     <template x-for="(photo, i) in newPhotos" :key="i">
                                         <div
-                                            style="aspect-ratio:4/3; border-radius:10px; overflow:hidden; border:1.5px solid #E8E0D3;">
+                                            style="position:relative; aspect-ratio:4/3; border-radius:10px; overflow:hidden; border:1.5px solid #C4783A;">
                                             <img :src="photo" style="width:100%; height:100%; object-fit:cover;">
+                                            <button type="button"
+                                                @click.stop="removeNewPhoto(i)"
+                                                style="position:absolute; top:0.3rem; right:0.3rem; width:24px; height:24px; border-radius:50%; background:rgba(0,0,0,0.6); border:none; color:white; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.7rem;">
+                                                ✕
+                                            </button>
                                         </div>
                                     </template>
                                 </div>
@@ -409,6 +427,7 @@
                         : []
                     ),
                     newPhotos: [],
+                    rawFiles: [],
                     coverPreview: null,
 
                     addHighlight() {
@@ -429,14 +448,55 @@
                         reader.readAsDataURL(file);
                     },
 
-                    previewPhotos(event) {
-                        const files = Array.from(event.target.files);
-                        this.newPhotos = [];
-                        files.forEach(file => {
+                    previewPhotos(eventOrNative) {
+                        // bisa dapat native Event (dari @change) atau CustomEvent detail
+                        const target = eventOrNative?.target ?? eventOrNative;
+                        const files = Array.from(target?.files ?? []);
+                        if (!files.length) return;
+
+                        const maxUpload = {{ 20 - $memoryBook->photos->count() }};
+                        const maxSize = 5 * 1024 * 1024; // 5MB
+                        let oversizedCount = 0;
+                        
+                        // Tambahkan file baru ke array rawFiles (akumulasi)
+                        for (let file of files) {
+                            if (file.size > maxSize) {
+                                oversizedCount++;
+                                continue;
+                            }
+                            if (this.rawFiles.length < maxUpload) {
+                                this.rawFiles.push(file);
+                            }
+                        }
+
+                        if (oversizedCount > 0) {
+                            alert(oversizedCount + " foto gagal ditambahkan karena ukurannya melebihi batas maksimal 5MB per foto.");
+                        }
+
+                        // Rebuild FileList di hidden input menggunakan DataTransfer
+                        const dt = new DataTransfer();
+                        this.rawFiles.forEach(f => dt.items.add(f));
+                        this.$refs.galleryInput.files = dt.files;
+
+                        // Buat preview untuk semua file yang terkumpul
+                        const readers = this.rawFiles.map(file => new Promise(resolve => {
                             const reader = new FileReader();
-                            reader.onload = (e) => this.newPhotos.push(e.target.result);
+                            reader.onload = e => resolve(e.target.result);
                             reader.readAsDataURL(file);
+                        }));
+
+                        Promise.all(readers).then(results => {
+                            this.newPhotos = results;
                         });
+                    },
+
+                    removeNewPhoto(index) {
+                        this.rawFiles.splice(index, 1);
+                        this.newPhotos.splice(index, 1);
+                        
+                        const dt = new DataTransfer();
+                        this.rawFiles.forEach(f => dt.items.add(f));
+                        this.$refs.galleryInput.files = dt.files;
                     },
 
                     deletePhoto(photoId, el) {

@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -49,69 +49,87 @@
         /* ── Shell Layout ── */
         .onboarding-shell {
             display: grid;
-            grid-template-columns: 380px 1fr;
+            grid-template-columns: 420px 1fr;
             min-height: 100vh;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 960px) {
             .onboarding-shell {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* ── Left Panel ── */
+        /* ── Left Panel — Full Photo ── */
         .left-panel {
-            background: var(--cream);
-            padding: 2.5rem 2.25rem;
-            display: flex;
-            flex-direction: column;
             position: sticky;
             top: 0;
             height: 100vh;
-            overflow-y: auto;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 960px) {
             .left-panel {
-                position: relative;
-                height: auto;
-                padding: 1.75rem 1.5rem;
+                display: none;
             }
         }
 
-        .left-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            margin-bottom: 2.5rem;
+        /* Background photo that switches per step */
+        .left-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.6s ease;
+            z-index: 1;
         }
 
-        .left-logo-mark {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: var(--green-dark);
+        /* Dark overlay gradient */
+        .left-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom,
+                    rgba(15, 27, 17, 0.22) 0%,
+                    rgba(15, 27, 17, 0.88) 100%);
+            z-index: 2;
+        }
+
+        /* Logo top-left */
+        .left-logo {
+            position: absolute;
+            top: 2.5rem;
+            left: 2.5rem;
+            z-index: 3;
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: var(--cream);
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.1rem;
+            gap: 0.55rem;
+        }
+
+        .left-logo-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--terracotta);
             flex-shrink: 0;
         }
 
         .left-logo-text {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: var(--green-dark);
-            line-height: 1.1;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.01em;
+            line-height: 1;
         }
 
-        .left-logo-tagline {
-            font-size: 0.68rem;
-            color: var(--gray-text);
-            letter-spacing: 0.03em;
+        /* Bottom text content */
+        .left-content {
+            position: relative;
+            z-index: 3;
+            padding: 2.5rem;
         }
 
         .left-eyebrow {
@@ -121,60 +139,33 @@
             text-transform: uppercase;
             color: var(--terracotta);
             margin-bottom: 0.6rem;
+            display: block;
         }
 
         .left-title {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.9rem;
+            font-size: 2.4rem;
             font-weight: 500;
-            color: var(--green-dark);
-            line-height: 1.2;
-            margin-bottom: 0.9rem;
+            color: #fff;
+            line-height: 1.15;
+            margin-bottom: 0.85rem;
         }
 
         .left-desc {
             font-size: 0.88rem;
-            color: var(--gray-text);
+            color: rgba(255, 255, 255, 0.78);
             line-height: 1.65;
-            margin-bottom: 1.75rem;
-        }
-
-        .left-image {
-            border-radius: 14px;
-            aspect-ratio: 3/4;
-            background: linear-gradient(160deg, #1E3A2F 0%, #2D4A32 55%, #C4783A 130%);
-            margin-bottom: 1.5rem;
-            flex-grow: 1;
-            min-height: 180px;
-            display: flex;
-            align-items: flex-end;
-            padding: 1.25rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .left-image::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.08), transparent 60%);
-        }
-
-        .left-image-caption {
-            color: rgba(255, 255, 255, 0.85);
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 0.95rem;
             font-style: italic;
-            position: relative;
-            z-index: 1;
         }
 
+        /* Info box (glass-style) */
         .left-info-box {
-            background: #fff;
-            border: 1px solid var(--gray-border);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(8px);
             border-radius: 12px;
-            padding: 1rem 1.1rem;
-            margin-bottom: 1rem;
+            padding: 0.9rem 1rem;
+            margin-bottom: 1.25rem;
             display: flex;
             gap: 0.75rem;
             align-items: flex-start;
@@ -183,44 +174,8 @@
         .left-info-icon {
             width: 32px;
             height: 32px;
-            border-radius: 8px;
-            background: var(--cream);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 0.95rem;
-        }
-
-        .left-info-title {
-            font-size: 0.82rem;
-            font-weight: 700;
-            color: var(--green-dark);
-            margin-bottom: 0.2rem;
-        }
-
-        .left-info-text {
-            font-size: 0.78rem;
-            color: var(--gray-text);
-            line-height: 1.5;
-        }
-
-        .left-help-box {
-            background: #fff;
-            border: 1px solid var(--gray-border);
-            border-radius: 12px;
-            padding: 1.1rem;
-            margin-top: auto;
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-        }
-
-        .left-help-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--cream);
+            border-radius: 10px;
+            background: rgba(196, 120, 58, 0.25);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -228,32 +183,62 @@
             font-size: 1rem;
         }
 
-        .left-help-title {
+        .left-info-title {
             font-size: 0.82rem;
             font-weight: 700;
-            color: var(--green-dark);
-            margin-bottom: 0.15rem;
+            color: #fff;
+            margin-bottom: 0.2rem;
         }
 
-        .left-help-text {
-            font-size: 0.74rem;
-            color: var(--gray-text);
-            line-height: 1.4;
+        .left-info-text {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.5;
+        }
+
+        /* Benefit list */
+        .left-benefit-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.85rem;
             margin-bottom: 0.5rem;
         }
 
-        .btn-help {
-            font-size: 0.74rem;
-            font-weight: 600;
-            color: var(--green-dark);
-            background: transparent;
-            border: 1.5px solid var(--gray-border);
-            padding: 0.35rem 0.8rem;
-            border-radius: 8px;
-            cursor: pointer;
+        .left-benefit-item {
+            display: flex;
+            gap: 0.7rem;
+            align-items: flex-start;
         }
 
-        /* ── Right Panel ── */
+        .left-benefit-dot {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: rgba(196, 120, 58, 0.25);
+            border: 1.5px solid rgba(196, 120, 58, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+            font-size: 0.7rem;
+            color: var(--terracotta);
+            font-weight: 700;
+        }
+
+        .left-benefit-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.1rem;
+        }
+
+        .left-benefit-desc {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.4;
+        }
+/* ── Right Panel ── */
         .right-panel {
             padding: 2rem 3rem 4rem;
             max-width: 980px;
@@ -286,74 +271,6 @@
             cursor: pointer;
         }
 
-        /* ── Step Indicator ── */
-        .step-indicator {
-            display: flex;
-            align-items: center;
-            margin-bottom: 2.5rem;
-            overflow-x: auto;
-        }
-
-        .step-node {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex-shrink: 0;
-            min-width: 90px;
-        }
-
-        .step-circle {
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            font-weight: 700;
-            background: #fff;
-            border: 2px solid var(--gray-border);
-            color: var(--gray-text);
-            transition: all 0.25s;
-        }
-
-        .step-circle.done {
-            background: var(--green-dark);
-            border-color: var(--green-dark);
-            color: #fff;
-        }
-
-        .step-circle.active {
-            background: var(--green-dark);
-            border-color: var(--green-dark);
-            color: #fff;
-        }
-
-        .step-label {
-            font-size: 0.7rem;
-            color: var(--gray-text);
-            margin-top: 0.5rem;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .step-label.active-label {
-            color: var(--green-dark);
-            font-weight: 700;
-        }
-
-        .step-line {
-            flex: 1;
-            height: 2px;
-            background: var(--gray-border);
-            margin: 0 0.25rem;
-            margin-bottom: 1.6rem;
-            min-width: 24px;
-        }
-
-        .step-line.done {
-            background: var(--green-dark);
-        }
 
         /* ── Form Card ── */
         .form-card {
@@ -379,12 +296,12 @@
         .form-header-icon {
             width: 46px;
             height: 46px;
-            border-radius: 12px;
+            border-radius: 14px;
             background: var(--cream);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
+            color: var(--green-dark);
             flex-shrink: 0;
         }
 
@@ -645,9 +562,21 @@
         }
 
         .tip-icon {
-            font-size: 1rem;
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            background: rgba(30,58,47,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             flex-shrink: 0;
-            margin-top: 0.1rem;
+            color: var(--green-dark);
+            margin-top: 0.05rem;
+        }
+
+        .tip-box.info .tip-icon {
+            background: rgba(37,99,168,0.10);
+            color: #2563A8;
         }
 
         .tip-title {
@@ -746,8 +675,10 @@
         }
 
         .ktp-placeholder-icon {
-            font-size: 1.8rem;
-            opacity: 0.4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #C4BEB1;
         }
 
         .btn-upload-ktp {
@@ -969,15 +900,16 @@
         }
 
         .welcome-benefit-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            background: var(--cream);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.05rem;
             flex-shrink: 0;
+            color: var(--green-dark);
+            margin-top: 0.1rem;
         }
 
         .welcome-benefit-title {
@@ -1074,45 +1006,50 @@
         ═══════════════════════════════════════════════ --}}
         <div class="left-panel">
 
+            {{-- Background photo — changes per step --}}
+            <img x-show="step === 1" class="left-bg" src="{{ asset('images/onboarding-step1.png') }}" alt="Host welcome">
+            <img x-show="step === 2" class="left-bg" src="{{ asset('images/onboarding-step2.png') }}" alt="Location">
+            <img x-show="step === 3" class="left-bg" src="{{ asset('images/onboarding-step3.png') }}" alt="Host profile">
+            <img x-show="step === 4" class="left-bg" src="{{ asset('images/onboarding-step4.png') }}" alt="Verification">
+            <img x-show="step === 5" class="left-bg" src="{{ asset('images/auth/travelling.png') }}" alt="Bank info">
+            <img x-show="step === 6" class="left-bg" src="{{ asset('images/onboarding-step1.png') }}" alt="Completion">
+
+            {{-- Dark overlay --}}
+            <div class="left-overlay"></div>
+
+            {{-- Logo top-left --}}
             <div class="left-logo">
-                <div class="left-logo-mark">C</div>
-                <div>
-                    <div class="left-logo-text">CittaLoka</div>
-                    <div class="left-logo-tagline">Soulful Journeys, Rooted in Bali</div>
-                </div>
+                <div class="left-logo-dot"></div>
+                <span class="left-logo-text">CittaLoka</span>
             </div>
 
             {{-- Step 1 content --}}
             <template x-if="step === 1">
-                <div style="display:flex; flex-direction:column; flex:1;">
-                    <p class="left-eyebrow">Why Join</p>
+                <div class="left-content">
+                    <span class="left-eyebrow">Why Join</span>
                     <h1 class="left-title">Why become<br>a Host on CittaLoka?</h1>
-                    <p class="left-desc">CittaLoka helps you share knowledge and culture, while earning fair income from
-                        every experience you share.</p>
+                    <p class="left-desc">CittaLoka helps you share knowledge and culture, while earning fair income from every experience you share.</p>
 
-                    <div class="welcome-benefit-list">
-                        <div class="welcome-benefit-item">
-                            <div class="welcome-benefit-icon">💰</div>
+                    <div class="left-benefit-list" style="margin-top:1.25rem;">
+                        <div class="left-benefit-item">
+                            <div class="left-benefit-dot">✦</div>
                             <div>
-                                <div class="welcome-benefit-title">90% of every booking</div>
-                                <div class="welcome-benefit-desc">We only take 10% commission for platform operations.
-                                </div>
+                                <div class="left-benefit-title">90% of every booking</div>
+                                <div class="left-benefit-desc">We only take 10% commission for platform operations.</div>
                             </div>
                         </div>
-                        <div class="welcome-benefit-item">
-                            <div class="welcome-benefit-icon">⚡</div>
+                        <div class="left-benefit-item">
+                            <div class="left-benefit-dot">✦</div>
                             <div>
-                                <div class="welcome-benefit-title">Payout otomatis</div>
-                                <div class="welcome-benefit-desc">Dana dari booking dicairkan otomatis ke rekening Anda.
-                                </div>
+                                <div class="left-benefit-title">Payout otomatis</div>
+                                <div class="left-benefit-desc">Dana dari booking dicairkan otomatis ke rekening Anda.</div>
                             </div>
                         </div>
-                        <div class="welcome-benefit-item">
-                            <div class="welcome-benefit-icon">🛡️</div>
+                        <div class="left-benefit-item">
+                            <div class="left-benefit-dot">✦</div>
                             <div>
-                                <div class="welcome-benefit-title">Kurasi & dukungan tim</div>
-                                <div class="welcome-benefit-desc">Kami memastikan setiap host berkualitas dan siap
-                                    dibantu.</div>
+                                <div class="left-benefit-title">Kurasi & dukungan tim</div>
+                                <div class="left-benefit-desc">Kami memastikan setiap host berkualitas dan siap dibantu.</div>
                             </div>
                         </div>
                     </div>
@@ -1121,112 +1058,90 @@
 
             {{-- Step 2 content --}}
             <template x-if="step === 2">
-                <div style="display:flex; flex-direction:column; flex:1;">
-                    <p class="left-eyebrow">Langkah 2 dari 5</p>
+                <div class="left-content">
+                    <span class="left-eyebrow">Langkah 2 dari 5</span>
                     <h1 class="left-title">Bahasa & lokasi pengalaman Anda</h1>
-                    <p class="left-desc">Informasi ini membantu kami menerjemahkan konten Anda dan menampilkan
-                        pengalaman Anda kepada wisatawan yang tepat.</p>
+                    <p class="left-desc">Informasi ini membantu kami menerjemahkan konten Anda dan menampilkan pengalaman Anda kepada wisatawan yang tepat.</p>
 
                     <div class="left-info-box">
-                        <div class="left-info-icon">💡</div>
+                        <div class="left-info-icon" style="color:white; display:flex; align-items:center; justify-content:center;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        </div>
                         <div>
                             <div class="left-info-title">Kenapa informasi ini penting?</div>
-                            <div class="left-info-text">Language and location help us translate your story accurately
-                                and show your experience to relevant travelers.</div>
+                            <div class="left-info-text">Language and location help us translate your story accurately and show your experience to relevant travelers.</div>
                         </div>
-                    </div>
-
-                    <div class="left-image" style="flex-grow:1;">
-                        <span class="left-image-caption">Setiap desa punya cerita untuk dibagikan.</span>
                     </div>
                 </div>
             </template>
 
             {{-- Step 3 content --}}
             <template x-if="step === 3">
-                <div style="display:flex; flex-direction:column; flex:1;">
-                    <p class="left-eyebrow">Langkah 3 dari 5</p>
+                <div class="left-content">
+                    <span class="left-eyebrow">Langkah 3 dari 5</span>
                     <h1 class="left-title">Ceritakan tentang diri Anda</h1>
-                    <p class="left-desc">A complete profile helps travelers get to know you and feel inspired by the
-                        experiences you share.</p>
+                    <p class="left-desc">A complete profile helps travelers get to know you and feel inspired by the experiences you share.</p>
 
                     <div class="left-info-box">
-                        <div class="left-info-icon">❤️</div>
+                        <div class="left-info-icon" style="color:white; display:flex; align-items:center; justify-content:center;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        </div>
                         <div>
                             <div class="left-info-title">Tips</div>
-                            <div class="left-info-text">Keaslian cerita Anda adalah kekuatan utama. Bagikan dengan jujur
-                                dan autentik tentang diri dan keahlian Anda.</div>
+                            <div class="left-info-text">Keaslian cerita Anda adalah kekuatan utama. Bagikan dengan jujur dan autentik tentang diri dan keahlian Anda.</div>
                         </div>
-                    </div>
-
-                    <div class="left-image" style="flex-grow:1;">
-                        <span class="left-image-caption">Cerita Anda, warisan budaya yang hidup.</span>
                     </div>
                 </div>
             </template>
 
             {{-- Step 4 content --}}
             <template x-if="step === 4">
-                <div style="display:flex; flex-direction:column; flex:1;">
-                    <p class="left-eyebrow">Langkah 4 dari 5</p>
+                <div class="left-content">
+                    <span class="left-eyebrow">Langkah 4 dari 5</span>
                     <h1 class="left-title">Verifikasi identitas untuk keamanan bersama</h1>
-                    <p class="left-desc">Kami melakukan verifikasi identitas untuk memastikan keamanan komunitas
-                        CittaLoka dan membangun kepercayaan dengan wisatawan.</p>
+                    <p class="left-desc">Kami melakukan verifikasi identitas untuk memastikan keamanan komunitas CittaLoka dan membangun kepercayaan dengan wisatawan.</p>
 
                     <div class="left-info-box">
-                        <div class="left-info-icon">🛡️</div>
+                        <div class="left-info-icon" style="color:white; display:flex; align-items:center; justify-content:center;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        </div>
                         <div>
                             <div class="left-info-title">Data Anda aman</div>
-                            <div class="left-info-text">Informasi identitas akan dienkripsi dan hanya digunakan untuk
-                                keperluan verifikasi. Kami tidak akan membagikannya ke pihak lain.</div>
+                            <div class="left-info-text">Informasi identitas akan dienkripsi dan hanya digunakan untuk keperluan verifikasi. Kami tidak akan membagikannya ke pihak lain.</div>
                         </div>
-                    </div>
-
-                    <div class="left-image" style="flex-grow:1;">
-                        <span class="left-image-caption">Kepercayaan dibangun dari transparansi.</span>
                     </div>
                 </div>
             </template>
 
             {{-- Step 5 content --}}
             <template x-if="step === 5">
-                <div style="display:flex; flex-direction:column; flex:1;">
-                    <p class="left-eyebrow">Langkah 5 dari 5</p>
+                <div class="left-content">
+                    <span class="left-eyebrow">Langkah 5 dari 5</span>
                     <h1 class="left-title">Informasi rekening untuk pencairan dana</h1>
-                    <p class="left-desc">Rekening ini digunakan untuk menerima pembayaran dari setiap booking yang Anda
-                        terima. Pastikan datanya benar.</p>
+                    <p class="left-desc">Rekening ini digunakan untuk menerima pembayaran dari setiap booking yang Anda terima. Pastikan datanya benar.</p>
 
                     <div class="left-info-box">
-                        <div class="left-info-icon">⚙️</div>
+                        <div class="left-info-icon" style="color:white; display:flex; align-items:center; justify-content:center;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        </div>
                         <div>
                             <div class="left-info-title">Bagaimana cara kerjanya?</div>
-                            <div class="left-info-text">Kami otomatis memverifikasi nama pemilik rekening Anda begitu
-                                disubmit. Jika ada ketidaksesuaian, tim kami akan meninjau secara singkat — Anda tidak
-                                perlu menunggu untuk lanjut.</div>
+                            <div class="left-info-text">Kami otomatis memverifikasi nama pemilik rekening Anda begitu disubmit. Jika ada ketidaksesuaian, tim kami akan meninjau secara singkat — Anda tidak perlu menunggu untuk lanjut.</div>
                         </div>
-                    </div>
-
-                    <div class="left-image" style="flex-grow:1;">
-                        <span class="left-image-caption">Fair experiences start with trust.</span>
                     </div>
                 </div>
             </template>
 
             {{-- Completion --}}
             <template x-if="step === 6">
-                <div style="display:flex; flex-direction:column; flex:1;">
-                    <p class="left-eyebrow">Selesai</p>
+                <div class="left-content">
+                    <span class="left-eyebrow">Selesai</span>
                     <h1 class="left-title">Welcome to the CittaLoka community</h1>
-                    <p class="left-desc">Anda sudah menjadi bagian dari host yang membagikan budaya Bali kepada dunia.
-                    </p>
-                    <div class="left-image" style="flex-grow:1;">
-                        <span class="left-image-caption">Perjalanan baru dimulai dari sini.</span>
-                    </div>
+                    <p class="left-desc">Anda sudah menjadi bagian dari host yang membagikan budaya Bali kepada dunia.</p>
                 </div>
             </template>
 
         </div>
-
 
         {{-- ═══════════════════════════════════════════════
         RIGHT PANEL — form per step
@@ -1243,43 +1158,18 @@
                 </button>
             </div>
 
-            {{-- Step Indicator --}}
-            <div class="step-indicator">
-                <template x-for="(label, index) in stepLabels" :key="index">
-
-                    <div style="display:flex; align-items:center; flex:1;">
-
-                        <!-- Garis sebelum node selain node pertama -->
-                        <div x-show="index > 0" class="step-line" :class="{ done: step > index }">
-                        </div>
-
-                        <!-- Bulatan -->
-                        <div class="step-node">
-                            <div class="step-circle" :class="{ done: step > index + 1, active: step === index + 1 }">
-
-                                <span x-show="step > index + 1">✓</span>
-                                <span x-show="step <= index + 1" x-text="index + 1"></span>
-
-                            </div>
-
-                            <div class="step-label" :class="{ 'active-label': step === index + 1 }" x-text="label">
-                            </div>
-                        </div>
-
-                    </div>
-
-                </template>
-            </div>
 
             {{-- ═══════════════════ STEP 1: WELCOME ═══════════════════ --}}
             <div x-show="step === 1" class="form-card">
-                <h2 class="form-title">Welcome, future Host! 👋</h2>
+                <h2 class="form-title">Welcome, future Host!</h2>
                 <p class="form-subtitle" style="margin-bottom:1.75rem;">Sebelum memulai, mari pahami bagaimana CittaLoka
                     bekerja dan keuntungan menjadi bagian dari kami.</p>
 
                 <div class="welcome-benefit-list" style="margin-bottom:1.75rem;">
                     <div class="welcome-benefit-item">
-                        <div class="welcome-benefit-icon">💰</div>
+                        <div class="welcome-benefit-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                        </div>
                         <div>
                             <div class="welcome-benefit-title">90% dari setiap booking untuk Anda</div>
                             <div class="welcome-benefit-desc">Kami hanya mengambil 10% komisi yang digunakan untuk
@@ -1287,7 +1177,9 @@
                         </div>
                     </div>
                     <div class="welcome-benefit-item">
-                        <div class="welcome-benefit-icon">⚡</div>
+                        <div class="welcome-benefit-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        </div>
                         <div>
                             <div class="welcome-benefit-title">Payout otomatis ke rekening Anda</div>
                             <div class="welcome-benefit-desc">Dana dari booking yang sudah selesai akan dicairkan
@@ -1295,7 +1187,9 @@
                         </div>
                     </div>
                     <div class="welcome-benefit-item">
-                        <div class="welcome-benefit-icon">🛡️</div>
+                        <div class="welcome-benefit-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
                         <div>
                             <div class="welcome-benefit-title">Kurasi & dukungan tim</div>
                             <div class="welcome-benefit-desc">Kami memastikan setiap host berkualitas dan siap
@@ -1303,7 +1197,9 @@
                         </div>
                     </div>
                     <div class="welcome-benefit-item">
-                        <div class="welcome-benefit-icon">👥</div>
+                        <div class="welcome-benefit-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        </div>
                         <div>
                             <div class="welcome-benefit-title">Komunitas & promosi</div>
                             <div class="welcome-benefit-desc">Bergabung dengan komunitas host lokal dan dapatkan promosi
@@ -1313,7 +1209,9 @@
                 </div>
 
                 <div class="tip-box" style="margin-bottom:1.75rem;">
-                    <span class="tip-icon">💡</span>
+                    <span class="tip-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    </span>
                     <div>
                         <div class="tip-title">Kami percaya setiap pengalaman punya nilai</div>
                         <div class="tip-text">Dari memasak makanan tradisional, membuat kerajinan tangan, hingga upacara
@@ -1345,7 +1243,9 @@
             {{-- ═══════════════════ STEP 2: BAHASA & LOKASI ═══════════════════ --}}
             <div x-show="step === 2" class="form-card">
                 <div class="form-header">
-                    <div class="form-header-icon">🌐</div>
+                    <div class="form-header-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    </div>
                     <div>
                         <h2 class="form-title">Bahasa & Lokasi</h2>
                         <p class="form-subtitle">Informasi ini membantu kami menerjemahkan konten Anda dan menampilkan
@@ -1425,7 +1325,9 @@
             {{-- ═══════════════════ STEP 3: PROFIL HOST ═══════════════════ --}}
             <div x-show="step === 3" class="form-card">
                 <div class="form-header">
-                    <div class="form-header-icon">👤</div>
+                    <div class="form-header-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </div>
                     <div>
                         <h2 class="form-title">Host Profile (Story)</h2>
                         <p class="form-subtitle">Tell travelers who you are and what you want to share with them.
@@ -1455,7 +1357,9 @@
                         <div class="avatar-upload-row">
                             <div class="avatar-preview">
                                 <img x-show="avatarPreview" :src="avatarPreview" alt="Preview">
-                                <span x-show="!avatarPreview" style="font-size:1.5rem;">🙂</span>
+                                <span x-show="!avatarPreview" style="display:flex;align-items:center;justify-content:center;color:#9CA3AF;">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                </span>
                             </div>
                             <div>
                                 <button type="button" class="btn-upload-photo"
@@ -1504,7 +1408,9 @@
                 </div>
 
                 <div class="tip-box">
-                    <span class="tip-icon">🌿</span>
+                    <span class="tip-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </span>
                     <div>
                         <div class="tip-title">Mengapa profil ini penting?</div>
                         <div class="tip-text">Profil Anda akan ditampilkan kepada wisatawan dan membantu mereka memilih
@@ -1536,7 +1442,9 @@
             {{-- ═══════════════════ STEP 4: VERIFIKASI IDENTITAS ═══════════════════ --}}
             <div x-show="step === 4" class="form-card">
                 <div class="form-header">
-                    <div class="form-header-icon">🛡️</div>
+                    <div class="form-header-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
                     <div>
                         <h2 class="form-title">Verifikasi Identitas</h2>
                         <p class="form-subtitle">Upload your ID for account verification. This process helps us keep the
@@ -1545,7 +1453,9 @@
                 </div>
 
                 <div class="tip-box info">
-                    <span class="tip-icon">🕐</span>
+                    <span class="tip-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </span>
                     <div>
                         <div class="tip-title" style="color:#2563A8;">Proses verifikasi: 1 x 24 jam (hari kerja)</div>
                         <div class="tip-text">Tim kami akan memeriksa dokumen Anda dan mengirimkan hasilnya melalui
@@ -1562,7 +1472,9 @@
                         <div class="ktp-card-label">Foto KTP Bagian Depan <span class="required">*</span></div>
                         <div class="ktp-preview-box">
                             <img x-show="ktpFrontPreview" :src="ktpFrontPreview" alt="KTP depan">
-                            <span class="ktp-placeholder-icon" x-show="!ktpFrontPreview">🪪</span>
+                            <span class="ktp-placeholder-icon" x-show="!ktpFrontPreview" style="display:flex;align-items:center;justify-content:center;color:#C4BEB1;">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                            </span>
                         </div>
                         <button type="button" class="btn-upload-ktp" x-on:click="$refs.ktpFrontInput.click()">↑ Upload
                             Foto Depan</button>
@@ -1575,7 +1487,9 @@
                         <div class="ktp-card-label">Foto Selfie dengan KTP <span class="required">*</span></div>
                         <div class="ktp-preview-box">
                             <img x-show="ktpSelfiePreview" :src="ktpSelfiePreview" alt="Selfie dengan KTP">
-                            <span class="ktp-placeholder-icon" x-show="!ktpSelfiePreview">🤳</span>
+                            <span class="ktp-placeholder-icon" x-show="!ktpSelfiePreview" style="display:flex;align-items:center;justify-content:center;color:#C4BEB1;">
+                                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
+                            </span>
                         </div>
                         <button type="button" class="btn-upload-ktp" x-on:click="$refs.ktpSelfieInput.click()">↑ Upload
                             Foto Selfie</button>
@@ -1598,7 +1512,9 @@
                 </div>
 
                 <div class="tip-box info" style="margin-bottom:0;">
-                    <span class="tip-icon">ℹ️</span>
+                    <span class="tip-icon">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    </span>
                     <div style="flex:1;">
                         <div class="tip-title" style="color:#2563A8;">Belum punya KTP?</div>
                         <div class="tip-text">Jika Anda belum memiliki KTP, silakan hubungi tim kami untuk alternatif
@@ -1633,7 +1549,9 @@
             {{-- ═══════════════════ STEP 5: INFORMASI BANK ═══════════════════ --}}
             <div x-show="step === 5" class="form-card">
                 <div class="form-header">
-                    <div class="form-header-icon">🏦</div>
+                    <div class="form-header-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="10" width="18" height="11" rx="1"/><path d="M3 10l9-7 9 7"/><line x1="12" y1="10" x2="12" y2="21"/><line x1="7" y1="10" x2="7" y2="21"/><line x1="17" y1="10" x2="17" y2="21"/></svg>
+                    </div>
                     <div>
                         <h2 class="form-title">Informasi Bank</h2>
                         <p class="form-subtitle">Rekening ini digunakan untuk menerima pencairan dana dari setiap
@@ -1725,13 +1643,17 @@
 
             {{-- ═══════════════════ STEP 6: COMPLETION ═══════════════════ --}}
             <div x-show="step === 6" class="form-card completion-wrap">
-                <div class="completion-icon">🏡</div>
+                <div class="completion-icon" style="display:flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;background:var(--cream);margin:0 auto 1.25rem;">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--green-dark)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                </div>
                 <h2 class="completion-title">Congratulations, you're officially a Host!</h2>
                 <p class="completion-sub">Welcome to the CittaLoka community. Your ID is under review —
                     kami akan memberi tahu hasilnya dalam 24 jam melalui email.</p>
 
                 <div class="bank-status-box verified" style="text-align:left;" x-show="finalBankStatus === 'verified'">
-                    <span class="bank-status-icon">✅</span>
+                    <span class="bank-status-icon" style="display:flex;align-items:center;justify-content:center;color:#16A34A;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </span>
                     <div>
                         <div class="bank-status-title">Rekening terverifikasi!</div>
                         <div class="bank-status-text">Anda siap menerima pencairan dana dari booking pertama Anda.</div>
@@ -1740,7 +1662,9 @@
 
                 <div class="bank-status-box needs-review" style="text-align:left;"
                     x-show="finalBankStatus === 'needs_review'">
-                    <span class="bank-status-icon">⏳</span>
+                    <span class="bank-status-icon" style="display:flex;align-items:center;justify-content:center;color:var(--terracotta);">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </span>
                     <div>
                         <div class="bank-status-title">Rekening tersimpan</div>
                         <div class="bank-status-text">Tim kami akan meninjau secara singkat sebelum pencairan dana

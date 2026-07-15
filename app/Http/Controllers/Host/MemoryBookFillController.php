@@ -55,6 +55,7 @@ class MemoryBookFillController extends Controller
             'pesan_penutup' => 'nullable|string',
             'highlight_items' => 'nullable|string',
             'cover_photo' => 'nullable|image|mimes:jpeg,jpg,png|max:5120',
+            'photos' => 'nullable|array|max:20',
             'photos.*' => 'nullable|image|mimes:jpeg,jpg,png|max:5120',
         ]);
 
@@ -86,7 +87,12 @@ class MemoryBookFillController extends Controller
             $existingCount = $memoryBook->photos()->count();
             $maxAllowed = 20 - $existingCount;
 
-            foreach (array_slice($request->file('photos'), 0, $maxAllowed) as $index => $file) {
+            $files = $request->file('photos');
+            if (!is_array($files)) {
+                $files = [$files];
+            }
+
+            foreach (array_slice($files, 0, $maxAllowed) as $index => $file) {
                 $uploaded = $cloudinary->upload($file, 'cittaloka/memory-books/gallery');
 
                 MemoryBookPhoto::create([

@@ -693,10 +693,7 @@
                             <span x-text="`${priceFormatted} × ${guests} person${guests > 1 ? 's' : ''}`"></span>
                             <span x-text="subtotalFormatted" style="color:#4A4A4A;"></span>
                         </div>
-                        <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:#6B7280; margin-bottom:0.85rem;">
-                            <span>Service fee</span>
-                            <span style="color:#4A4A4A;">Rp {{ number_format($serviceFee, 0, ',', '.') }}</span>
-                        </div>
+
                         <div style="display:flex; justify-content:space-between; font-size:0.95rem; font-weight:700; color:#1E3A2F; padding-top:0.85rem; border-top:1px solid #EDE7DC;">
                             <span>Total</span>
                             <span x-text="totalFormatted"></span>
@@ -756,7 +753,7 @@ function bookingWidget() {
         get priceFormatted()    { return 'Rp ' + this.basePrice.toLocaleString('id-ID'); },
         get subtotal()          { return this.basePrice * this.guests; },
         get subtotalFormatted() { return 'Rp ' + this.subtotal.toLocaleString('id-ID'); },
-        get total()             { return this.subtotal + this.serviceFee; },
+        get total()             { return this.subtotal; },
         get totalFormatted()    { return 'Rp ' + this.total.toLocaleString('id-ID'); },
 
         init() {},

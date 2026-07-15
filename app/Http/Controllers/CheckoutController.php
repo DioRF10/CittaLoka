@@ -90,8 +90,8 @@ class CheckoutController extends Controller
         $hargaPerOrang = (float) $experience->harga;
         $subtotal      = $hargaPerOrang * $guests;
         $platformFee   = round($subtotal * 0.10); // 10%
-        $total         = $subtotal + $platformFee;
-        $hostEarning   = $subtotal - 0; // host dapat subtotal penuh, platform fee di atas
+        $total         = $subtotal; // traveler bayar sesuai subtotal
+        $hostEarning   = $subtotal - $platformFee; // host dapat subtotal potong admin
 
         // Format tanggal & waktu
         $tanggal = Carbon::parse($date)->locale('en')->isoFormat('ddd, MMM D, YYYY');
@@ -157,7 +157,7 @@ class CheckoutController extends Controller
         $hargaPerOrang = (float) $experience->harga;
         $subtotal      = $hargaPerOrang * $guests;
         $platformFee   = round($subtotal * 0.10);
-        $hostEarning   = $subtotal;
+        $hostEarning   = $subtotal - $platformFee;
 
         // ── Validasi ulang kupon di server (jangan percaya nominal dari client) ──
         $coupon = null;
@@ -176,7 +176,7 @@ class CheckoutController extends Controller
             }
         }
 
-        $total = $subtotal + $platformFee - $discountAmount;
+        $total = $subtotal - $discountAmount;
 
         $locale = app()->getLocale();
 

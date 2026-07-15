@@ -223,18 +223,14 @@
                                     this.couponCode = '';
                                     this.message = '';
                                 },
-                                get total() { return this.subtotal + this.platformFee - this.discount; }
+                                get total() { return this.subtotal - this.discount; }
                             }">
                             <div
                                 style="display:flex; justify-content:space-between; font-size:0.85rem; color:#4A4A4A; margin-bottom:0.6rem;">
                                 <span>{{ $guests }} {{ $guests === 1 ? 'guest' : 'guests' }}</span>
                                 <span>Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
                             </div>
-                            <div
-                                style="display:flex; justify-content:space-between; font-size:0.85rem; color:#4A4A4A; margin-bottom:0.75rem;">
-                                <span>Platform fee</span>
-                                <span>Rp {{ number_format($platformFee, 0, ',', '.') }}</span>
-                            </div>
+
 
                             {{-- Coupon input --}}
                             <div style="margin-bottom:0.75rem;">
